@@ -18,8 +18,8 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
     {
         public UnityCanvasUAL UnityCanvasUAL;
         public AssetController assetController;
+        public InventoryUI inventoryUI;
         public GameObject TransactionPanel;
-
         private User user;
         [SerializeField]private EventSystem _canvasEventSystem;
 
@@ -122,7 +122,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
 
                 //Set wallet
                 assetController.SetWallet(await user.GetAccountName());
-                assetController.GetWallet();
+                inventoryUI.SetWalletNameText(assetController.GetWallet());
             }
         }
 

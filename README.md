@@ -1,26 +1,7 @@
-# UnityPluginSuite
-The Unity Plugin Suite provides a complete set of all required plugins and tools for the integration of various available services and allows Unity developers to create blockchain-based games based with free choice between available and commonly used services.
+Main Net configs -
+Chaind id: 1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4
+RPC: api.wax.liquidstudios.io
 
-Included in this suite is a full implementation/integration of all interfaces, 3d party solutions and protocols known and widely used from other platforms essential to provide Unity developers with the same functionality and richness of tools, plugins and libraries while maintaining the same user and developer experience known from other platforms.
-
-## Download for Unity3D
-
-```bash
-    git clone https://github.com/liquiidio/UnityPluginSuite.git
-    cd UnityPluginSuite
-    git checkout unity_base
-    git pull
-    git submodule update --init --recursive
-```
-
-## Download for .NET
-
-```bash
-    git clone https://github.com/liquiidio/UnityPluginSuite.git
-    cd UnityPluginSuite
-    git submodule update --init --recursive
-```
-
-#### Demo Application
-
-Open the Link to the Plugin Suite Demo Application [here](https://noodles.lol/gitbook/MultiExample%20WebGL%202022.x/).
+Test Net configs -
+Chaind id: f16b1833c747c43682f4386fca9cbb327929334a762755ebec17f6f23c9b8a12
+RPC: https://waxtestnet.greymass.com/
