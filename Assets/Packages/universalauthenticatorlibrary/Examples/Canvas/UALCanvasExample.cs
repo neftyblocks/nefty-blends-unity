@@ -94,6 +94,8 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
             if (Input.GetKeyUp(KeyCode.Tab))
             {
                 OnBrowserClipboardPaste("Working as intended!");
+
+
             }
         }
 
@@ -107,7 +109,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
             print("This function to paste is being called!");
         }
 
-        private void UserLogin(User _user)
+        private async void UserLogin(User _user)
         {
             user = _user;
 
@@ -117,6 +119,10 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
                     (UnityCanvasUAL.ActiveAuthenticator as AnchorAuthenticator).Transport as UnityCanvasTransport;
 
                 _anchorCanvasTransport.SwitchToNewPanel(TransactionPanel);
+
+                //Set wallet
+                assetController.SetWallet(await user.GetAccountName());
+                assetController.GetWallet();
             }
         }
 

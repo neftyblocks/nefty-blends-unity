@@ -1,16 +1,14 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
-
+using UniversalAuthenticatorLibrary;
 
 public class AssetController : MonoBehaviour
 {
-    [SerializeField] string wallet;
+    [SerializeField] public string wallet;
 
     [ContextMenu("GetAssetImage")]
     public async void GetAssetImage()
@@ -73,5 +71,15 @@ public class AssetController : MonoBehaviour
         var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
         var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
         return sprite;
+    }
+
+    public void SetWallet(String accountName)
+    {
+        wallet = accountName;
+    }
+
+    public String GetWallet()
+    {
+        return wallet;
     }
 }
