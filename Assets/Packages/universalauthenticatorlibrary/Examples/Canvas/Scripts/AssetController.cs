@@ -11,8 +11,11 @@ public class AssetController : MonoBehaviour
     [SerializeField] public string wallet;
     [SerializeField] public Image[] slots;
     [SerializeField] public int assetCount;
+    [SerializeField] public int currentPage;
+
     void Awake()
     {
+        currentPage = 1;
         int slotCount = 12;
         slots = new Image[slotCount]; 
         for (int i = 0; i < slotCount; i++)
@@ -27,7 +30,7 @@ public class AssetController : MonoBehaviour
     {
         try 
         {
-            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={wallet}&limit=12&only_whitelisted=true";
+            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
 

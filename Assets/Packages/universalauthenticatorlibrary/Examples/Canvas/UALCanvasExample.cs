@@ -89,6 +89,11 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
             UnityCanvasUAL.AuthenticatorPanel.gameObject.SetActive(true);
         }
 
+        public void CloseGameobject()
+        {
+            gameObject.SetActive(false);
+        }
+
         private void Update()
         {
             if (Input.GetKeyUp(KeyCode.Tab))
@@ -198,6 +203,28 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
             {
                 Debug.Log(e);
                 throw;
+            }
+        }
+
+        public void NextPage()
+        {
+            assetController.currentPage++;
+            inventoryUI.SetCurrentPageText(assetController.currentPage);
+            assetController.GetAssetImage();
+        }
+
+        public void PreviousPage()
+        {
+            if (assetController.currentPage - 1 >= 1)
+            {
+                assetController.currentPage--;
+                inventoryUI.SetCurrentPageText(assetController.currentPage);
+                assetController.GetAssetImage();
+
+            }
+            else
+            {
+                assetController.currentPage = 1;
             }
         }
     }

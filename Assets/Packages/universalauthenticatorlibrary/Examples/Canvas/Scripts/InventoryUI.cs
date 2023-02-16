@@ -7,7 +7,7 @@ public class InventoryUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI walletNameText;
     [SerializeField] private TextMeshProUGUI totalAssetText;
-
+    [SerializeField] private TextMeshProUGUI currentPageText;
 
     public void SetWalletNameText(string wallet)
     {
@@ -16,5 +16,9 @@ public class InventoryUI : MonoBehaviour
     public void SetTotalAssetText(int amount)
     {
         totalAssetText.text = $"Total assets - {amount}";
+    }
+    public void SetCurrentPageText(int currentPage)
+    {
+        currentPageText.text = $"{currentPage}";
     }
 }
