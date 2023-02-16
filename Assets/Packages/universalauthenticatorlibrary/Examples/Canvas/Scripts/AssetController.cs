@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -28,7 +30,7 @@ public class AssetController : MonoBehaviour
     [ContextMenu("GetAssetImage")]
     public async void GetAssetImage()
     {
-        try 
+        try
         {
             var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true";
             var jsonResponse = await GetTextAsync(url);
@@ -44,6 +46,8 @@ public class AssetController : MonoBehaviour
                 Debug.LogError("No asset found for the given wallet address.");
                 return;
             }
+
+            List<string> imageUris = new List<string>();
             for (int i = 0; i < slots.Length; i++)
             {
                 if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
@@ -53,13 +57,18 @@ public class AssetController : MonoBehaviour
                 }
 
                 var imageUri = resultObject.items[i].assets[0].image.hash;
-                var texture = await GetSpriteAsync(imageUri);
-                slots[i].sprite = texture;
+                imageUris.Add(imageUri);
+            }
+
+            var downloadedSprites = await Task.WhenAll(imageUris.Select(uri => GetSpriteAsync(uri)));
+            for (int i = 0; i < downloadedSprites.Length; i++)
+            {
+                slots[i].sprite = downloadedSprites[i];
             }
         }
-        catch(Exception ex) 
+        catch (Exception ex)
         {
-            Debug.Log($"Error: { ex }");
+            Debug.Log($"Error: {ex}");
         }
     }
 
