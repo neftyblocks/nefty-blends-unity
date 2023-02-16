@@ -120,9 +120,10 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
 
                 _anchorCanvasTransport.SwitchToNewPanel(TransactionPanel);
 
-                //Set wallet
+                //Set general info
                 assetController.SetWallet(await user.GetAccountName());
                 inventoryUI.SetWalletNameText(assetController.GetWallet());
+                inventoryUI.SetTotalAssetText(assetController.GetAssetCount());
             }
         }
 

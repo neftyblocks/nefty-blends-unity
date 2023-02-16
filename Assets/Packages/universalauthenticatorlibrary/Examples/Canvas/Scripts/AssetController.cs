@@ -10,11 +10,12 @@ public class AssetController : MonoBehaviour
 {
     [SerializeField] public string wallet;
     [SerializeField] public Image[] slots;
-
+    [SerializeField] public int assetCount;
     void Awake()
     {
-        slots = new Image[10]; 
-        for (int i = 0; i < 10; i++)
+        int slotCount = 12;
+        slots = new Image[slotCount]; 
+        for (int i = 0; i < slotCount; i++)
         {
             slots[i] = transform.Find("Slots").Find("Slot" + (i + 1)).GetComponent<Image>();
 
@@ -26,9 +27,14 @@ public class AssetController : MonoBehaviour
     {
         try 
         {
-            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={wallet}&limit=10&only_whitelisted=true";
+            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={wallet}&limit=12&only_whitelisted=true";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
+
+            if (resultObject != null)
+            {
+                SetAssetCount(resultObject.total);
+            }
 
             if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
             {
@@ -93,13 +99,23 @@ public class AssetController : MonoBehaviour
         return sprite;
     }
 
-    public void SetWallet(String accountName)
+    public void SetWallet(string accountName)
     {
         wallet = accountName;
     }
 
-    public String GetWallet()
+    public string GetWallet()
     {
         return wallet;
+    }
+
+    public int GetAssetCount()
+    {
+        return assetCount;
+    }
+
+    public void SetAssetCount(int count)
+    {
+        assetCount = count;
     }
 }
