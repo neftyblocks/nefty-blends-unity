@@ -11,8 +11,6 @@ public class AssetController : MonoBehaviour
     [SerializeField] public string wallet;
     [SerializeField] public Image[] slots;
 
-
-
     void Awake()
     {
         slots = new Image[10]; 
