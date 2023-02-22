@@ -16,17 +16,17 @@ public class AssetController : MonoBehaviour
     [SerializeField] public int currentPage;
     [SerializeField] public GameObject prefab;
     [SerializeField] public RectTransform prefabContainer;
+    [SerializeField] public Sprite loadingImage;
 
 
     void Awake()
     {
-        Debug.Log("Hello");
         currentPage = 1;
         int slotCount = 12;
         int slotSize = 150;
         int x = 0;
         int y = 0;
-        slots = new GameObject[slotCount]; 
+        slots = new GameObject[slotCount];
         for (int i = 0; i < slotCount; i++)
         {
             slots[i] = Instantiate(prefab, prefabContainer);
@@ -34,7 +34,7 @@ public class AssetController : MonoBehaviour
             x++;
             if (x >= 6)
             {
-                x=0;y++;
+                x = 0; y++;
             }
         }
     }
@@ -75,7 +75,7 @@ public class AssetController : MonoBehaviour
             var downloadedSprites = await Task.WhenAll(imageUris.Select(uri => GetSpriteAsync(uri)));
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].GetComponent<Image>().sprite = downloadedSprites[i];
+                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
             }
         }
         catch (Exception ex)
@@ -141,5 +141,14 @@ public class AssetController : MonoBehaviour
     public void SetAssetCount(int count)
     {
         assetCount = count;
+    }
+
+    public void SetLoadingImage()
+    {
+        for (int i = 0; i < 12; i++)
+        {
+            slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+
+        }
     }
 }

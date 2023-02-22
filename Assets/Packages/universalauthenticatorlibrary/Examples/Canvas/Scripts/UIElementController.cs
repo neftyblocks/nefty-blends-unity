@@ -9,34 +9,33 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] private Color baseColor;
     [SerializeField] private Color hoverColor;
     [SerializeField] private Color selectedColor;
+    [SerializeField] private bool isClicked;
+    [SerializeField] private Sprite loadingImage;
 
     void Start()
     {
-/*        baseColor = slotImage.GetComponent<Image>().color;
-*/    }
+        baseColor = slotImage.GetComponent<Image>().color;
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-    /*    slotImage.GetComponent<Image>().color = hoverColor;
-        selectionBoardImage.SetActive(true);*/
+        selectionBoardImage.SetActive(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-/*        slotImage.GetComponent<Image>().color = baseColor;
-        selectionBoardImage.SetActive(false);*/
-
+        if(!isClicked)
+        {
+            selectionBoardImage.SetActive(false);
+        }
     }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        /*Debug.Log(gameObject);
-        slotImage.GetComponent<Image>().color = selectedColor;
-        selectionBoardImage.SetActive(true);*/
+        isClicked = isClicked ? false : true;
     }
 
-    public void SetLoadingImage(bool condition)
+    public GameObject GetSlotImage()
     {
-        Debug.Log(slotImage+" "+condition);
-        slotImage.SetActive(condition);
+        return slotImage;
     }
 }

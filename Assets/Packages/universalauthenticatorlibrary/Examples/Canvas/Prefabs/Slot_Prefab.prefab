@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8658164907119293412
 RectTransform:
   m_ObjectHideFlags: 0
@@ -245,6 +245,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotImage: {fileID: 8658164907540088183}
   selectionBoardImage: {fileID: 8658164907119293413}
-  baseColor: {r: 0, g: 0.39067292, b: 1, a: 0}
-  hoverColor: {r: 0.764151, g: 0.6155235, b: 0.27033645, a: 0}
-  selectedColor: {r: 0, g: 0, b: 0, a: 0}
+  baseColor: {r: 0.9622642, g: 0.33376577, b: 0.26779994, a: 1}
+  hoverColor: {r: 0.35624695, g: 0, b: 1, a: 1}
+  selectedColor: {r: 0, g: 0, b: 0, a: 1}
+  isClicked: 0
+  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}

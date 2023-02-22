@@ -4530,6 +4530,7 @@ MonoBehaviour:
   currentPage: 0
   prefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
   prefabContainer: {fileID: 374508388}
+  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!114 &1614810464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5547,6 +5548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   UnityCanvasUAL: {fileID: 68450126}
   assetController: {fileID: 1614810463}
+  uIElementController: {fileID: 0}
   inventoryUI: {fileID: 735353349}
   TransactionPanel: {fileID: 1056304382}
   _canvasEventSystem: {fileID: 1920536234}

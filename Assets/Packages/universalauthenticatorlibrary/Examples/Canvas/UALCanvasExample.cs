@@ -18,6 +18,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
     {
         public UnityCanvasUAL UnityCanvasUAL;
         public AssetController assetController;
+        public UIElementController uIElementController;
         public InventoryUI inventoryUI;
         public GameObject TransactionPanel;
         private User user;
@@ -208,6 +209,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
 
         public void NextPage()
         {
+            assetController.SetLoadingImage();
             assetController.currentPage++;
             inventoryUI.SetCurrentPageText(assetController.currentPage);
             assetController.GetAssetImage();
@@ -215,6 +217,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
 
         public void PreviousPage()
         {
+            assetController.SetLoadingImage();
             if (assetController.currentPage - 1 >= 1)
             {
                 assetController.currentPage--;
