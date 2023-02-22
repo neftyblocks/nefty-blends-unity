@@ -104,7 +104,8 @@ public class AssetController : MonoBehaviour
 
     private async Task<Sprite> GetSpriteAsync(string imageUri)
     {
-        var url = $"https://atomichub-ipfs.com/ipfs/{imageUri}";
+        var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
+
         var request = UnityWebRequestTexture.GetTexture(url);
         var operation = request.SendWebRequest();
 
