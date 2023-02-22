@@ -11,18 +11,31 @@ using UniversalAuthenticatorLibrary;
 public class AssetController : MonoBehaviour
 {
     [SerializeField] public string wallet;
-    [SerializeField] public Image[] slots;
+    [SerializeField] public GameObject[] slots;
     [SerializeField] public int assetCount;
     [SerializeField] public int currentPage;
+    [SerializeField] public GameObject prefab;
+    [SerializeField] public RectTransform prefabContainer;
+
 
     void Awake()
     {
+        Debug.Log("Hello");
         currentPage = 1;
         int slotCount = 12;
-        slots = new Image[slotCount]; 
+        int slotSize = 150;
+        int x = 0;
+        int y = 0;
+        slots = new GameObject[slotCount]; 
         for (int i = 0; i < slotCount; i++)
         {
-            slots[i] = transform.Find("Slots").Find("Slot_Background_"+(i + 1)).Find("Slot" + (i + 1)).GetComponent<Image>();
+            slots[i] = Instantiate(prefab, prefabContainer);
+            slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
+            x++;
+            if (x >= 6)
+            {
+                x=0;y++;
+            }
         }
     }
 
@@ -62,7 +75,7 @@ public class AssetController : MonoBehaviour
             var downloadedSprites = await Task.WhenAll(imageUris.Select(uri => GetSpriteAsync(uri)));
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].sprite = downloadedSprites[i];
+                slots[i].GetComponent<Image>().sprite = downloadedSprites[i];
             }
         }
         catch (Exception ex)
