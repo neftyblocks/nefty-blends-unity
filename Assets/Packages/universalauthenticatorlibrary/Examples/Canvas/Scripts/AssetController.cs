@@ -22,8 +22,7 @@ public class AssetController : MonoBehaviour
         slots = new Image[slotCount]; 
         for (int i = 0; i < slotCount; i++)
         {
-            slots[i] = transform.Find("Slots").Find("Slot" + (i + 1)).GetComponent<Image>();
-
+            slots[i] = transform.Find("Slots").Find("Slot_Background_"+(i + 1)).Find("Slot" + (i + 1)).GetComponent<Image>();
         }
     }
 
