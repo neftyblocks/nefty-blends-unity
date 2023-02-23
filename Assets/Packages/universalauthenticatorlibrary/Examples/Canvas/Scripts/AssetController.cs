@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class AssetController : MonoBehaviour
     [SerializeField] public GameObject prefab;
     [SerializeField] public RectTransform prefabContainer;
     [SerializeField] public Sprite loadingImage;
+    [SerializeField] public CollectionUI collectionUI;
 
 
     void Awake()
@@ -84,6 +86,32 @@ public class AssetController : MonoBehaviour
         }
     }
 
+    [ContextMenu("GetCollectionImage")]
+    public async void GetCollectionImageURL()
+    {
+        try
+        {
+            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/zos";
+            var jsonResponse = await GetTextAsync(url);
+            var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
+
+            if (resultObject.data.img.Length == 0)
+            {
+                Debug.LogError("No asset found for the given wallet address.");
+                return;
+            }
+
+            var imageUri = resultObject.data.img;
+            var downloadedSprites = await GetSpriteAsync(imageUri);
+            collectionUI.SetCollectionImage(downloadedSprites);
+            
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Error: {ex}");
+        }
+    }
+
     private async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
@@ -98,7 +126,6 @@ public class AssetController : MonoBehaviour
         {
             throw new UnityException(request.error);
         }
-
         return request.downloadHandler.text;
     }
 
