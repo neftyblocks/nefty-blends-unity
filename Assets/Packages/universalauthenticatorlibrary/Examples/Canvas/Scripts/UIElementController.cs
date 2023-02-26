@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] public GameObject slotImage;
+    [SerializeField] public string assetId;
     [SerializeField] public GameObject selectionBoardImage;
     [SerializeField] private Color baseColor;
     [SerializeField] private Color hoverColor;
@@ -37,5 +38,14 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public GameObject GetSlotImage()
     {
         return slotImage;
+    }
+
+    public string GetAssetId()
+    {
+        return assetId;
+    }
+    public bool IsClicked()
+    {
+        return isClicked;
     }
 }

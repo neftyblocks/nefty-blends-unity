@@ -32,6 +32,7 @@ public class AssetController : MonoBehaviour
         for (int i = 0; i < slotCount; i++)
         {
             slots[i] = Instantiate(prefab, prefabContainer);
+            slots[i].tag = "Asset";
             slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
             x++;
             if (x >= 6)
@@ -78,6 +79,8 @@ public class AssetController : MonoBehaviour
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
+                slots[i].GetComponent<UIElementController>().assetId = resultObject.items[i].id;
+
             }
         }
         catch (Exception ex)
@@ -91,7 +94,7 @@ public class AssetController : MonoBehaviour
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/zos";
+            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/alien.worlds";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
 

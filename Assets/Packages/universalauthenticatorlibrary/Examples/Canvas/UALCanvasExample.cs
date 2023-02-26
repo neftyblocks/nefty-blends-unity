@@ -26,6 +26,7 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
 
         async void Start()
         {
+            assetController.GetCollectionImageURL();
             if (SceneManager.sceneCount > 1)
                 UnityCanvasUAL.AuthenticatorPanel.GetComponentInChildren<Button>().gameObject.SetActive(false);
 
@@ -229,6 +230,11 @@ namespace UniversalAuthenticatorLibrary.Examples.Canvas
             {
                 assetController.currentPage = 1;
             }
+        }
+
+        public User GetUser()
+        {
+            return user;
         }
     }
 }
