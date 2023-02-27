@@ -19,6 +19,7 @@ public class AssetController : MonoBehaviour
     [SerializeField] public RectTransform prefabContainer;
     [SerializeField] public Sprite loadingImage;
     [SerializeField] public CollectionUI collectionUI;
+    [SerializeField] public PluginController pluginController;
 
 
     void Awake()
@@ -47,7 +48,7 @@ public class AssetController : MonoBehaviour
     {
         try
         {
-            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true";
+            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
 
@@ -94,7 +95,7 @@ public class AssetController : MonoBehaviour
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/alien.worlds";
+            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
 
@@ -118,6 +119,7 @@ public class AssetController : MonoBehaviour
     private async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
+        request.SetRequestHeader("Content-Type", "application/json");
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)
@@ -135,7 +137,6 @@ public class AssetController : MonoBehaviour
     private async Task<Sprite> GetSpriteAsync(string imageUri)
     {
         var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
-
         var request = UnityWebRequestTexture.GetTexture(url);
         var operation = request.SendWebRequest();
 
