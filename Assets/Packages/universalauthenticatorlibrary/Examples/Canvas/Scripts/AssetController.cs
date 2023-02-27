@@ -20,6 +20,7 @@ public class AssetController : MonoBehaviour
     [SerializeField] public Sprite loadingImage;
     [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
+    private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
 
 
     void Awake()
@@ -108,7 +109,7 @@ public class AssetController : MonoBehaviour
             var imageUri = resultObject.data.img;
             var downloadedSprites = await GetSpriteAsync(imageUri);
             collectionUI.SetCollectionImage(downloadedSprites);
-            
+
         }
         catch (Exception ex)
         {
@@ -136,8 +137,18 @@ public class AssetController : MonoBehaviour
 
     private async Task<Sprite> GetSpriteAsync(string imageUri)
     {
+        if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
+        {
+            Debug.Log($"{imageUri} already cached");
+            return sprite;
+        }
+
         var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
+
+        request.SetRequestHeader("Cache-Control", "max-age=3600");
+        request.SetRequestHeader("Pragma", "cache");
+
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)
@@ -151,7 +162,13 @@ public class AssetController : MonoBehaviour
         }
 
         var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-        var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
+        sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
+
+        if (!_spriteCache.ContainsKey(imageUri))
+        {
+            _spriteCache.Add(imageUri, sprite);
+        }
+
         return sprite;
     }
 
