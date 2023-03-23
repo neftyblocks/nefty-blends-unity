@@ -6,22 +6,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 using UniversalAuthenticatorLibrary;
 
-public class AssetController : MonoBehaviour
+public class InventoryFetcherController : MonoBehaviour
 {
-    [SerializeField] public string wallet;
+    [SerializeField] public int assetCount { get; set; }
+    [SerializeField] public int currentPage { get; set; }
     [SerializeField] public GameObject[] slots;
-    [SerializeField] public int assetCount;
-    [SerializeField] public int currentPage;
     [SerializeField] public GameObject prefab;
     [SerializeField] public RectTransform prefabContainer;
+    [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public Sprite loadingImage;
     [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
-    private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
-
+    public delegate void UiRefreshEventHandler();
+    public static event UiRefreshEventHandler UiRefresh;
 
     void Awake()
     {
@@ -43,20 +44,21 @@ public class AssetController : MonoBehaviour
             }
         }
     }
+    private void OnEnable()
+    {
+        InventoryUI.NextPageEvent += UpdateImageToNextPage;
+        InventoryUI.PreviousPageEvent += UpdateImageToPreviousPage;
+    }
 
     [ContextMenu("GetAssetImage")]
     public async void GetAssetImage()
     {
+
         try
         {
             var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
-
-            if (resultObject != null)
-            {
-                SetAssetCount(resultObject.total);
-            }
 
             if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
             {
@@ -64,7 +66,10 @@ public class AssetController : MonoBehaviour
                 return;
             }
 
+            assetCount = resultObject.total;
+            UiRefresh();
             List<string> imageUris = new List<string>();
+
             for (int i = 0; i < slots.Length; i++)
             {
                 if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
@@ -172,26 +177,6 @@ public class AssetController : MonoBehaviour
         return sprite;
     }
 
-    public void SetWallet(string accountName)
-    {
-        wallet = accountName;
-    }
-
-    public string GetWallet()
-    {
-        return wallet;
-    }
-
-    public int GetAssetCount()
-    {
-        return assetCount;
-    }
-
-    public void SetAssetCount(int count)
-    {
-        assetCount = count;
-    }
-
     public void SetLoadingImage()
     {
         for (int i = 0; i < 12; i++)
@@ -199,5 +184,16 @@ public class AssetController : MonoBehaviour
             slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
 
         }
+    }
+
+    public void UpdateImageToNextPage()
+    {
+        currentPage++;
+        GetAssetImage();
+    }
+    public void UpdateImageToPreviousPage()
+    {
+        currentPage--;
+        GetAssetImage();
     }
 }

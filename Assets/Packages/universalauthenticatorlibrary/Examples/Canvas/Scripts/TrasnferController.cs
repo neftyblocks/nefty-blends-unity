@@ -5,15 +5,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UniversalAuthenticatorLibrary;
-using UniversalAuthenticatorLibrary.Examples.Canvas;
 
 public class TrasnferController : MonoBehaviour
 {
 
-    [SerializeField]UALCanvasExample uALCanvasExample;
+    [SerializeField]DashboardController uALCanvasExample;
 
     public async Task TransferAction()
-    {    
+    {
+        Debug.Log(uALCanvasExample.user);
+
         List<string> assets = new List<string>();
         GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Asset");
         foreach (GameObject slotObject in slotObjects)
@@ -34,9 +35,9 @@ public class TrasnferController : MonoBehaviour
                     new PermissionLevel()
                     {
                         actor =
-                            "............1", // ............1 will be resolved to the signing accounts permission
+                            "............1", 
                         permission =
-                            "............2" // ............2 will be resolved to the signing accounts authority
+                            "............2" 
                     }
                 },
 
@@ -50,7 +51,8 @@ public class TrasnferController : MonoBehaviour
         };
         try
         {
-            await uALCanvasExample.GetUser().SignTransaction(new[] { action });
+
+            await uALCanvasExample.user.SignTransaction(new[] { action });
         }
         catch (Exception e)
         {
