@@ -13,47 +13,15 @@ using UniversalAuthenticatorLibrary;
 public class InventoryFetcherController : MonoBehaviour
 {
     [SerializeField] public int assetCount { get; set; }
-    [SerializeField] public int currentPage { get; set; }
-    [SerializeField] public GameObject[] slots;
-    [SerializeField] public GameObject prefab;
-    [SerializeField] public RectTransform prefabContainer;
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
-    [SerializeField] public Sprite loadingImage;
     [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
     public delegate void UiRefreshEventHandler();
     public static event UiRefreshEventHandler UiRefresh;
 
-    void Awake()
-    {
-        currentPage = 1;
-        int slotCount = 12;
-        int slotSize = 150;
-        int x = 0;
-        int y = 0;
-        slots = new GameObject[slotCount];
-        for (int i = 0; i < slotCount; i++)
-        {
-            slots[i] = Instantiate(prefab, prefabContainer);
-            slots[i].tag = "Asset";
-            slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
-            x++;
-            if (x >= 6)
-            {
-                x = 0; y++;
-            }
-        }
-    }
-    private void OnEnable()
-    {
-        InventoryUI.NextPageEvent += UpdateImageToNextPage;
-        InventoryUI.PreviousPageEvent += UpdateImageToPreviousPage;
-    }
-
     [ContextMenu("GetAssetImage")]
-    public async void GetAssetImage()
+    public async Task<(Sprite[], string[])> GetAssetImage(int slots,int currentPage)
     {
-
         try
         {
             var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
@@ -63,14 +31,13 @@ public class InventoryFetcherController : MonoBehaviour
             if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
             {
                 Debug.LogError("No asset found for the given wallet address.");
-                return;
+                return (null, null);
             }
-
             assetCount = resultObject.total;
             UiRefresh();
-            List<string> imageUris = new List<string>();
+            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
 
-            for (int i = 0; i < slots.Length; i++)
+            for (int i = 0; i < slots; i++)
             {
                 if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
                 {
@@ -79,25 +46,25 @@ public class InventoryFetcherController : MonoBehaviour
                 }
 
                 var imageUri = resultObject.items[i].assets[0].image.hash;
-                imageUris.Add(imageUri);
+                var assetId = resultObject.items[i].id;
+                imageUrisWithIds.Add((imageUri, assetId));
             }
-
-            var downloadedSprites = await Task.WhenAll(imageUris.Select(uri => GetSpriteAsync(uri)));
-            for (int i = 0; i < downloadedSprites.Length; i++)
-            {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
-                slots[i].GetComponent<UIElementController>().assetId = resultObject.items[i].id;
-
-            }
+            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
+            var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
+            var spriteResults = await Task.WhenAll(spriteTasks);
+            var sprites = spriteResults.Select(sprite => sprite).ToArray();
+            var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
+            return (sprites, assetIds);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
+            return (null, null);
         }
     }
 
     [ContextMenu("GetCollectionImage")]
-    public async void GetCollectionImageURL()
+    public async Task<Sprite> GetCollectionImageURL()
     {
         try
         {
@@ -107,18 +74,18 @@ public class InventoryFetcherController : MonoBehaviour
 
             if (resultObject.data.img.Length == 0)
             {
-                Debug.LogError("No asset found for the given wallet address.");
-                return;
+                Debug.LogError("No image found for the given collection.");
+                return null;
             }
 
             var imageUri = resultObject.data.img;
-            var downloadedSprites = await GetSpriteAsync(imageUri);
-            collectionUI.SetCollectionImage(downloadedSprites);
+            return await GetSpriteAsync(imageUri);
 
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
+            return null;
         }
     }
 
@@ -175,25 +142,5 @@ public class InventoryFetcherController : MonoBehaviour
         }
 
         return sprite;
-    }
-
-    public void SetLoadingImage()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
-
-        }
-    }
-
-    public void UpdateImageToNextPage()
-    {
-        currentPage++;
-        GetAssetImage();
-    }
-    public void UpdateImageToPreviousPage()
-    {
-        currentPage--;
-        GetAssetImage();
     }
 }

@@ -8,13 +8,18 @@ public class CollectionUI : MonoBehaviour
 {
     [SerializeField] public Sprite colletionImage;
     [SerializeField] GameObject collectionImageUI;
+    [SerializeField] public InventoryFetcherController inventoryFetcherController;
 
+    async void Start()
+    {
+        DisplayCollectionImage(await inventoryFetcherController.GetCollectionImageURL());   
+    }
     public Sprite GetCollectionImage()
     {
         return colletionImage; 
     }
 
-    public void SetCollectionImage(Sprite image)
+    public void DisplayCollectionImage(Sprite image)
     {
         collectionImageUI.GetComponent<Image>().sprite = image;
     }

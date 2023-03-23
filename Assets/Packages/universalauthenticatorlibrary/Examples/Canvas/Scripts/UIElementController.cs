@@ -7,16 +7,10 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] public GameObject slotImage;
     [SerializeField] public string assetId;
     [SerializeField] public GameObject selectionBoardImage;
-    [SerializeField] private Color baseColor;
     [SerializeField] private Color hoverColor;
     [SerializeField] private Color selectedColor;
     [SerializeField] private bool isClicked;
     [SerializeField] private Sprite loadingImage;
-
-    void Start()
-    {
-        baseColor = slotImage.GetComponent<Image>().color;
-    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {

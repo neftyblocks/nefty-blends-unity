@@ -167,6 +167,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 799937290}
   - {fileID: 1330350317}
   - {fileID: 82636087}
   - {fileID: 206229107}
@@ -206,7 +207,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 80892888}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &82636088
 MonoBehaviour:
@@ -398,7 +399,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 80892888}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &340278625
 GameObject:
@@ -1103,7 +1104,11 @@ MonoBehaviour:
   totalAssetText: {fileID: 436063405}
   currentPageText: {fileID: 509446053}
   dashboardController: {fileID: 82636088}
-  inventoryFetcherController: {fileID: 1614810463}
+  inventoryFetcherController: {fileID: 799937291}
+  slots: []
+  prefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
+  prefabContainer: {fileID: 374508388}
+  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!4 &761031053 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7477725567536108708, guid: 0cde3a773e1f7e0438429510f51554c4, type: 3}
@@ -1120,6 +1125,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1348a6492c4cfb3458e500bd9f10c019, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &799937289
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 799937290}
+  - component: {fileID: 799937291}
+  m_Layer: 0
+  m_Name: InventoryFetcherController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &799937290
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799937289}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 80892888}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &799937291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799937289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d349e84708e750943abb3b61282ccb2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectionUI: {fileID: 966344687}
+  pluginController: {fileID: 206229106}
 --- !u!1 &877874663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1562,6 +1613,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   colletionImage: {fileID: 0}
   collectionImageUI: {fileID: 340278625}
+  inventoryFetcherController: {fileID: 799937291}
 --- !u!1 &1019263819
 GameObject:
   m_ObjectHideFlags: 0
@@ -1625,7 +1677,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 80892888}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1330350318
 MonoBehaviour:
@@ -1639,7 +1691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58dd73b0e230a854188deada7dca7bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uALCanvasExample: {fileID: 82636088}
+  dashboardController: {fileID: 0}
 --- !u!1 &1377965941
 GameObject:
   m_ObjectHideFlags: 0
@@ -1900,7 +1952,6 @@ GameObject:
   - component: {fileID: 1614810466}
   - component: {fileID: 1614810465}
   - component: {fileID: 1614810464}
-  - component: {fileID: 1614810463}
   m_Layer: 0
   m_Name: Asset-UI
   m_TagString: Untagged
@@ -1931,24 +1982,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: -122.97986, y: -61.2117}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1614810463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1614810461}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d349e84708e750943abb3b61282ccb2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  slots: []
-  prefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
-  prefabContainer: {fileID: 374508388}
-  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
-  collectionUI: {fileID: 966344687}
-  pluginController: {fileID: 206229106}
 --- !u!114 &1614810464
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2109,9 +2142,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1614810463}
-        m_TargetAssemblyTypeName: AssetController, UniversalAuthenticatorLibrary
-        m_MethodName: GetAssetImage
+      - m_Target: {fileID: 735353349}
+        m_TargetAssemblyTypeName: InventoryUI, UniversalAuthenticatorLibrary
+        m_MethodName: DisplayAssetImages
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2196,7 +2229,7 @@ RectTransform:
   - {fileID: 966344686}
   - {fileID: 1834589478}
   m_Father: {fileID: 80892888}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2352,7 +2385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58dd73b0e230a854188deada7dca7bca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uALCanvasExample: {fileID: 82636088}
+  dashboardController: {fileID: 82636088}
 --- !u!1 &1920536232
 GameObject:
   m_ObjectHideFlags: 0
@@ -2419,7 +2452,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 80892888}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1952469124
 GameObject:
@@ -2601,7 +2634,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3666523331982699819, guid: aa720d9d5b6176245962a4f1a70b8089, type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3666523331982699819, guid: aa720d9d5b6176245962a4f1a70b8089, type: 3}
       propertyPath: m_AnchorMax.x

@@ -9,12 +9,10 @@ using UniversalAuthenticatorLibrary;
 public class TrasnferController : MonoBehaviour
 {
 
-    [SerializeField]DashboardController uALCanvasExample;
+    [SerializeField]DashboardController dashboardController;
 
     public async Task TransferAction()
     {
-        Debug.Log(uALCanvasExample.user);
-
         List<string> assets = new List<string>();
         GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Asset");
         foreach (GameObject slotObject in slotObjects)
@@ -52,7 +50,7 @@ public class TrasnferController : MonoBehaviour
         try
         {
 
-            await uALCanvasExample.user.SignTransaction(new[] { action });
+            await dashboardController.user.SignTransaction(new[] { action });
         }
         catch (Exception e)
         {
