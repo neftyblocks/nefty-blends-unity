@@ -1,51 +1,42 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.PlayerLoop;
-using UnityEngine.UI;
-using UniversalAuthenticatorLibrary;
 
-public class InventoryFetcherController : MonoBehaviour, IFetcher
+public class BlendFetcherController : MonoBehaviour,IFetcher
 {
-    [SerializeField] public int assetCount { get; set; }
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
-    [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
-    public delegate void UiRefreshEventHandler();
-    public static event UiRefreshEventHandler UiRefresh;
 
-    public async Task<(Sprite[], string[])> GetImage(int slots,int currentPage)
+    [ContextMenu("GetImage")]
+    public async void Get()
+    {
+        await GetImage(12,1);
+    }
+    public async Task<(Sprite[], string[])> GetImage(int slots, int currentPage)
     {
         try
         {
-            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name=farmingtales&visibility=visible&render_markdown=false&page=1&limit=2&order=desc&sort=created_at_time";
             var jsonResponse = await GetTextAsync(url);
             // dit dynamisch 
-            var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
-
-            if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
+            var resultObject = JsonConvert.DeserializeObject<Blend>(jsonResponse);
+            
+            if (resultObject.Data.Count == 0)
             {
                 Debug.LogError("No asset found for the given wallet address.");
                 return (null, null);
             }
-            assetCount = resultObject.total;
-            UiRefresh();
             List<(string, string)> imageUrisWithIds = new List<(string, string)>();
 
             for (int i = 0; i < slots; i++)
-            {
-                if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
-                {
-                    Debug.LogError($"No asset found for slot {i + 1}.");
-                    continue;
-                }
-                var imageUri = resultObject.items[i].assets[0].image.hash;
-                var assetId = resultObject.items[i].id;
+            {               
+                var imageUri = resultObject.Data[0].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+                var assetId = resultObject.Data[0].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
                 imageUrisWithIds.Add((imageUri, assetId));
             }
             var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();

@@ -2,16 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
-public class InventoryUI : MonoBehaviour
+public class BlendMainUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI walletNameText;
-    [SerializeField] private TextMeshProUGUI totalAssetText;
     [SerializeField] private TextMeshProUGUI currentPageText;
     [SerializeField] private DashboardController dashboardController;
-    [SerializeField] private InventoryFetcherController inventoryFetcherController;
+    [SerializeField] private BlendFetcherController blendFetcherController;
 
     [SerializeField] public GameObject[] slots;
     [SerializeField] public GameObject prefab;
@@ -41,10 +38,12 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    [ContextMenu("GetCollectionImage")]
+
     public async void DisplayAssetImages()
     {
-        var (downloadedSprites, assetIds) = await inventoryFetcherController.GetImage(slotCount, currentPage);
-        if(downloadedSprites != null)
+        var (downloadedSprites, assetIds) = await blendFetcherController.GetImage(slotCount, currentPage);
+        if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
@@ -71,19 +70,9 @@ public class InventoryUI : MonoBehaviour
 
     private void UpdateUI()
     {
-        SetWalletNameText(dashboardController.walletName);
-        SetTotalAssetText(inventoryFetcherController.assetCount);
         SetCurrentPageText(currentPage);
     }
 
-    public void SetWalletNameText(string wallet)
-    {
-        walletNameText.text = $"Welcome {wallet}";
-    }
-    public void SetTotalAssetText(int amount)
-    {
-        totalAssetText.text = $"Total assets - {amount}";
-    }
     public void SetCurrentPageText(int currentPage)
     {
         currentPageText.text = $"{currentPage}";

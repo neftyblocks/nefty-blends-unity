@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collection
+public partial class Collection
 {
     public bool success { get; set; }
     public CollectionData data { get; set; }
