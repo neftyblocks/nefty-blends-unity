@@ -127,6 +127,6 @@ public class Blend
         public Template Template { get; set; }
     }
 
-    public enum TypeEnum { Image, String, Uint64 };
+    public enum TypeEnum { Image, Ipfs, String, Uint64 };
 
 }

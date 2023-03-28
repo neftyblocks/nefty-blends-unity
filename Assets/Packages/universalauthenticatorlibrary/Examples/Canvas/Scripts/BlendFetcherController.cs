@@ -12,20 +12,15 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
-    [ContextMenu("GetImage")]
-    public async void Get()
-    {
-        await GetImage(12,1);
-    }
     public async Task<(Sprite[], string[])> GetImage(int slots, int currentPage)
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name=farmingtales&visibility=visible&render_markdown=false&page=1&limit=2&order=desc&sort=created_at_time";
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit=12&order=desc&sort=created_at_time";
             var jsonResponse = await GetTextAsync(url);
-            // dit dynamisch 
+
             var resultObject = JsonConvert.DeserializeObject<Blend>(jsonResponse);
-            
+
             if (resultObject.Data.Count == 0)
             {
                 Debug.LogError("No asset found for the given wallet address.");
@@ -33,10 +28,10 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
             }
             List<(string, string)> imageUrisWithIds = new List<(string, string)>();
 
-            for (int i = 0; i < slots; i++)
+            for (int i = 0; i < resultObject.Data.Count; i++)
             {               
-                var imageUri = resultObject.Data[0].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
-                var assetId = resultObject.Data[0].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+                var imageUri = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+                var assetId = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
                 imageUrisWithIds.Add((imageUri, assetId));
             }
             var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();

@@ -22,7 +22,7 @@ namespace AnchorLinkTransportSharp.Src.Transports.UiToolkit.Ui
         {
             _subTitleLabel = Root.Q<Label>("anchor-link-subtitle-label");
 
-            OnStart();
+           OnStart();
         }
 
         #region Rebind

@@ -46,7 +46,8 @@ public class UIManager : MonoBehaviour
                 ui.Value.SetActive(false);
             }
         }
-        UIs[UIType.BlendMenu].SetActive(true); 
+        UIs[UIType.BlendMenu].SetActive(true);
+        blendMenuUI.GetComponentInChildren<BlendMainUI>().DisplayAssetImages();
     }
     public void EnableInventoryMainMenuUI()
     {
@@ -58,5 +59,7 @@ public class UIManager : MonoBehaviour
             }
         }
         UIs[UIType.InventoryMenu].SetActive(true);
+        inventoryUI.GetComponentInChildren<InventoryUI>().DisplayAssetImages();
+
     }
 }

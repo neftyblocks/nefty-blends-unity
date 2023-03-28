@@ -51,6 +51,10 @@ public class InventoryUI : MonoBehaviour
                 slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
                 slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
             }
+            for (int i = downloadedSprites.Length; i < slotCount; i++)
+            {
+                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+            }
         }
     }
 

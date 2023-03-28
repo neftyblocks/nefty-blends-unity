@@ -450,12 +450,18 @@ namespace AnchorLinkTransportSharp.Src.Transports.Canvas
         /// <param name="toPanel"></param>
         public void SwitchToNewPanel(GameObject toPanel)
         {
+            
             currentPanel?.SetActive(false);
             DisableAllPanels();
 
             currentPanel = toPanel;
-
             currentPanel.SetActive(true);
+
+            if (SuccessPanel == toPanel)
+            {
+                currentPanel.SetActive(false);
+
+            }
         }
 
         /// <summary>

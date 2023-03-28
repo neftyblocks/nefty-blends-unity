@@ -47,8 +47,15 @@ public class BlendMainUI : MonoBehaviour
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
-                slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
+                if (downloadedSprites[i] != null)
+                {
+                    slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
+                    slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
+                }
+            }
+            for (int i = downloadedSprites.Length; i < slotCount; i++)
+            {
+                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
