@@ -13,7 +13,8 @@ public class Blend
 
     public partial class Datum
     {
-        public long BlendId { get; set; }
+        [JsonProperty("blend_id")]
+        public int BlendId { get; set; }
         public string Contract { get; set; }
         public string CollectionName { get; set; }
         public string StartTime { get; set; }

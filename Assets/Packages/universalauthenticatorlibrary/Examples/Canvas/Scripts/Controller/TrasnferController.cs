@@ -17,8 +17,8 @@ public class TrasnferController : MonoBehaviour
         GameObject[] slotObjects = GameObject.FindGameObjectsWithTag("Asset");
         foreach (GameObject slotObject in slotObjects)
         {
-            var slotScript = slotObject.GetComponent<UIElementController>();
-            if (slotScript.IsClicked()) {
+            var slotScript = slotObject.GetComponent<NFT>();
+            if (slotScript.GetComponent<UIElementController>().IsClicked()) {
                 assets.Add(slotScript.GetAssetId());
             }
         }

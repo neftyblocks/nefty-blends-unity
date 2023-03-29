@@ -43,17 +43,17 @@ public class InventoryUI : MonoBehaviour
 
     public async void DisplayAssetImages()
     {
-        var (downloadedSprites, assetIds) = await inventoryFetcherController.GetImage(slotCount, currentPage);
+        var (downloadedSprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(slotCount, currentPage);
         if(downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
-                slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
+                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = downloadedSprites[i];
+                slots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
             }
             for (int i = downloadedSprites.Length; i < slotCount; i++)
             {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
@@ -62,8 +62,7 @@ public class InventoryUI : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
-
+            slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = loadingImage;
         }
     }
 

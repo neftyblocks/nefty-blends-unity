@@ -19,14 +19,18 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public delegate void UiRefreshEventHandler();
     public static event UiRefreshEventHandler UiRefresh;
 
-    public async Task<(Sprite[], string[])> GetImage(int slots,int currentPage)
+    public async Task<Asset> GetDeserializedData<Asset>(int slotLimit, int currentPage)
+    {
+        var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={ "cabba.wam" }&page={ currentPage }&limit={ slotLimit }&only_whitelisted=true&collection_name={ pluginController.GetCollectionName() }";
+        var jsonResponse = await GetTextAsync(url);
+
+        return JsonConvert.DeserializeObject<Asset>(jsonResponse);
+    }
+    public async Task<(Sprite[], string[])> GetInventoryAssets(int slotLimit,int currentPage)
     {
         try
         {
-            var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit=12&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
-            var jsonResponse = await GetTextAsync(url);
-            // dit dynamisch 
-            var resultObject = JsonConvert.DeserializeObject<InventoryAsset>(jsonResponse);
+            var resultObject = await GetDeserializedData<Asset>(slotLimit, currentPage);
 
             if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
             {
@@ -37,7 +41,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             UiRefresh();
             List<(string, string)> imageUrisWithIds = new List<(string, string)>();
 
-            for (int i = 0; i < slots; i++)
+            for (int i = 0; i < slotLimit; i++)
             {
                 if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
                 {
@@ -48,11 +52,13 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 var assetId = resultObject.items[i].id;
                 imageUrisWithIds.Add((imageUri, assetId));
             }
+
             var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
+
             return (sprites, assetIds);
         }
         catch (Exception ex)

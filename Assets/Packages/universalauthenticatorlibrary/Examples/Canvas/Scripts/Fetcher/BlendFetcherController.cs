@@ -12,48 +12,47 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
-    public async Task<Blend> GetDeserializedData<Blend>(int slots, int currentPage)
+    public async Task<Blend> GetDeserializedData<Blend>(int slotLimit, int currentPage)
     {
-        
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit=12&order=desc&sort=created_at_time";
-            var jsonResponse = await GetTextAsync(url);
+        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
+        var jsonResponse = await GetTextAsync(url);
 
-            return JsonConvert.DeserializeObject<Blend>(jsonResponse);
-
+        return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
-    public async Task<(Sprite[], string[])> GetImage(int slots, int currentPage)
+    public async Task<(Sprite[], int[], string[])> GetBlendAssets(int slotLimit, int currentPage)
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit=12&order=desc&sort=created_at_time";
-            var jsonResponse = await GetTextAsync(url);
-
-            var resultObject = JsonConvert.DeserializeObject<Blend>(jsonResponse);
-
+            var resultObject = await GetDeserializedData<Blend>(slotLimit, currentPage);
+            Debug.Log(resultObject.Data[0].BlendId.ToString()) ;
             if (resultObject.Data.Count == 0)
             {
-                Debug.LogError("No asset found for the given wallet address.");
-                return (null, null);
+                Debug.LogError("No data found for the given blend.");
+                return (null, null,null);
             }
-            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
+            List<(string, int,string)> imageUrisWithIds = new List<(string, int, string)>();
 
             for (int i = 0; i < resultObject.Data.Count; i++)
             {               
                 var imageUri = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
-                var assetId = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
-                imageUrisWithIds.Add((imageUri, assetId));
+                var blendId = resultObject.Data[i].BlendId;
+                var contractName = resultObject.Data[i].Contract;
+
+                imageUrisWithIds.Add((imageUri, blendId, contractName));
             }
-            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
+            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2,uriWithId.Item3)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
-            return (sprites, assetIds);
+            var contractNames = downloadedSprites.Select(tuple => tuple.Item3).ToArray();
+
+            return (sprites, assetIds, contractNames);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null, null);
+            return (null, null, null);
         }
     }
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InventoryAsset
+public class Asset
 {
     public int total { get; set; }
     public List<Item> items { get; set; }
@@ -18,7 +18,7 @@ public class InventoryAsset
         public bool trusted { get; set; }
     }
 
-    public class Asset
+    public class Data
     {
         public string name { get; set; }
         public Image image { get; set; }
@@ -38,8 +38,8 @@ public class InventoryAsset
     public class Item
     {
         public string id { get; set; }
-        public Asset asset { get; set; }
-        public List<Asset> assets { get; set; }
+        public Data asset { get; set; }
+        public List<Data> assets { get; set; }
         public string collection_id { get; set; }
         public string collection_name { get; set; }
         public Image collection_img { get; set; }

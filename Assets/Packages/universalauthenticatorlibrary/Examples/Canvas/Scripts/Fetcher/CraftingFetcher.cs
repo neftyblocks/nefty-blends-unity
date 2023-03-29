@@ -13,21 +13,27 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
-    public async Task<(Sprite[], string[])> GetImage(int slots, int currentPage)
+
+    public async Task<Blend> GetDeserializedData<Blend>(int slotLimit, int currentPage)
+    {
+        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
+        var jsonResponse = await GetTextAsync(url);
+
+        return JsonConvert.DeserializeObject<Blend>(jsonResponse);
+    }
+
+    /*public async Task<(Sprite[], string[], string[])> GetCraftingAssets(int slotLimit, int currentPage)
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit=12&order=desc&sort=created_at_time";
-            var jsonResponse = await GetTextAsync(url);
-
-            var resultObject = JsonConvert.DeserializeObject<Blend>(jsonResponse);
+            var resultObject = await GetDeserializedData<Blend>(slotLimit, currentPage);
 
             if (resultObject.Data.Count == 0)
             {
-                Debug.LogError("No asset found for the given wallet address.");
-                return (null, null);
+                Debug.LogError("No data found for the given crafting recipe.");
+                return (null, null,null);
             }
-            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
+            List<(string, string,string)> imageUrisWithIds = new List<(string, string,string)>();
 
             for (int i = 0; i < resultObject.Data.Count; i++)
             {
@@ -40,16 +46,15 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
-            return (sprites, assetIds);
+            return (sprites, blendId,contract);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null, null);
+            return (null, null,null);
         }
-    }
+    }*/
 
- 
     public async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);

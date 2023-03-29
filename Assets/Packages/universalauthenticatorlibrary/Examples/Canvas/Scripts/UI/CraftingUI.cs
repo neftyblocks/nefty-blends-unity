@@ -36,7 +36,7 @@ public class CraftingUI : MonoBehaviour
     }
     public async void DisplayAssetImages()
     {
-        /*var (downloadedSprites, assetIds) = await blendFetcherController.GetImage(slotCount, currentPage);
+       /* var (downloadedSprites, assetIds) = await blendFetcherController.GetImage(slotCount, currentPage);
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)

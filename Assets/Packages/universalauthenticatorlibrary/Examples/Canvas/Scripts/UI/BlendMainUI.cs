@@ -9,7 +9,6 @@ public class BlendMainUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentPageText;
     [SerializeField] private DashboardController dashboardController;
     [SerializeField] private BlendFetcherController blendFetcherController;
-
     [SerializeField] public GameObject[] slots;
     [SerializeField] public GameObject prefab;
     [SerializeField] public RectTransform prefabContainer;
@@ -28,7 +27,7 @@ public class BlendMainUI : MonoBehaviour
         for (int i = 0; i < slotCount; i++)
         {
             slots[i] = Instantiate(prefab, prefabContainer);
-            slots[i].tag = "Asset";
+            slots[i].tag = "Blend";
             slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
             x++;
             if (x >= 6)
@@ -42,20 +41,21 @@ public class BlendMainUI : MonoBehaviour
 
     public async void DisplayAssetImages()
     {
-        var (downloadedSprites, assetIds) = await blendFetcherController.GetImage(slotCount, currentPage);
+        var (downloadedSprites, blendIds,contractNames) = await blendFetcherController.GetBlendAssets(slotCount, currentPage);
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 if (downloadedSprites[i] != null)
                 {
-                    slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
-                    slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
+                    slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = downloadedSprites[i];
+                    slots[i].GetComponent<BlendNFT>().SetBlendId(blendIds[i]);
+                    slots[i].GetComponent<BlendNFT>().SetContractName(contractNames[i]);
                 }
             }
             for (int i = downloadedSprites.Length; i < slotCount; i++)
             {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+                slots[i].GetComponent<NFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
@@ -64,7 +64,7 @@ public class BlendMainUI : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+            slots[i].GetComponent<UIElementController>().gameObject.GetComponent<Image>().sprite = loadingImage;
 
         }
     }

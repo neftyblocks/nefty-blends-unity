@@ -4069,7 +4069,7 @@ GameObject:
   - component: {fileID: 1614810465}
   - component: {fileID: 1614810464}
   m_Layer: 0
-  m_Name: Asset-UI
+  m_Name: Inventory-UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5317,7 +5317,7 @@ MonoBehaviour:
   dashboardController: {fileID: 82636088}
   blendFetcherController: {fileID: 176410152}
   slots: []
-  prefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
+  prefab: {fileID: 8658164907581310236, guid: 1225eeaddc4697240886f359256fc9a7, type: 3}
   prefabContainer: {fileID: 1737389618}
   loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!1 &2147482917
