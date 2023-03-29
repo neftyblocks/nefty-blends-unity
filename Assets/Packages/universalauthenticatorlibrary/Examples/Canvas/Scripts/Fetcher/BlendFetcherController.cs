@@ -12,6 +12,15 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
+    public async Task<Blend> GetDeserializedData<Blend>(int slots, int currentPage)
+    {
+        
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit=12&order=desc&sort=created_at_time";
+            var jsonResponse = await GetTextAsync(url);
+
+            return JsonConvert.DeserializeObject<Blend>(jsonResponse);
+
+    }
     public async Task<(Sprite[], string[])> GetImage(int slots, int currentPage)
     {
         try
@@ -45,32 +54,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
         {
             Debug.Log($"Error: {ex}");
             return (null, null);
-        }
-    }
-
-    [ContextMenu("GetCollectionImage")]
-    public async Task<Sprite> GetCollectionImageURL()
-    {
-        try
-        {
-            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
-            var jsonResponse = await GetTextAsync(url);
-            var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
-
-            if (resultObject.data.img.Length == 0)
-            {
-                Debug.LogError("No image found for the given collection.");
-                return null;
-            }
-
-            var imageUri = resultObject.data.img;
-            return await GetSpriteAsync(imageUri);
-
-        }
-        catch (Exception ex)
-        {
-            Debug.Log($"Error: {ex}");
-            return null;
         }
     }
 
