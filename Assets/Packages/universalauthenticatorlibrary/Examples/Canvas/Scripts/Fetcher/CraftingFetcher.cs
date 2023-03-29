@@ -13,47 +13,64 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
+    private void OnEnable()
+    {
+        // Event: When Blend Image is clicked
+        BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
+    }
 
+    private async void ReceiveBlendId(int blendId)
+    {
+        Debug.Log(blendId);
+        await GetCraftingAssets(blendId);
+    }
+    public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(int blendId)
+    {
+        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
+        var jsonResponse = await GetTextAsync(url);
+
+        return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
+    }
+
+    //delete this later
     public async Task<Blend> GetDeserializedData<Blend>(int slotLimit, int currentPage)
     {
-        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
+        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
         var jsonResponse = await GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
-
-    /*public async Task<(Sprite[], string[], string[])> GetCraftingAssets(int slotLimit, int currentPage)
+    public async Task<Sprite[]> GetCraftingAssets(int blendId)
     {
         try
         {
-            var resultObject = await GetDeserializedData<Blend>(slotLimit, currentPage);
+            var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(blendId);
 
-            if (resultObject.Data.Count == 0)
+            if (resultObject.Success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return (null, null,null);
+                return null;
             }
-            List<(string, string,string)> imageUrisWithIds = new List<(string, string,string)>();
+            List<string> imageUris = new List<string>();
 
-            for (int i = 0; i < resultObject.Data.Count; i++)
+            var outcome = resultObject.Data.Rolls[0].Outcomes[0];
+            foreach (var result in outcome.Results)
             {
-                var imageUri = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
-                var assetId = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
-                imageUrisWithIds.Add((imageUri, assetId));
+                var imageUri = result.Template.ImmutableData.Img;
+                imageUris.Add(imageUri);
             }
-            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
-            var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
-            var spriteResults = await Task.WhenAll(spriteTasks);
-            var sprites = spriteResults.Select(sprite => sprite).ToArray();
-            var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
-            return (sprites, blendId,contract);
+
+            var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
+            var spriteResults = await Task.WhenAll(downloadedSprites);
+            Debug.Log(spriteResults.Length);
+            return spriteResults;
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null, null,null);
+            return null;
         }
-    }*/
+    }
 
     public async Task<string> GetTextAsync(string url)
     {

@@ -55,7 +55,7 @@ public class BlendMainUI : MonoBehaviour
             }
             for (int i = downloadedSprites.Length; i < slotCount; i++)
             {
-                slots[i].GetComponent<NFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
+                slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
@@ -64,7 +64,7 @@ public class BlendMainUI : MonoBehaviour
     {
         for (int i = 0; i < 12; i++)
         {
-            slots[i].GetComponent<UIElementController>().gameObject.GetComponent<Image>().sprite = loadingImage;
+            slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
 
         }
     }

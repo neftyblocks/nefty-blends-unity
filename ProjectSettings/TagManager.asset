@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Asset
   - Blend
+  - Craft
   layers:
   - Default
   - TransparentFX

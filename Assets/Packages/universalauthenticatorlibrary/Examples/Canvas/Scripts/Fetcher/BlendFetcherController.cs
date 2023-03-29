@@ -24,7 +24,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
         try
         {
             var resultObject = await GetDeserializedData<Blend>(slotLimit, currentPage);
-            Debug.Log(resultObject.Data[0].BlendId.ToString()) ;
             if (resultObject.Data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");

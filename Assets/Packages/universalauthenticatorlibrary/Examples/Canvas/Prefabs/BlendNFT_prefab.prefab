@@ -87,8 +87,8 @@ GameObject:
   - component: {fileID: 8658164907581310239}
   - component: {fileID: 8658164907581310233}
   - component: {fileID: 8658164907581310238}
-  - component: {fileID: 8561048104755841190}
   - component: {fileID: 1127213864646176342}
+  - component: {fileID: 6517190412283880983}
   m_Layer: 0
   m_Name: BlendNFT_prefab
   m_TagString: Untagged
@@ -155,22 +155,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8561048104755841190
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8658164907581310236}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 999032adab80df241ab037744bf8dd9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectionBoardImage: {fileID: 8658164907119293413}
-  hoverColor: {r: 0.35624695, g: 0, b: 1, a: 1}
-  selectedColor: {r: 0, g: 0, b: 0, a: 1}
-  isClicked: 0
 --- !u!114 &1127213864646176342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -183,6 +167,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890b7145f335024409b235afb7ac0df8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotImage: {fileID: 0}
-  blendId: 
+  blendId: 0
   contract: 
+--- !u!114 &6517190412283880983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658164907581310236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2b947397b359df4aa3202da543b720f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionBoardImage: {fileID: 8658164907119293413}
+  hoverColor: {r: 0.35686275, g: 0, b: 1, a: 0}
+  selectedColor: {r: 0, g: 0, b: 0, a: 0}
+  isClicked: 0

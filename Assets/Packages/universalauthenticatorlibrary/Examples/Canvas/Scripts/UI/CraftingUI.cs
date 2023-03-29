@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class CraftingUI : MonoBehaviour
 {
@@ -25,7 +26,7 @@ public class CraftingUI : MonoBehaviour
         for (int i = 0; i < slotCount; i++)
         {
             slots[i] = Instantiate(prefab, prefabContainer);
-            slots[i].tag = "Asset";
+            slots[i].tag = "Craft";
             slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
             x++;
             if (x >= 6)
@@ -34,23 +35,21 @@ public class CraftingUI : MonoBehaviour
             }
         }
     }
-    public async void DisplayAssetImages()
+
+   /* public async void DisplayAssetImages()
     {
-       /* var (downloadedSprites, assetIds) = await blendFetcherController.GetImage(slotCount, currentPage);
+        var (downloadedSprites, assetIds) = await craftingFetcher.GetCraftingAssets(slotCount, currentPage);
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                if (downloadedSprites[i] != null)
-                {
-                    slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = downloadedSprites[i];
-                    slots[i].GetComponent<UIElementController>().assetId = assetIds[i];
-                }
+                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = downloadedSprites[i];
+                slots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
             }
             for (int i = downloadedSprites.Length; i < slotCount; i++)
             {
-                slots[i].GetComponent<UIElementController>().GetSlotImage().GetComponent<Image>().sprite = loadingImage;
+                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = loadingImage;
             }
-        }*/
-    }
+        }
+    }*/
 }
