@@ -3,53 +3,115 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.UI;
 
 public class CraftingUI : MonoBehaviour
 {
     [SerializeField] private DashboardController dashboardController;
     [SerializeField] private CraftingFetcher craftingFetcher;
-    [SerializeField] public GameObject[] slots;
-    [SerializeField] public GameObject prefab;
+    [SerializeField] public GameObject[] slotsOwned;
+    [SerializeField] public GameObject[] slotsIngredient;
+    [SerializeField] public GameObject[] slotsRolls;
+
+    [SerializeField] public GameObject ingredientPrefab;
+    [SerializeField] public GameObject ownedIngredientPrefab;
+    [SerializeField] public GameObject rollSlotPrefab;
     [SerializeField] public RectTransform prefabContainer;
     [SerializeField] public Sprite loadingImage;
-    [SerializeField] public int currentPage { get; set; }
+    [SerializeField] public int currentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; }
+
 
     void Awake()
     {
-        currentPage = 1;
-        slotCount = 12;
+        InstantiateRollWindow();
+        InstantiateIngredientWindow();
+        InstantiateOwnedIngredientWindow();
+    }
+
+    public void InstantiateRollWindow()
+    {
+        slotsRolls = new GameObject[1];
+
+
+        slotsRolls[0] = Instantiate(rollSlotPrefab, prefabContainer);
+        slotsRolls[0].tag = "Craft";
+        slotsRolls[0].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(0 * 300, -0 * 300);
+    }
+    public void InstantiateIngredientWindow()
+    {
+        slotCount = 4;
         int slotSize = 150;
-        int x = 0;
+        int x = 2;
         int y = 0;
-        slots = new GameObject[slotCount];
+        slotsIngredient = new GameObject[slotCount];
+
         for (int i = 0; i < slotCount; i++)
         {
-            slots[i] = Instantiate(prefab, prefabContainer);
-            slots[i].tag = "Craft";
-            slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
+            slotsIngredient[i] = Instantiate(ingredientPrefab, prefabContainer);
+            slotsIngredient[i].tag = "Craft";
+            slotsIngredient[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
             x++;
-            if (x >= 6)
-            {
-                x = 0; y++;
-            }
         }
     }
 
-   /* public async void DisplayAssetImages()
+    public void InstantiateOwnedIngredientWindow()
     {
-        var (downloadedSprites, assetIds) = await craftingFetcher.GetCraftingAssets(slotCount, currentPage);
+        slotCount = 4;
+        int slotSize = 150;
+        int x = 2;
+        float y = 1.1f;
+        slotsOwned = new GameObject[slotCount];
+
+        for (int i = 0; i < slotCount; i++)
+        {
+            slotsOwned[i] = Instantiate(ownedIngredientPrefab, prefabContainer);
+            slotsOwned[i].tag = "Craft";
+            slotsOwned[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
+            x++;
+        }
+    }
+
+    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites)
+    {
+        DisplayRollImage(rollSprite);
+        DisplayRequirementsImage(requirementSprites);
+
+    }
+
+    public void DisplayRollImage(Sprite[] downloadedSprites)
+    {
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = downloadedSprites[i];
-                slots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
+
+                Transform nftImage = slotsRolls[i].transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+
             }
-            for (int i = downloadedSprites.Length; i < slotCount; i++)
+            for (int i = downloadedSprites.Length; i < 1; i++)
             {
-                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = loadingImage;
+                Transform nftImage = slotsRolls[i].transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = loadingImage;
             }
         }
-    }*/
+    }
+    public void DisplayRequirementsImage(Sprite[] downloadedSprites)
+    {
+        Debug.Log(downloadedSprites.Length);
+        if (downloadedSprites != null)
+        {
+            for (int i = 0; i < downloadedSprites.Length; i++)
+            {
+                Transform nftImage = slotsIngredient[i].transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+            }
+            for (int i = downloadedSprites.Length; i < 4; i++)
+            {
+                Transform nftImage = slotsIngredient[i].transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = loadingImage;
+            }
+        }
+    }
 }

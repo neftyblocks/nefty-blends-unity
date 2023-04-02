@@ -76,7 +76,5 @@ public class UIManager : MonoBehaviour
             }
         }
         UIs[UIType.CraftingMenu].SetActive(true);
-/*        craftingUI.GetComponentInChildren<CraftingUI>().DisplayAssetImages();
-*/
     }
 }

@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -101,6 +102,7 @@ using UnityEngine;
         public long MaxSupply { get; set; }
         public Collection Collection { get; set; }
         public TemplateSchema Schema { get; set; }
+        [JsonProperty("immutable_data")]
         public PurpleImmutableData ImmutableData { get; set; }
         public string CreatedAtTime { get; set; }
         public long CreatedAtBlock { get; set; }
@@ -167,13 +169,14 @@ using UnityEngine;
         public long MaxSupply { get; set; }
         public Collection Collection { get; set; }
         public TemplateSchema Schema { get; set; }
-        public FluffyImmutableData ImmutableData { get; set; }
+        [JsonProperty("immutable_data")]
+        public ImmutableData ImmutableData { get; set; }
         public string CreatedAtTime { get; set; }
         public long CreatedAtBlock { get; set; }
         public string Name { get; set; }
     }
 
-    public partial class FluffyImmutableData
+    public partial class ImmutableData
     {
         public string Era { get; set; }
         public string Img { get; set; }

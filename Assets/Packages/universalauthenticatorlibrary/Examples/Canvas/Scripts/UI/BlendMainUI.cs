@@ -24,8 +24,10 @@ public class BlendMainUI : MonoBehaviour
         int x = 0;
         int y = 0;
         slots = new GameObject[slotCount];
+
         for (int i = 0; i < slotCount; i++)
         {
+           
             slots[i] = Instantiate(prefab, prefabContainer);
             slots[i].tag = "Blend";
             slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
@@ -48,7 +50,8 @@ public class BlendMainUI : MonoBehaviour
             {
                 if (downloadedSprites[i] != null)
                 {
-                    slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = downloadedSprites[i];
+                    Transform nftImage = slots[i].transform.Find("NFT_Image");
+                    nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
                     slots[i].GetComponent<BlendNFT>().SetBlendId(blendIds[i]);
                     slots[i].GetComponent<BlendNFT>().SetContractName(contractNames[i]);
                 }

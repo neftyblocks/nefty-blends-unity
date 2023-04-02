@@ -11,6 +11,7 @@ public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPo
     [SerializeField] private bool isClicked;
     public delegate void UserSelectedBlendInEventHandler(int blendId);
     public static event UserSelectedBlendInEventHandler UserSelectedBlend;
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         selectionBoardImage.SetActive(true);

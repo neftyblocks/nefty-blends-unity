@@ -12,6 +12,9 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
+    [SerializeField] public CraftingUI craftingUI;
+    [SerializeField] public UIManager uIManager;
+
 
     private void OnEnable()
     {
@@ -19,10 +22,12 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
     }
 
-    private async void ReceiveBlendId(int blendId)
+    public async void ReceiveBlendId(int blendId)
     {
-        Debug.Log(blendId);
-        await GetCraftingAssets(blendId);
+        var (rollSprites, requirementSprites) = await GetCraftingAssets(blendId);
+        uIManager.EnableCraftingUI();
+        craftingUI.DisplayAssetImages(rollSprites, requirementSprites);
+
     }
     public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(int blendId)
     {
@@ -40,35 +45,39 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
-    public async Task<Sprite[]> GetCraftingAssets(int blendId)
+    public async Task<(Sprite[], Sprite[])> GetCraftingAssets(int blendId)
     {
         try
         {
             var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(blendId);
 
-            if (resultObject.Success)
+            if (!resultObject.Success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return null;
+                return (null,null);
             }
             List<string> imageUris = new List<string>();
-
-            var outcome = resultObject.Data.Rolls[0].Outcomes[0];
-            foreach (var result in outcome.Results)
-            {
-                var imageUri = result.Template.ImmutableData.Img;
-                imageUris.Add(imageUri);
-            }
-
+            var rollOutcome = resultObject.Data.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+            imageUris.Add(rollOutcome);
             var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
             var spriteResults = await Task.WhenAll(downloadedSprites);
-            Debug.Log(spriteResults.Length);
-            return spriteResults;
+
+            List<string> imageUrisIngredients = new List<string>();
+            foreach (var ingredient in resultObject.Data.Ingredients)
+            {
+                var ingredientOutcome = ingredient.Template.ImmutableData.Img;
+                imageUrisIngredients.Add(ingredientOutcome);
+
+            }
+            var downloadedSprites2 = imageUrisIngredients.Select(uri => GetSpriteAsync(uri)).ToArray();
+            var spriteResults2 = await Task.WhenAll(downloadedSprites2);
+
+            return (spriteResults, spriteResults2);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return null;
+            return (null, null);
         }
     }
 
@@ -92,6 +101,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     public async Task<Sprite> GetSpriteAsync(string imageUri)
     {
+
         if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
         {
             Debug.Log($"{imageUri} already cached");

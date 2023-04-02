@@ -48,7 +48,8 @@ public class InventoryUI : MonoBehaviour
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
-                slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = downloadedSprites[i];
+                Transform nftImage = slots[i].transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
                 slots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
             }
             for (int i = downloadedSprites.Length; i < slotCount; i++)

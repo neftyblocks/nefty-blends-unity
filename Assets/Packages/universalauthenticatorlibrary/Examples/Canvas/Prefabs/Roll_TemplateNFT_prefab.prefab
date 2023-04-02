@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3041905217761460853
+--- !u!1 &2802979503567913199
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,9 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2339910771002243567}
-  - component: {fileID: 8444983603797850337}
-  - component: {fileID: 8506413214953712495}
+  - component: {fileID: 4844366827291393373}
+  - component: {fileID: 7595896606175032525}
+  - component: {fileID: 7434152274181602038}
   m_Layer: 0
   m_Name: NFT_Image
   m_TagString: Untagged
@@ -18,14 +18,14 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &2339910771002243567
+--- !u!224 &4844366827291393373
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3041905217761460853}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 2802979503567913199}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -36,23 +36,23 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 125, y: 125}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &8444983603797850337
+--- !u!222 &7595896606175032525
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3041905217761460853}
+  m_GameObject: {fileID: 2802979503567913199}
   m_CullTransparentMesh: 1
---- !u!114 &8506413214953712495
+--- !u!114 &7434152274181602038
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3041905217761460853}
+  m_GameObject: {fileID: 2802979503567913199}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -163,10 +163,10 @@ GameObject:
   - component: {fileID: 8658164907581310239}
   - component: {fileID: 8658164907581310233}
   - component: {fileID: 8658164907581310238}
-  - component: {fileID: 8561048104755841190}
-  - component: {fileID: 7578494509707753282}
+  - component: {fileID: 6517190412283880983}
+  - component: {fileID: -3850480463670798019}
   m_Layer: 0
-  m_Name: AssetNFT_Prefab
+  m_Name: Roll_TemplateNFT_prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,14 +185,14 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8658164907119293412}
-  - {fileID: 2339910771002243567}
+  - {fileID: 4844366827291393373}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 125, y: 125}
+  m_SizeDelta: {x: 300, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8658164907581310233
 CanvasRenderer:
@@ -232,7 +232,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8561048104755841190
+--- !u!114 &6517190412283880983
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -241,14 +241,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8658164907581310236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 999032adab80df241ab037744bf8dd9f, type: 3}
+  m_Script: {fileID: 11500000, guid: d2b947397b359df4aa3202da543b720f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selectionBoardImage: {fileID: 8658164907119293413}
-  hoverColor: {r: 0.35624695, g: 0, b: 1, a: 1}
-  selectedColor: {r: 0, g: 0, b: 0, a: 1}
+  hoverColor: {r: 0.35686275, g: 0, b: 1, a: 0}
+  selectedColor: {r: 0, g: 0, b: 0, a: 0}
   isClicked: 0
---- !u!114 &7578494509707753282
+--- !u!114 &-3850480463670798019
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8658164907581310236}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fbc90e12d58d9445a8c8106d5f84de6, type: 3}
+  m_Script: {fileID: 11500000, guid: a082d439c5b86b2479056711393741b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  assetId: 
+  templateId: 0
