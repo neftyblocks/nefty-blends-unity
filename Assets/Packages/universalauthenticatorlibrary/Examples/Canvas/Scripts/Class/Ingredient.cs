@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class Ingredient
 {
     
     public bool Success { get; set; }
+    [JsonProperty("data")]
     public List<Datum> DataData { get; set; }
     public long QueryTime { get; set; }
     

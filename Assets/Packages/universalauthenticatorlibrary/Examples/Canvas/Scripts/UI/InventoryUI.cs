@@ -23,7 +23,7 @@ public class InventoryUI : MonoBehaviour
     void Awake()
     {
         currentPage = 1;
-        slotCount = 12;
+        slotCount = 40;
         int slotSize = 150;
         int x = 0;
         int y = 0;
@@ -77,7 +77,6 @@ public class InventoryUI : MonoBehaviour
     {
         SetWalletNameText(dashboardController.walletName);
         SetTotalAssetText(inventoryFetcherController.assetCount);
-        SetCurrentPageText(currentPage);
     }
 
     public void SetWalletNameText(string wallet)
@@ -87,20 +86,5 @@ public class InventoryUI : MonoBehaviour
     public void SetTotalAssetText(int amount)
     {
         totalAssetText.text = $"Total assets - {amount}";
-    }
-    public void SetCurrentPageText(int currentPage)
-    {
-        currentPageText.text = $"{currentPage}";
-    }
-
-    public void NextPage()
-    {
-        currentPage++;
-        DisplayAssetImages();
-    }
-    public void PreviousPage()
-    {
-        currentPage--;
-        DisplayAssetImages();
     }
 }
