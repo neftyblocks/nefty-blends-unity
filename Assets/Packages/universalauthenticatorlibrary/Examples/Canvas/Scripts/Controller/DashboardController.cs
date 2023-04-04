@@ -24,6 +24,7 @@ public class DashboardController : MonoBehaviour
     {
         user = _user;
         walletName = await user.GetAccountName();
+        Debug.Log(walletName);
         UserLoggedIn();
     }
 }

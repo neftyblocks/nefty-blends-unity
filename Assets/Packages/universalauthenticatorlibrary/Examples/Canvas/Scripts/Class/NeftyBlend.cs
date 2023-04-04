@@ -3,12 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-    public partial class NeftyBlend
-    {
-        public bool Success { get; set; }
-        public Data Data { get; set; }
-        public long QueryTime { get; set; }
-    }
+public class NeftyBlend
+{
+    public bool Success { get; set; }
+    [JsonProperty("data")]
+    public Data MainData { get; set; }
+    public long QueryTime { get; set; }
 
     public partial class Data
     {
@@ -187,5 +187,6 @@ using UnityEngine;
         public long ShieldStrength { get; set; }
     }
 
-    public enum TypeEnum { Image, String, Uint64 };
+    public enum TypeEnum { Image, String, Uint64, IPFS };
 
+}

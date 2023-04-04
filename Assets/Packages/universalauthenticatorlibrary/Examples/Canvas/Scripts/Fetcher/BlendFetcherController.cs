@@ -12,9 +12,8 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
 
-    public async Task<Blend> GetDeserializedData<Blend>(int slotLimit, int currentPage)
+    public async Task<Blend> GetDeserializedData<Blend>(string url, int slotLimit, int currentPage)
     {
-        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
         var jsonResponse = await GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
@@ -23,7 +22,9 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     {
         try
         {
-            var resultObject = await GetDeserializedData<Blend>(slotLimit, currentPage);
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
+
+            var resultObject = await GetDeserializedData<Blend>(url, slotLimit, currentPage);
             if (resultObject.Data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");

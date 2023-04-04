@@ -25,20 +25,21 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async void ReceiveBlendId(int blendId)
     {
         var (rollSprites, requirementSprites) = await GetCraftingAssets(blendId);
+/*        var ingredientSprites = await GetIngredientAssets(blendId);
+*/
         uIManager.EnableCraftingUI();
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites);
 
     }
-    public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(int blendId)
+    public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(string url, int blendId)
     {
-        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
         var jsonResponse = await GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
     //delete this later
-    public async Task<Blend> GetDeserializedData<Blend>(int slotLimit, int currentPage)
+    public async Task<Blend> GetDeserializedData<Blend>(string link , int slotLimit, int currentPage)
     {
         var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
         var jsonResponse = await GetTextAsync(url);
@@ -49,7 +50,9 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(blendId);
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
+
+            var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(url, blendId);
 
             if (!resultObject.Success)
             {
@@ -57,13 +60,13 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 return (null,null);
             }
             List<string> imageUris = new List<string>();
-            var rollOutcome = resultObject.Data.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+            var rollOutcome = resultObject.MainData.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
             imageUris.Add(rollOutcome);
             var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
             var spriteResults = await Task.WhenAll(downloadedSprites);
 
             List<string> imageUrisIngredients = new List<string>();
-            foreach (var ingredient in resultObject.Data.Ingredients)
+            foreach (var ingredient in resultObject.MainData.Ingredients)
             {
                 var ingredientOutcome = ingredient.Template.ImmutableData.Img;
                 imageUrisIngredients.Add(ingredientOutcome);
@@ -73,6 +76,46 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             var spriteResults2 = await Task.WhenAll(downloadedSprites2);
 
             return (spriteResults, spriteResults2);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Error: {ex}");
+            return (null, null);
+        }
+    }
+
+    public async Task<(Sprite[], Sprite[])> GetIngredientAssets(int blendId)
+    {
+        try
+        {
+            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/0/assets?owner={"xswvw.wam"}&page=1&limit=100&order=desc&sort=asset_id";
+
+            var resultObject = await GetDeserializedDataNOTCLEANCODE<Ingredient>(url, blendId);
+            Debug.Log(resultObject.DataData.ToString());
+            /*            if (!resultObject.)
+                        {
+                            Debug.LogError("No data found for the given crafting recipe.");
+                            return (null, null);
+                        }
+                        List<string> imageUris = new List<string>();
+                        var rollOutcome = resultObject.DataData
+                        imageUris.Add(rollOutcome);
+                        var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
+                        var spriteResults = await Task.WhenAll(downloadedSprites);
+
+                        List<string> imageUrisIngredients = new List<string>();
+                        foreach (var ingredient in resultObject.Data.Ingredients)
+                        {
+                            var ingredientOutcome = ingredient.Template.ImmutableData.Img;
+                            imageUrisIngredients.Add(ingredientOutcome);
+
+                        }
+                        var downloadedSprites2 = imageUrisIngredients.Select(uri => GetSpriteAsync(uri)).ToArray();
+                        var spriteResults2 = await Task.WhenAll(downloadedSprites2);
+
+                        return (spriteResults, spriteResults2);*/
+            return (null, null);
+
         }
         catch (Exception ex)
         {

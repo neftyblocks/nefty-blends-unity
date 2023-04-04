@@ -19,9 +19,8 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public delegate void UiRefreshEventHandler();
     public static event UiRefreshEventHandler UiRefresh;
 
-    public async Task<Asset> GetDeserializedData<Asset>(int slotLimit, int currentPage)
+    public async Task<Asset> GetDeserializedData<Asset>(string url, int slotLimit, int currentPage)
     {
-        var url = $"https://neftyblocks.com/api/account/assets?sort=transferred&order=desc&owner={ "cabba.wam" }&page={ currentPage }&limit={ slotLimit }&only_whitelisted=true&collection_name={ pluginController.GetCollectionName() }";
         var jsonResponse = await GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
@@ -30,26 +29,28 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            var resultObject = await GetDeserializedData<Asset>(slotLimit, currentPage);
+            var url = $"https://aa.neftyblocks.com/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
 
-            if (resultObject.items.Count == 0 || resultObject.items[0].assets.Count == 0)
+            var resultObject = await GetDeserializedData<Asset>(url, slotLimit, currentPage);
+            Debug.Log(resultObject);
+            if (resultObject.Data.Count == 0 )
             {
                 Debug.LogError("No asset found for the given wallet address.");
                 return (null, null);
             }
-            assetCount = resultObject.total;
+            assetCount = resultObject.Data.Count;
             UiRefresh();
             List<(string, string)> imageUrisWithIds = new List<(string, string)>();
 
             for (int i = 0; i < slotLimit; i++)
             {
-                if (resultObject.items.Count <= i || resultObject.items[i].assets.Count == 0)
+                if (resultObject.Data.Count <= i )
                 {
                     Debug.LogError($"No asset found for slot {i + 1}.");
                     continue;
                 }
-                var imageUri = resultObject.items[i].assets[0].image.hash;
-                var assetId = resultObject.items[i].id;
+                var imageUri = resultObject.Data[i].Data.Img;
+                var assetId = resultObject.Data[i].AssetId;
                 imageUrisWithIds.Add((imageUri, assetId));
             }
 
