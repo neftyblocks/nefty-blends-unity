@@ -229,6 +229,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pluginController: {fileID: 206229106}
+  imageLoader: {fileID: 1033219999}
 --- !u!1 &206229105
 GameObject:
   m_ObjectHideFlags: 0
@@ -2428,6 +2429,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d349e84708e750943abb3b61282ccb2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  imageLoader: {fileID: 1033219999}
   collectionUI: {fileID: 966344687}
   pluginController: {fileID: 206229106}
 --- !u!1 &813771953
@@ -3464,6 +3466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pluginController: {fileID: 206229106}
+  imageLoader: {fileID: 1033219999}
   craftingUI: {fileID: 227220809}
   uIManager: {fileID: 1202977173}
 --- !u!1 &996817324

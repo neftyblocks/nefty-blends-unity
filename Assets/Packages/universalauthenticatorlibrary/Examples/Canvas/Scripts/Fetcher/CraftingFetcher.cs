@@ -10,8 +10,8 @@ using UnityEngine.Networking;
 public class CraftingFetcher : MonoBehaviour,IFetcher
 {
 
-    [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public PluginController pluginController;
+    [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public CraftingUI craftingUI;
     [SerializeField] public UIManager uIManager;
 
@@ -33,7 +33,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     }
     public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(string url, int blendId)
     {
-        var jsonResponse = await GetTextAsync(url);
+        var jsonResponse = await imageLoader.GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
@@ -42,7 +42,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async Task<Blend> GetDeserializedData<Blend>(string link , int slotLimit, int currentPage)
     {
         var url = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
-        var jsonResponse = await GetTextAsync(url);
+        var jsonResponse = await imageLoader.GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
@@ -65,7 +65,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
             ingredientIndexCount = resultObject.MainData.Ingredients.Count;
             imageUris.Add(rollOutcome);
-            var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
+            var downloadedSprites = imageUris.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
             var spriteResults = await Task.WhenAll(downloadedSprites);
 
             List<string> imageUrisIngredients = new List<string>();
@@ -75,7 +75,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 imageUrisIngredients.Add(ingredientOutcome);
 
             }
-            var downloadedSprites2 = imageUrisIngredients.Select(uri => GetSpriteAsync(uri)).ToArray();
+            var downloadedSprites2 = imageUrisIngredients.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
             var spriteResults2 = await Task.WhenAll(downloadedSprites2);
             return (spriteResults, spriteResults2, ingredientIndexCount);
         }
@@ -107,7 +107,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 }
 
             }
-            var downloadedSprites2 = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
+            var downloadedSprites2 = imageUris.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
             var spriteResults2 = await Task.WhenAll(downloadedSprites2);
 
             return spriteResults2; 
@@ -117,56 +117,5 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             Debug.Log($"Error: {ex}");
             return (null);
         }
-    }
-
-    public async Task<string> GetTextAsync(string url)
-    {
-        var request = UnityWebRequest.Get(url);
-        var operation = request.SendWebRequest();
-
-        while (!operation.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            throw new UnityException(request.error);
-        }
-        return request.downloadHandler.text;
-    }
-
-    public async Task<Sprite> GetSpriteAsync(string imageUri)
-    {
-
-        if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
-        {
-            Debug.Log($"{imageUri} already cached");
-            return sprite;
-        }
-
-        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
-        var request = UnityWebRequestTexture.GetTexture(url);
-        var operation = request.SendWebRequest();
-
-        while (!operation.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            throw new UnityException(request.error);
-        }
-
-        var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-        sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
-
-        if (!_spriteCache.ContainsKey(imageUri))
-        {
-            _spriteCache.Add(imageUri, sprite);
-        }
-
-        return sprite;
     }
 }

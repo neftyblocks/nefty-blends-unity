@@ -12,8 +12,8 @@ using UniversalAuthenticatorLibrary;
 
 public class InventoryFetcherController : MonoBehaviour, IFetcher
 {
+    [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public int assetCount { get; set; }
-    [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
     [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
     public delegate void UiRefreshEventHandler();
@@ -21,7 +21,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
 
     public async Task<Asset> GetDeserializedData<Asset>(string url, int slotLimit, int currentPage)
     {
-        var jsonResponse = await GetTextAsync(url);
+        var jsonResponse = await imageLoader.GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
     }
@@ -54,7 +54,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 imageUrisWithIds.Add((imageUri, assetId));
             }
 
-            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
+            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
@@ -75,7 +75,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
         try
         {
             var url = $"{PluginController.apiUrl}/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
-            var jsonResponse = await GetTextAsync(url);
+            var jsonResponse = await imageLoader.GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
 
             if (resultObject.data.img.Length == 0)
@@ -85,7 +85,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             }
 
             var imageUri = resultObject.data.img;
-            return await GetSpriteAsync(imageUri);
+            return await imageLoader.GetSpriteAsync(imageUri);
 
         }
         catch (Exception ex)
@@ -93,55 +93,5 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             Debug.Log($"Error: {ex}");
             return null;
         }
-    }
-
-    public async Task<string> GetTextAsync(string url)
-    {
-        var request = UnityWebRequest.Get(url);
-        var operation = request.SendWebRequest();
-
-        while (!operation.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            throw new UnityException(request.error);
-        }
-        return request.downloadHandler.text;
-    }
-
-    public async Task<Sprite> GetSpriteAsync(string imageUri)
-    {
-        if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
-        {
-            Debug.Log($"{imageUri} already cached");
-            return sprite;
-        }
-
-        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
-        var request = UnityWebRequestTexture.GetTexture(url);
-        var operation = request.SendWebRequest();
-
-        while (!operation.isDone)
-        {
-            await Task.Yield();
-        }
-
-        if (request.result != UnityWebRequest.Result.Success)
-        {
-            throw new UnityException(request.error);
-        }
-
-        var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-        sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
-
-        if (!_spriteCache.ContainsKey(imageUri))
-        {
-            _spriteCache.Add(imageUri, sprite);
-        }
-
-        return sprite;
     }
 }
