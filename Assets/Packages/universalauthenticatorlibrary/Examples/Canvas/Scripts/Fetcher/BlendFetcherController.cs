@@ -22,7 +22,7 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
+            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
 
             var resultObject = await GetDeserializedData<Blend>(url, slotLimit, currentPage);
             if (resultObject.Data.Count == 0)
@@ -37,7 +37,10 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
                 var imageUri = resultObject.Data[i].Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
                 var blendId = resultObject.Data[i].BlendId;
                 var contractName = resultObject.Data[i].Contract;
-
+                if (imageUri == null)
+                {
+                    imageUri = "QmX8TS6johVqmrnuMNAYUV5kZ3ToFtgoWYK41NmAhMkufC";
+                }
                 imageUrisWithIds.Add((imageUri, blendId, contractName));
             }
             var downloadedSprites = imageUrisWithIds.Select(uriWithId => (GetSpriteAsync(uriWithId.Item1), uriWithId.Item2,uriWithId.Item3)).ToArray();
@@ -46,7 +49,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
             var contractNames = downloadedSprites.Select(tuple => tuple.Item3).ToArray();
-
             return (sprites, assetIds, contractNames);
         }
         catch (Exception ex)
@@ -59,7 +61,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     public async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
-        request.SetRequestHeader("Content-Type", "application/json");
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)
@@ -82,12 +83,8 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
             return sprite;
         }
 
-        var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
+        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
-
-        request.SetRequestHeader("Cache-Control", "max-age=3600");
-        request.SetRequestHeader("Pragma", "cache");
-
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)

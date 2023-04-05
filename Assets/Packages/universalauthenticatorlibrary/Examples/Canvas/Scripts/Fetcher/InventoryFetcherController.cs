@@ -29,7 +29,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
 
             var resultObject = await GetDeserializedData<Asset>(url, slotLimit, currentPage);
             Debug.Log(resultObject);
@@ -74,7 +74,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            var url = $"https://aa.neftyblocks.com/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
             var jsonResponse = await GetTextAsync(url);
             var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
 
@@ -98,7 +98,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
-        request.SetRequestHeader("Content-Type", "application/json");
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)
@@ -121,12 +120,8 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             return sprite;
         }
 
-        var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
+        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
-
-        request.SetRequestHeader("Cache-Control", "max-age=3600");
-        request.SetRequestHeader("Pragma", "cache");
-
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)

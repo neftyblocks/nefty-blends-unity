@@ -13,6 +13,8 @@ public class DashboardController : MonoBehaviour
     public string walletName { get; set; }
     public delegate void UserLoggedInEventHandler();
     public static event UserLoggedInEventHandler UserLoggedIn;
+   
+
 
     async void Start()
     {
@@ -24,7 +26,6 @@ public class DashboardController : MonoBehaviour
     {
         user = _user;
         walletName = await user.GetAccountName();
-        Debug.Log(walletName);
         UserLoggedIn();
     }
 }

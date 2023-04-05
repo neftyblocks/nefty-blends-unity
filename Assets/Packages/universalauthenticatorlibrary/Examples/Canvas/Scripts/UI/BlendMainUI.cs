@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class BlendMainUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI currentPageText;
     [SerializeField] private DashboardController dashboardController;
     [SerializeField] private BlendFetcherController blendFetcherController;
     [SerializeField] public GameObject[] slots;
@@ -19,7 +18,7 @@ public class BlendMainUI : MonoBehaviour
     void Awake()
     {
         currentPage = 1;
-        slotCount = 12;
+        slotCount = 40;
         int slotSize = 150;
         int x = 0;
         int y = 0;
@@ -43,7 +42,9 @@ public class BlendMainUI : MonoBehaviour
 
     public async void DisplayAssetImages()
     {
+        Debug.Log(slotCount+" "+ currentPage);
         var (downloadedSprites, blendIds,contractNames) = await blendFetcherController.GetBlendAssets(slotCount, currentPage);
+
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
@@ -80,13 +81,8 @@ public class BlendMainUI : MonoBehaviour
 
     private void UpdateUI()
     {
-        SetCurrentPageText(currentPage);
-    }
-
-    public void SetCurrentPageText(int currentPage)
-    {
-        currentPageText.text = $"{currentPage}";
-    }
+/*        SetCurrentPageText(currentPage);
+*/    }
 
     public void NextPage()
     {

@@ -25,7 +25,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async void ReceiveBlendId(int blendId)
     {
         var (rollSprites, requirementSprites,ingredientIndexCount) = await GetCraftingAssets(blendId);
-        var ingredientSprites = await GetIngredientAssets(blendId,ingredientIndexCount);
+        var ingredientSprites = await GetIngredientAssets(blendId, ingredientIndexCount);
 
         uIManager.EnableCraftingUI();
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites);
@@ -41,7 +41,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     //delete this later
     public async Task<Blend> GetDeserializedData<Blend>(string link , int slotLimit, int currentPage)
     {
-        var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
+        var url = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
         var jsonResponse = await GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
@@ -51,7 +51,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         var ingredientIndexCount = 0;
         try
         {
-            var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
+            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
 
             var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(url, blendId);
 
@@ -62,6 +62,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             }
             List<string> imageUris = new List<string>();
             var rollOutcome = resultObject.MainData.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
+
             ingredientIndexCount = resultObject.MainData.Ingredients.Count;
             imageUris.Add(rollOutcome);
             var downloadedSprites = imageUris.Select(uri => GetSpriteAsync(uri)).ToArray();
@@ -76,7 +77,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             }
             var downloadedSprites2 = imageUrisIngredients.Select(uri => GetSpriteAsync(uri)).ToArray();
             var spriteResults2 = await Task.WhenAll(downloadedSprites2);
-
             return (spriteResults, spriteResults2, ingredientIndexCount);
         }
         catch (Exception ex)
@@ -93,7 +93,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             List<string> imageUris = new List<string>();
             for (int i = 0;i < ingredientIndexCount; i++)
             {
-                var url = $"https://aa.neftyblocks.com/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=1&order=desc&sort=asset_id";
+                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=1&order=desc&sort=asset_id";
                 var resultObject = await GetDeserializedDataNOTCLEANCODE<Ingredient>(url, blendId);
                 if (!resultObject.Success)
                 {
@@ -122,7 +122,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async Task<string> GetTextAsync(string url)
     {
         var request = UnityWebRequest.Get(url);
-        request.SetRequestHeader("Content-Type", "application/json");
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)
@@ -146,12 +145,8 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             return sprite;
         }
 
-        var url = $"https://resizer.neftyblocks.com?ipfs={imageUri}&width=300&static=false";
+        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
-
-        request.SetRequestHeader("Cache-Control", "max-age=3600");
-        request.SetRequestHeader("Pragma", "cache");
-
         var operation = request.SendWebRequest();
 
         while (!operation.isDone)

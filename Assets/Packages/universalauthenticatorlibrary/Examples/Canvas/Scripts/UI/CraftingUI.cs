@@ -13,63 +13,51 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public GameObject[] slotsIngredient;
     [SerializeField] public GameObject[] slotsRolls;
 
+    [SerializeField] public GameObject recipeWindow;
+    [SerializeField] public GameObject ingredientWindow;
     [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject ownedIngredientPrefab;
     [SerializeField] public GameObject rollSlotPrefab;
     [SerializeField] public RectTransform prefabContainer;
+    [SerializeField] public RectTransform ingredientContainer;
+
+    [SerializeField] public RectTransform rollImageContainer;
+    [SerializeField] public GameObject rollImageSlot;
+
     [SerializeField] public Sprite loadingImage;
     [SerializeField] public int currentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; }
 
-
-    void Awake()
+    public void InstantiateRequirementWindow(int slotCount)
     {
-        InstantiateRollWindow();
-        InstantiateIngredientWindow();
-        InstantiateOwnedIngredientWindow();
-    }
-
-    public void InstantiateRollWindow()
-    {
-        slotsRolls = new GameObject[1];
-
-
-        slotsRolls[0] = Instantiate(rollSlotPrefab, prefabContainer);
-        slotsRolls[0].tag = "Craft";
-        slotsRolls[0].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(0 * 300, -0 * 300);
-    }
-    public void InstantiateIngredientWindow()
-    {
-        slotCount = 4;
         int slotSize = 150;
-        int x = 2;
-        int y = 0;
+
         slotsIngredient = new GameObject[slotCount];
 
         for (int i = 0; i < slotCount; i++)
         {
             slotsIngredient[i] = Instantiate(ingredientPrefab, prefabContainer);
             slotsIngredient[i].tag = "Craft";
-            slotsIngredient[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
-            x++;
+            slotsIngredient[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(slotSize,  slotSize);
         }
     }
 
-    public void InstantiateOwnedIngredientWindow()
+    public void InstantiateOwnedIngredientWindow(int slotcount)
     {
-        slotCount = 4;
         int slotSize = 150;
-        int x = 2;
-        float y = 1.1f;
-        slotsOwned = new GameObject[slotCount];
 
-        for (int i = 0; i < slotCount; i++)
+        Debug.Log("slotcount: " + slotcount);
+        Debug.Log(ownedIngredientPrefab);
+        Debug.Log(ingredientContainer);
+        slotsOwned = new GameObject[slotcount];
+        for (int i = 0; i < slotcount; i++)
         {
-            slotsOwned[i] = Instantiate(ownedIngredientPrefab, prefabContainer);
+            Debug.Log("Here");
+            slotsOwned[i] = Instantiate(ownedIngredientPrefab, ingredientContainer);
             slotsOwned[i].tag = "Craft";
-            slotsOwned[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
-            x++;
+            slotsOwned[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(slotSize, slotSize);
         }
+        Debug.Log("Gone");
     }
 
     public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites)
@@ -81,19 +69,19 @@ public class CraftingUI : MonoBehaviour
 
     public void DisplayRollImage(Sprite[] downloadedSprites)
     {
+
         if (downloadedSprites != null)
         {
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
 
-                Transform nftImage = slotsRolls[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+                rollImageSlot.GetComponent<Image>().sprite = downloadedSprites[i];
 
             }
             for (int i = downloadedSprites.Length; i < 1; i++)
             {
                 Transform nftImage = slotsRolls[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = loadingImage;
+                rollImageSlot.GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
@@ -101,33 +89,30 @@ public class CraftingUI : MonoBehaviour
     {
         if (downloadedSprites != null)
         {
+            InstantiateRequirementWindow(downloadedSprites.Length);
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 Transform nftImage = slotsIngredient[i].transform.Find("NFT_Image");
                 nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-            }
-            for (int i = downloadedSprites.Length; i < 4; i++)
-            {
-                Transform nftImage = slotsIngredient[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
     public void DisplayIngredientImage(Sprite[] downloadedSprites)
     {
-        Debug.Log(downloadedSprites.Length);
-        if (downloadedSprites != null)
+        if (downloadedSprites != null || downloadedSprites.Length > 0)
         {
+            Debug.Log(downloadedSprites.Length);
+            InstantiateOwnedIngredientWindow(downloadedSprites.Length);
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 Transform nftImage = slotsOwned[i].transform.Find("NFT_Image");
                 nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
             }
-            for (int i = downloadedSprites.Length; i < 4; i++)
-            {
-                Transform nftImage = slotsOwned[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = loadingImage;
-            }
         }
+    }
+    public void SwitchRecipeIngredientWindow()
+    {
+        recipeWindow.SetActive(!recipeWindow.activeSelf);
+        ingredientWindow.SetActive(!ingredientWindow.activeSelf);
     }
 }
