@@ -21,30 +21,24 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            List<(string, string)> assetDetails = new List<(string, string)>();
+            List<(string, string)> assetDetailsList = new List<(string, string)>();
             var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
             var assetCount = deserializedJsonResult.details.Count;
 
-            if (assetCount == 0)
-            {
-                Debug.LogError("No assets found for the given wallet address.");
-                return (null, null);
-            }
-
-            for (int i = 0; i < slotLimit; i++)
+            for (int i = 0; i < slotLimit && i < assetCount; i++)
             {
                 if (deserializedJsonResult.details.Count <= i)
                 {
                     Debug.LogError($"No asset found for slot {i + 1}.");
                     continue;
                 }
-                var imageUri = deserializedJsonResult.details[i].Data.Img;
+                var imageHash = deserializedJsonResult.details[i].Data.Img;
                 var assetId = deserializedJsonResult.details[i].AssetId;
-                assetDetails.Add((imageUri, assetId));
+                assetDetailsList.Add((imageHash, assetId));
             }
 
-            var downloadedSprites = assetDetails.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
+            var downloadedSprites = assetDetailsList.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
@@ -65,31 +59,5 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
         var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
 
         return deserializedJsonResult.Data;
-    }
-
-    [ContextMenu("GetCollectionImage")]
-    public async Task<Sprite> GetCollectionImageURL()
-    {
-        try
-        {
-            var url = $"{PluginController.apiUrl}/atomicassets/v1/collections/{pluginController.GetCollectionName()}";
-            var jsonResponse = await imageLoader.GetTextAsync(url);
-            var resultObject = JsonConvert.DeserializeObject<Collection>(jsonResponse);
-
-            if (resultObject.data.img.Length == 0)
-            {
-                Debug.LogError("No image found for the given collection.");
-                return null;
-            }
-
-            var imageUri = resultObject.data.img;
-            return await imageLoader.GetSpriteAsync(imageUri);
-
-        }
-        catch (Exception ex)
-        {
-            Debug.Log($"Error: {ex}");
-            return null;
-        }
     }
 }
