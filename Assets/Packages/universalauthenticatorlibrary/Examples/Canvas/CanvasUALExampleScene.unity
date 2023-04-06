@@ -392,19 +392,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dashboardController: {fileID: 82636088}
   craftingFetcher: {fileID: 989558570}
-  slotsOwned: []
-  slotsIngredient: []
-  slotsRolls: []
-  recipeWindow: {fileID: 767811416}
-  ingredientWindow: {fileID: 955833293}
-  ingredientPrefab: {fileID: 8658164907581310236, guid: 101d0bf383978574bbd0d0ef86c75d1c, type: 3}
-  ownedIngredientPrefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
-  rollSlotPrefab: {fileID: 8658164907581310236, guid: e9fe4abd8b04f554c84c533dff748ada, type: 3}
-  prefabContainer: {fileID: 943324714}
+  ingredientSlots: []
+  requirementSlots: []
+  rewardSlots: []
+  recipeUI: {fileID: 767811416}
+  ingredientUI: {fileID: 955833293}
+  requirementPrefab: {fileID: 8658164907581310236, guid: 101d0bf383978574bbd0d0ef86c75d1c, type: 3}
+  ingredientPrefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
+  rewardPrefab: {fileID: 8658164907581310236, guid: e9fe4abd8b04f554c84c533dff748ada, type: 3}
+  requirementContainer: {fileID: 943324714}
   ingredientContainer: {fileID: 1108553853}
-  rollImageContainer: {fileID: 252459397}
-  rollImageSlot: {fileID: 413729606}
-  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
+  rewardContainer: {fileID: 413729607}
 --- !u!1 &252459396
 GameObject:
   m_ObjectHideFlags: 0
@@ -2962,7 +2960,7 @@ GameObject:
   - component: {fileID: 943324714}
   - component: {fileID: 943324715}
   m_Layer: 0
-  m_Name: Content
+  m_Name: 'RecipeContentAssets '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3821,7 +3819,7 @@ GameObject:
   - component: {fileID: 1108553853}
   - component: {fileID: 1108553854}
   m_Layer: 0
-  m_Name: Content
+  m_Name: 'IngredientContentAssets '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6987,7 +6985,6 @@ MonoBehaviour:
   blendSlots: []
   blendPrefab: {fileID: 8658164907581310236, guid: 054e103135439a0458558e0129d5ce93, type: 3}
   blendPrefabContainer: {fileID: 2124922569}
-  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!114 &1979906829
 MonoBehaviour:
   m_ObjectHideFlags: 0

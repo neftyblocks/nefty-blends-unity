@@ -98,6 +98,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 }
 
             }
+            // Download or Get from cache an Sprite
             var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
             var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
 
