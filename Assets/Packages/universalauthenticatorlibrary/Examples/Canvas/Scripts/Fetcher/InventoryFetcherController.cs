@@ -9,9 +9,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public PluginController pluginController;
-    // Events 
-    public delegate void UiRefreshEventHandler(int assetCount);
-    public static event UiRefreshEventHandler UiRefreshAssetCount;
 
     public async Task<Asset> GetDeserializedData<Asset>(string url)
     {
@@ -24,7 +21,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
+            List<(string, string)> assetDetails = new List<(string, string)>();
             var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
             var assetCount = deserializedJsonResult.details.Count;
@@ -35,9 +32,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 return (null, null);
             }
 
-            // Triggers UiRefreshAssetCount event in InventoryUI class
-            UiRefreshAssetCount(assetCount);
-
             for (int i = 0; i < slotLimit; i++)
             {
                 if (deserializedJsonResult.details.Count <= i)
@@ -47,10 +41,10 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 }
                 var imageUri = deserializedJsonResult.details[i].Data.Img;
                 var assetId = deserializedJsonResult.details[i].AssetId;
-                imageUrisWithIds.Add((imageUri, assetId));
+                assetDetails.Add((imageUri, assetId));
             }
 
-            var downloadedSprites = imageUrisWithIds.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
+            var downloadedSprites = assetDetails.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
@@ -68,12 +62,9 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public async Task<int> GetInventoryAssetsCount()
     {
         var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={"cabba.wam"}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
-        var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+        var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
 
-        Debug.Log("Asset: "+ deserializedJsonResult);
-        Debug.Log("Asset: " + deserializedJsonResult.details.Count);
-
-        return deserializedJsonResult.details.Count;
+        return deserializedJsonResult.Data;
     }
 
     [ContextMenu("GetCollectionImage")]

@@ -18,7 +18,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] public int currentPage { get; set; }
     [SerializeField] public int slotCount { get; set; }
 
-    void Awake()
+    async void Awake()
     {
         currentPage = 1;
         slotCount = 40;
@@ -37,6 +37,8 @@ public class InventoryUI : MonoBehaviour
                 x = 0; y++;
             }
         }
+
+        SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
     }
 
     public async void DisplayAssetImages()
@@ -60,7 +62,6 @@ public class InventoryUI : MonoBehaviour
     private void OnEnable()
     {
         DashboardController.UserLoggedIn += UpdateUI;
-        InventoryFetcherController.UiRefreshAssetCount += UpdateAssetCount;
     }
 
     private void UpdateUI()
@@ -68,18 +69,13 @@ public class InventoryUI : MonoBehaviour
         SetWalletNameText(dashboardController.walletName);
     }
 
-    private void UpdateAssetCount(int assetCount)
-    {
-        SetTotalAssetText(assetCount);
-    }
-
     public void SetWalletNameText(string wallet)
     {
         walletNameText.text = $"Welcome { wallet }";
     }
 
-    public void SetTotalAssetText(int amount)
+    public async void SetTotalAssetText(int assetCount)
     {
-        totalAssetText.text = $"Total assets - { amount }";
+        totalAssetText.text = $"Total assets - { assetCount }";
     }
 }

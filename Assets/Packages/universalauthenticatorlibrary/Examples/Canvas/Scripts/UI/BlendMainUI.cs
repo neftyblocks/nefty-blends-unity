@@ -72,26 +72,4 @@ public class BlendMainUI : MonoBehaviour
 
         }
     }
-
-    private void OnEnable()
-    {
-/*        DashboardController.UserLoggedIn += UpdateUI;
-*/        InventoryFetcherController.UiRefreshAssetCount += UpdateUI;
-    }
-
-    private void UpdateUI(int assetCount)
-    {
-/*        SetCurrentPageText(currentPage);
-*/    }
-
-    public void NextPage()
-    {
-        currentPage++;
-        DisplayAssetImages();
-    }
-    public void PreviousPage()
-    {
-        currentPage--;
-        DisplayAssetImages();
-    }
 }
