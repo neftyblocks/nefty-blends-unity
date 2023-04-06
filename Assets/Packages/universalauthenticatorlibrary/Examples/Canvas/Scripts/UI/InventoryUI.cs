@@ -57,32 +57,29 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    public void SetLoadingImage()
-    {
-        for (int i = 0; i < 12; i++)
-        {
-            slots[i].GetComponent<NFT>().GetComponent<Image>().sprite = loadingImage;
-        }
-    }
-
     private void OnEnable()
     {
         DashboardController.UserLoggedIn += UpdateUI;
-        InventoryFetcherController.UiRefresh += UpdateUI;
+        InventoryFetcherController.UiRefreshAssetCount += UpdateAssetCount;
     }
 
     private void UpdateUI()
     {
         SetWalletNameText(dashboardController.walletName);
-        SetTotalAssetText(inventoryFetcherController.assetCount);
+    }
+
+    private void UpdateAssetCount(int assetCount)
+    {
+        SetTotalAssetText(assetCount);
     }
 
     public void SetWalletNameText(string wallet)
     {
-        walletNameText.text = $"Welcome {wallet}";
+        walletNameText.text = $"Welcome { wallet }";
     }
+
     public void SetTotalAssetText(int amount)
     {
-        totalAssetText.text = $"Total assets - {amount}";
+        totalAssetText.text = $"Total assets - { amount }";
     }
 }

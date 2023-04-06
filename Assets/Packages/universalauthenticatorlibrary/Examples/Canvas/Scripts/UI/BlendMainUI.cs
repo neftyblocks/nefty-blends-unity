@@ -75,11 +75,11 @@ public class BlendMainUI : MonoBehaviour
 
     private void OnEnable()
     {
-        DashboardController.UserLoggedIn += UpdateUI;
-        InventoryFetcherController.UiRefresh += UpdateUI;
+/*        DashboardController.UserLoggedIn += UpdateUI;
+*/        InventoryFetcherController.UiRefreshAssetCount += UpdateUI;
     }
 
-    private void UpdateUI()
+    private void UpdateUI(int assetCount)
     {
 /*        SetCurrentPageText(currentPage);
 */    }

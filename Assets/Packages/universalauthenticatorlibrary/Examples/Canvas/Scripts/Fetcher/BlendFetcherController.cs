@@ -12,7 +12,7 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     [SerializeField] public PluginController pluginController;
     [SerializeField] public ImageLoader imageLoader;
 
-    public async Task<Blend> GetDeserializedData<Blend>(string url, int slotLimit, int currentPage)
+    public async Task<Blend> GetDeserializedData<Blend>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
 
@@ -24,7 +24,7 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
 
-            var resultObject = await GetDeserializedData<Blend>(url, slotLimit, currentPage);
+            var resultObject = await GetDeserializedData<Blend>(url);
             if (resultObject.Data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");

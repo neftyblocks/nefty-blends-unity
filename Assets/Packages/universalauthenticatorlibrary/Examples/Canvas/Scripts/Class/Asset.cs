@@ -1,19 +1,16 @@
 using Newtonsoft.Json;
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Asset
 {
-   
-        public bool Success { get; set; }
-        public List<Datum> Data { get; set; }
-        public long QueryTime { get; set; }
-    
-    public partial class Datum
+    public bool Success { get; set; }
+    [JsonProperty("data")]
+    public List<Details> details { get; set; }
+    public long QueryTime { get; set; }
+
+    public partial class Details
     {
-        public Contract Contract { get; set; }
+        public string Contract { get; set; }
         public string AssetId { get; set; }
         public string Owner { get; set; }
         public bool IsTransferable { get; set; }
@@ -22,65 +19,55 @@ public class Asset
         public Schema Schema { get; set; }
         public Template Template { get; set; }
         public MutableData MutableData { get; set; }
-        public DatumImmutableData ImmutableData { get; set; }
+        public ImmutableData ImmutableData { get; set; }
         public long TemplateMint { get; set; }
         public List<object> BackedTokens { get; set; }
-        public string BurnedByAccount { get; set; }
-        public long? BurnedAtBlock { get; set; }
-        public string BurnedAtTime { get; set; }
+        public object BurnedByAccount { get; set; }
+        public object BurnedAtBlock { get; set; }
+        public object BurnedAtTime { get; set; }
         public long UpdatedAtBlock { get; set; }
         public string UpdatedAtTime { get; set; }
         public long TransferredAtBlock { get; set; }
         public string TransferredAtTime { get; set; }
         public long MintedAtBlock { get; set; }
         public string MintedAtTime { get; set; }
-        public AssetData Data { get; set; }
+        public Data Data { get; set; }
         public string Name { get; set; }
     }
 
     public partial class Collection
     {
-        [JsonProperty("collection_name")]
         public string CollectionName { get; set; }
         public string Name { get; set; }
         public string Img { get; set; }
+        public string Author { get; set; }
         public bool AllowNotify { get; set; }
-        public List<string> AuthorizedAccounts { get; set; }
-        public List<NotifyAccount> NotifyAccounts { get; set; }
+        public string[] AuthorizedAccounts { get; set; }
+        public string[] NotifyAccounts { get; set; }
         public double MarketFee { get; set; }
         public long CreatedAtBlock { get; set; }
         public string CreatedAtTime { get; set; }
     }
 
-    public partial class AssetData
+    public partial class Data
     {
-        public string Era { get; set; }
         public string Img { get; set; }
+        public string Info { get; set; }
         public string Name { get; set; }
-        public long ZosId { get; set; }
-        public string Healing { get; set; }
+        public string Product { get; set; }
+        public long? Quantity { get; set; }
         public string Description { get; set; }
-        public string Hat { get; set; }
-        public string Top { get; set; }
-        public string Face { get; set; }
-        public string Shoes { get; set; }
-        public string Bottoms { get; set; }
-        public string Survivor { get; set; }
-        public long? MaxHealth { get; set; }
         public string Rarity { get; set; }
-        public long? ShieldStrength { get; set; }
-        public long? WeaponStrength { get; set; }
+        public string Type { get; set; }
+        public long? Slots { get; set; }
     }
 
-    public partial class DatumImmutableData
+    public partial class ImmutableData
     {
-        public string Hat { get; set; }
-        public string Top { get; set; }
         public string Img { get; set; }
-        public string Face { get; set; }
         public string Name { get; set; }
-        public string Shoes { get; set; }
-        public string Bottoms { get; set; }
+        public string Product { get; set; }
+        public long? Quantity { get; set; }
     }
 
     public partial class MutableData
@@ -98,7 +85,7 @@ public class Asset
     public partial class Format
     {
         public string Name { get; set; }
-        public TypeEnum Type { get; set; }
+        public string Type { get; set; }
     }
 
     public partial class Template
@@ -108,29 +95,8 @@ public class Asset
         public bool IsTransferable { get; set; }
         public bool IsBurnable { get; set; }
         public long IssuedSupply { get; set; }
-        public TemplateImmutableData ImmutableData { get; set; }
+        public Data ImmutableData { get; set; }
         public string CreatedAtTime { get; set; }
         public long CreatedAtBlock { get; set; }
     }
-
-    public partial class TemplateImmutableData
-    {
-        public string Era { get; set; }
-        public string Img { get; set; }
-        public string Name { get; set; }
-        public long ZosId { get; set; }
-        public string Healing { get; set; }
-        public string Description { get; set; }
-        public string Survivor { get; set; }
-        public long? MaxHealth { get; set; }
-        public string Rarity { get; set; }
-        public long? ShieldStrength { get; set; }
-        public long? WeaponStrength { get; set; }
-    }
-
-    public enum NotifyAccount { CentralZos, SupplyZos };
-
-    public enum Contract { Atomicassets };
-
-    public enum TypeEnum { Image, String, Uint64 };
 }

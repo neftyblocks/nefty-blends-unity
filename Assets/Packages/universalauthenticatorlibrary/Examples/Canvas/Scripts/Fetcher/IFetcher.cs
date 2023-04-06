@@ -5,5 +5,5 @@ using UnityEngine;
 
 public interface IFetcher 
 {
-    Task<T> GetDeserializedData<T>(string link, int slotLimit, int currentPage);
+    Task<T> GetDeserializedData<T>(string link);
 }

@@ -31,21 +31,13 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites);
 
     }
-    public async Task<NeftyBlend> GetDeserializedDataNOTCLEANCODE<NeftyBlend>(string url, int blendId)
+    public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    //delete this later
-    public async Task<Blend> GetDeserializedData<Blend>(string link , int slotLimit, int currentPage)
-    {
-        var url = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&visibility=visible&render_markdown=false&page={currentPage}&limit={slotLimit}&order=desc&sort=created_at_time";
-        var jsonResponse = await imageLoader.GetTextAsync(url);
-
-        return JsonConvert.DeserializeObject<Blend>(jsonResponse);
-    }
     public async Task<(Sprite[], Sprite[],int)> GetCraftingAssets(int blendId)
     {
         var ingredientIndexCount = 0;
@@ -53,7 +45,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
 
-            var resultObject = await GetDeserializedDataNOTCLEANCODE<NeftyBlend>(url, blendId);
+            var resultObject = await GetDeserializedData<NeftyBlend>(url);
 
             if (!resultObject.Success)
             {
@@ -94,7 +86,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             for (int i = 0;i < ingredientIndexCount; i++)
             {
                 var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=1&order=desc&sort=asset_id";
-                var resultObject = await GetDeserializedDataNOTCLEANCODE<Ingredient>(url, blendId);
+                var resultObject = await GetDeserializedData<Ingredient>(url);
                 if (!resultObject.Success)
                 {
                     Debug.LogError("No data found for the given ingredient.");

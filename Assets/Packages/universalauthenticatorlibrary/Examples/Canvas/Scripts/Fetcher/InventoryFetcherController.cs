@@ -1,56 +1,52 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
-using UnityEngine.PlayerLoop;
-using UnityEngine.UI;
-using UniversalAuthenticatorLibrary;
 
 public class InventoryFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] public ImageLoader imageLoader;
-    [SerializeField] public int assetCount { get; set; }
-    [SerializeField] public CollectionUI collectionUI;
     [SerializeField] public PluginController pluginController;
-    public delegate void UiRefreshEventHandler();
-    public static event UiRefreshEventHandler UiRefresh;
+    // Events 
+    public delegate void UiRefreshEventHandler(int assetCount);
+    public static event UiRefreshEventHandler UiRefreshAssetCount;
 
-    public async Task<Asset> GetDeserializedData<Asset>(string url, int slotLimit, int currentPage)
+    public async Task<Asset> GetDeserializedData<Asset>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
 
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
     }
-    public async Task<(Sprite[], string[])> GetInventoryAssets(int slotLimit,int currentPage)
+
+    public async Task<(Sprite[], string[])> GetInventoryAssets(int slotLimit, int currentPage)
     {
         try
         {
+            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
             var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
+            var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+            var assetCount = deserializedJsonResult.details.Count;
 
-            var resultObject = await GetDeserializedData<Asset>(url, slotLimit, currentPage);
-            Debug.Log(resultObject);
-            if (resultObject.Data.Count == 0 )
+            if (assetCount == 0)
             {
-                Debug.LogError("No asset found for the given wallet address.");
+                Debug.LogError("No assets found for the given wallet address.");
                 return (null, null);
             }
-            assetCount = resultObject.Data.Count;
-            UiRefresh();
-            List<(string, string)> imageUrisWithIds = new List<(string, string)>();
+
+            // Triggers UiRefreshAssetCount event in InventoryUI class
+            UiRefreshAssetCount(assetCount);
 
             for (int i = 0; i < slotLimit; i++)
             {
-                if (resultObject.Data.Count <= i )
+                if (deserializedJsonResult.details.Count <= i)
                 {
                     Debug.LogError($"No asset found for slot {i + 1}.");
                     continue;
                 }
-                var imageUri = resultObject.Data[i].Data.Img;
-                var assetId = resultObject.Data[i].AssetId;
+                var imageUri = deserializedJsonResult.details[i].Data.Img;
+                var assetId = deserializedJsonResult.details[i].AssetId;
                 imageUrisWithIds.Add((imageUri, assetId));
             }
 
@@ -67,6 +63,17 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             Debug.Log($"Error: {ex}");
             return (null, null);
         }
+    }
+
+    public async Task<int> GetInventoryAssetsCount()
+    {
+        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={"cabba.wam"}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
+        var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+
+        Debug.Log("Asset: "+ deserializedJsonResult);
+        Debug.Log("Asset: " + deserializedJsonResult.details.Count);
+
+        return deserializedJsonResult.details.Count;
     }
 
     [ContextMenu("GetCollectionImage")]
