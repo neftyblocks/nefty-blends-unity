@@ -46,8 +46,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
 
-
-            Debug.Log(assetIds[0]);
             return (sprites, assetIds);
         }
         catch (Exception ex)

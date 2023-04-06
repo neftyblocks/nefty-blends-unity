@@ -7,8 +7,6 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject inventoryUI;
     [SerializeField] private GameObject blendMenuUI;
     [SerializeField] private GameObject craftingUI;
-
-
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
     public enum UIType
@@ -41,6 +39,7 @@ public class UIManager : MonoBehaviour
             UIs[uiType].SetActive(false);
         }
     }
+
     public void EnableBlendMainMenuUI()
     {
         foreach (KeyValuePair<UIType, GameObject> ui in UIs)
@@ -53,6 +52,7 @@ public class UIManager : MonoBehaviour
         UIs[UIType.BlendMenu].SetActive(true);
         blendMenuUI.GetComponentInChildren<BlendMainUI>().DisplayAssetImages();
     }
+
     public void EnableInventoryMainMenuUI()
     {
         foreach (KeyValuePair<UIType, GameObject> ui in UIs)
@@ -66,6 +66,7 @@ public class UIManager : MonoBehaviour
         inventoryUI.GetComponentInChildren<InventoryUI>().DisplayAssetImages();
 
     }
+
     public void EnableCraftingUI()
     {
         foreach (KeyValuePair<UIType, GameObject> ui in UIs)

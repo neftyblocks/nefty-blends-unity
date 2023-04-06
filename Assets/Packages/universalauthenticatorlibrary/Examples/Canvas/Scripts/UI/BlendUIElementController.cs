@@ -6,8 +6,6 @@ using UnityEngine.EventSystems;
 public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] public GameObject selectionBoardImage;
-    [SerializeField] private Color hoverColor;
-    [SerializeField] private Color selectedColor;
     [SerializeField] private bool isClicked;
     public delegate void UserSelectedBlendInEventHandler(int blendId);
     public static event UserSelectedBlendInEventHandler UserSelectedBlend;

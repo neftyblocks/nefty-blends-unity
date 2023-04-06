@@ -8,42 +8,21 @@ public class BlendMainUI : MonoBehaviour
 {
     [SerializeField] private DashboardController dashboardController;
     [SerializeField] private BlendFetcherController blendFetcherController;
-    [SerializeField] public GameObject[] slots;
-    [SerializeField] public GameObject prefab;
-    [SerializeField] public RectTransform prefabContainer;
-    [SerializeField] public Sprite loadingImage;
-    [SerializeField] public int currentPage { get; set; }
-    [SerializeField] public int slotCount { get; set; }
+    [SerializeField] public GameObject[] blendSlots;
+    [SerializeField] public GameObject blendPrefab;
+    [SerializeField] public RectTransform blendPrefabContainer;
+    [SerializeField] public int apiCurrentPage { get; set; } = 1;
+    [SerializeField] public int slotCount { get; set; } = 40;
 
     void Awake()
     {
-        currentPage = 1;
-        slotCount = 40;
-        int slotSize = 150;
-        int x = 0;
-        int y = 0;
-        slots = new GameObject[slotCount];
-
-        for (int i = 0; i < slotCount; i++)
-        {
-           
-            slots[i] = Instantiate(prefab, prefabContainer);
-            slots[i].tag = "Blend";
-            slots[i].GetComponentInParent<RectTransform>().anchoredPosition = new Vector2(x * slotSize, -y * slotSize);
-            x++;
-            if (x >= 6)
-            {
-                x = 0; y++;
-            }
-        }
+        InstantiateBlendSlots();
+        DisplayAssetImages();
     }
-
-    [ContextMenu("GetCollectionImage")]
 
     public async void DisplayAssetImages()
     {
-        Debug.Log(slotCount+" "+ currentPage);
-        var (downloadedSprites, blendIds,contractNames) = await blendFetcherController.GetBlendAssets(slotCount, currentPage);
+        var (downloadedSprites, blendIds,contractNames) = await blendFetcherController.GetBlendAssets(slotCount, apiCurrentPage);
 
         if (downloadedSprites != null)
         {
@@ -51,25 +30,21 @@ public class BlendMainUI : MonoBehaviour
             {
                 if (downloadedSprites[i] != null)
                 {
-                    Transform nftImage = slots[i].transform.Find("NFT_Image");
+                    Transform nftImage = blendSlots[i].transform.Find("NFT_Image");
                     nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    slots[i].GetComponent<BlendNFT>().SetBlendId(blendIds[i]);
-                    slots[i].GetComponent<BlendNFT>().SetContractName(contractNames[i]);
+                    blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendIds[i]);
+                    blendSlots[i].GetComponent<BlendNFT>().SetContractName(contractNames[i]);
                 }
-            }
-            for (int i = downloadedSprites.Length; i < slotCount; i++)
-            {
-                slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
             }
         }
     }
-
-    public void SetLoadingImage()
+    public void InstantiateBlendSlots()
     {
-        for (int i = 0; i < 12; i++)
+        blendSlots = new GameObject[slotCount];
+        for (int i = 0; i < slotCount; i++)
         {
-            slots[i].GetComponent<BlendNFT>().gameObject.GetComponent<Image>().sprite = loadingImage;
-
+            blendSlots[i] = Instantiate(blendPrefab, blendPrefabContainer);
+            blendSlots[i].tag = "Blend";
         }
     }
 }

@@ -1,12 +1,9 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] public GameObject selectionBoardImage;
-    [SerializeField] private Color hoverColor;
-    [SerializeField] private Color selectedColor;
     [SerializeField] private bool isClicked;
 
     public void OnPointerEnter(PointerEventData eventData)

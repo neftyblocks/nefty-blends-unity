@@ -5965,7 +5965,6 @@ MonoBehaviour:
   inventorySlots: []
   inventoryAssetPrefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
   inventoryContainer: {fileID: 1784170739}
-  loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!1 &1709812847
 GameObject:
   m_ObjectHideFlags: 0
@@ -6985,9 +6984,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dashboardController: {fileID: 82636088}
   blendFetcherController: {fileID: 176410152}
-  slots: []
-  prefab: {fileID: 8658164907581310236, guid: 054e103135439a0458558e0129d5ce93, type: 3}
-  prefabContainer: {fileID: 2124922569}
+  blendSlots: []
+  blendPrefab: {fileID: 8658164907581310236, guid: 054e103135439a0458558e0129d5ce93, type: 3}
+  blendPrefabContainer: {fileID: 2124922569}
   loadingImage: {fileID: 21300000, guid: bf69a6ce0dde20c41adadb8783734664, type: 3}
 --- !u!114 &1979906829
 MonoBehaviour:
