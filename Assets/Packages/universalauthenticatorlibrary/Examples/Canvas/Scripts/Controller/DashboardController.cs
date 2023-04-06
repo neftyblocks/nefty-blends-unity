@@ -14,8 +14,6 @@ public class DashboardController : MonoBehaviour
     public delegate void UserLoggedInEventHandler();
     public static event UserLoggedInEventHandler UserLoggedIn;
    
-
-
     async void Start()
     {
         await UnityCanvasUAL.Init();

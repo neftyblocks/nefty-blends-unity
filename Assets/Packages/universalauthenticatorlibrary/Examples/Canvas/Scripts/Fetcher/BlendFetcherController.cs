@@ -13,7 +13,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     public async Task<Blend> GetDeserializedData<Blend>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
-
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
     public async Task<(Sprite[], int[], string[])> GetBlendAssets(int slotLimit, int currentPage)
@@ -29,7 +28,6 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
                 Debug.LogError("No data found for the given blend.");
                 return (null, null,null);
             }
-
 
             for (int i = 0; i < deserializedJsonResult.Data.Count; i++)
             {               
