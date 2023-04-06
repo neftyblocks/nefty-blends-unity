@@ -11,6 +11,7 @@ public class Asset
     public partial class Details
     {
         public string Contract { get; set; }
+        [JsonProperty("asset_id")]
         public string AssetId { get; set; }
         public string Owner { get; set; }
         public bool IsTransferable { get; set; }

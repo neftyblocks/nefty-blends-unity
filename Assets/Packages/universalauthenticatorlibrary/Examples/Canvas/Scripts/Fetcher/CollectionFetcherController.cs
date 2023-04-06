@@ -1,7 +1,5 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -25,7 +23,6 @@ public class CollectionFetcherController : MonoBehaviour
 
             var imageHash = resultObject.data.img;
             return await imageLoader.GetSpriteAsync(imageHash);
-
         }
         catch (Exception ex)
         {

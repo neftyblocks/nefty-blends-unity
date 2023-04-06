@@ -38,17 +38,21 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 assetDetailsList.Add((imageHash, assetId));
             }
 
+            // Download or Get from cache an Sprite
             var downloadedSprites = assetDetailsList.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
             var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
             var spriteResults = await Task.WhenAll(spriteTasks);
+            // Split resulsts per variable into own array
             var sprites = spriteResults.Select(sprite => sprite).ToArray();
             var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
 
+
+            Debug.Log(assetIds[0]);
             return (sprites, assetIds);
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: {ex}");
+            Debug.LogError($"Error: {ex}");
             return (null, null);
         }
     }
