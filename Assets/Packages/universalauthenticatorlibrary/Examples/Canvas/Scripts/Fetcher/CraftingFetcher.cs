@@ -55,8 +55,8 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             uniqueIngredientCount = deserializedJsonResult.MainData.Ingredients.Count;
             requirementsDetailsList.Add(rollOutcome);
             // Split resulsts per variable into own array
-            var downloadedRequirementSprites = requirementsDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
-            var spriteRequirementResults = await Task.WhenAll(downloadedRequirementSprites);
+            var downloadedRollSprites = requirementsDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
+            var spriteRollResult = await Task.WhenAll(downloadedRollSprites);
 
             foreach (var ingredient in deserializedJsonResult.MainData.Ingredients)
             {
@@ -65,10 +65,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             }
 
             // Download or Get from cache an Sprite
-            var downloadedIngredientSprites = ingredientstDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
-            var spriteIngredientsResults = await Task.WhenAll(downloadedIngredientSprites);
+            var downloadedRequirementSprites = ingredientstDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
+            var spriteRequirementResults = await Task.WhenAll(downloadedRequirementSprites);
 
-            return (spriteRequirementResults, spriteIngredientsResults, uniqueIngredientCount);
+            return (spriteRollResult, spriteRequirementResults, uniqueIngredientCount);
         }
         catch (Exception ex)
         {
@@ -98,10 +98,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 }
 
             }
-            var downloadedSprites2 = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
-            var spriteResults2 = await Task.WhenAll(downloadedSprites2);
+            var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
+            var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
 
-            return spriteResults2; 
+            return spriteIngredientResults; 
         }
         catch (Exception ex)
         {
