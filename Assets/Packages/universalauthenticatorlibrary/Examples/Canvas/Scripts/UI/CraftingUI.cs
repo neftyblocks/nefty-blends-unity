@@ -19,16 +19,9 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 100;
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites)
+    private void InstantiateSlots(int slotCount, GameObject slotPrefab, RectTransform container, ref GameObject[] slots)
     {
-        DisplayRollImage(rollSprite);
-        DisplayRequirementsImage(requirementSprites);
-        DisplayIngredientImage(ingredientSprites);
-    }
-
-    private void InstantiateSlots(int slotCount, GameObject slotPrefab, RectTransform container)
-    {
-        GameObject[] slots = new GameObject[slotCount];
+        slots = new GameObject[slotCount];
 
         for (int i = 0; i < slotCount; i++)
         {
@@ -39,24 +32,14 @@ public class CraftingUI : MonoBehaviour
 
     public void InstantiateRequirementSlots(int slotCount)
     {
-        requirementSlots = new GameObject[slotCount];
-
-        for (int i = 0; i < slotCount; i++)
-        {
-            requirementSlots[i] = Instantiate(requirementPrefab, requirementContainer);
-            requirementSlots[i].tag = "Craft";
-        }
+        ResetSlots(requirementSlots);
+        InstantiateSlots(slotCount, requirementPrefab, requirementContainer, ref requirementSlots);
     }
 
     public void InstantiateIngredientSlots(int slotcount)
     {
-        ingredientSlots = new GameObject[slotcount];
-
-        for (int i = 0; i < slotcount; i++)
-        {
-            ingredientSlots[i] = Instantiate(ingredientPrefab, ingredientContainer);
-            ingredientSlots[i].tag = "Craft";
-        }
+        ResetSlots(ingredientSlots);
+        InstantiateSlots(slotCount, ingredientPrefab, ingredientContainer, ref ingredientSlots);
     }
 
     public void DisplayRollImage(Sprite[] downloadedSprites)
@@ -69,6 +52,7 @@ public class CraftingUI : MonoBehaviour
             }
         }
     }
+
     public void DisplayRequirementsImage(Sprite[] downloadedSprites)
     {
         if (downloadedSprites != null)
@@ -81,6 +65,7 @@ public class CraftingUI : MonoBehaviour
             }
         }
     }
+
     public void DisplayIngredientImage(Sprite[] downloadedSprites)
     {
         if (downloadedSprites != null)
@@ -93,6 +78,27 @@ public class CraftingUI : MonoBehaviour
             }
         }
     }
+
+    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites)
+    {
+        DisplayRollImage(rollSprite);
+        DisplayRequirementsImage(requirementSprites);
+        DisplayIngredientImage(ingredientSprites);
+    }
+
+    public void ResetSlots(GameObject[] gameObjects)
+    {
+        for (int i = 0; i < gameObjects.Length; i++)
+        {
+            if (gameObjects[i] != null)
+            {
+                Destroy(gameObjects[i]); 
+            }
+
+            gameObjects[i] = null;
+        }
+    }
+
     public void SwitchRecipeIngredientWindow()
     {
         recipeUI.SetActive(!recipeUI.activeSelf);
