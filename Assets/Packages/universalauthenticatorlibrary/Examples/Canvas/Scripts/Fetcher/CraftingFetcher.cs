@@ -20,7 +20,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     public async void ReceiveBlendId(int blendId)
     {
-        var (rollSprites, requirementSprites,ingredientIndexCount) = await GetCraftingAssets(blendId);
+        var (rollSprites, requirementSprites,ingredientIndexCount) = await GetRequiredAssets(blendId);
         var ingredientSprites = await GetIngredientAssets(blendId, ingredientIndexCount);
 
         uIManager.EnableCraftingUI();
@@ -33,47 +33,35 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    public async Task<(Sprite[], Sprite[],int)> GetCraftingAssets(int blendId)
+    public async Task<(Sprite[], Sprite[],int)> GetRequiredAssets(int blendId)
     {
         var uniqueIngredientCount = 0;
 
         try
         {
-            List<string> requirementsDetailsList = new List<string>();
-            List<string> ingredientstDetailsList = new List<string>();
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
 
             if (!deserializedJsonResult.Success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return (null,null, uniqueIngredientCount);
+                return (null, null, 0);
             }
 
-            // Download or Get from cache an Sprite
+            // Download or Get from cache a Sprite
             var rollOutcome = deserializedJsonResult.MainData.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img;
             uniqueIngredientCount = deserializedJsonResult.MainData.Ingredients.Count;
-            requirementsDetailsList.Add(rollOutcome);
-            // Split resulsts per variable into own array
-            var downloadedRollSprites = requirementsDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
-            var spriteRollResult = await Task.WhenAll(downloadedRollSprites);
 
-            foreach (var ingredient in deserializedJsonResult.MainData.Ingredients)
-            {
-                var ingredientOutcome = ingredient.Template.ImmutableData.Img;
-                ingredientstDetailsList.Add(ingredientOutcome);
-            }
+            // Download or Get from cache a Sprite
+            var rollSprites = await Task.WhenAll(deserializedJsonResult.MainData.Rolls.Select(i => imageLoader.GetSpriteAsync(i.Outcomes[0].Results[0].Template.ImmutableData.Img)));
+            var requirementSprites = await Task.WhenAll(deserializedJsonResult.MainData.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
 
-            // Download or Get from cache an Sprite
-            var downloadedRequirementSprites = ingredientstDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
-            var spriteRequirementResults = await Task.WhenAll(downloadedRequirementSprites);
-
-            return (spriteRollResult, spriteRequirementResults, uniqueIngredientCount);
+            return (rollSprites, requirementSprites, uniqueIngredientCount);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null, null, uniqueIngredientCount);
+            return (null, null, 0);
         }
     }
 

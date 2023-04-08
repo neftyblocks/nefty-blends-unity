@@ -21,30 +21,21 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         try
         {
-            List<(string, string)> assetDetailsList = new List<(string, string)>();
             var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={currentPage}&limit={slotLimit}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
-            var assetCount = deserializedJsonResult.details.Count;
 
-            for (int i = 0; i < slotLimit && i < assetCount; i++)
-            {
-                if (deserializedJsonResult.details.Count <= i)
-                {
-                    Debug.LogError($"No asset found for slot {i + 1}.");
-                    continue;
-                }
-                var imageHash = deserializedJsonResult.details[i].Data.Img;
-                var assetId = deserializedJsonResult.details[i].AssetId;
-                assetDetailsList.Add((imageHash, assetId));
-            }
+            var assetDetailsList = deserializedJsonResult.details
+                .Take(slotLimit)
+                .Select(detail => (detail.Data.Img, detail.AssetId))
+                .ToList();
 
-            // Download or Get from cache an Sprite
-            var downloadedSprites = assetDetailsList.Select(uriWithId => (imageLoader.GetSpriteAsync(uriWithId.Item1), uriWithId.Item2)).ToArray();
-            var spriteTasks = downloadedSprites.Select(tuple => tuple.Item1).ToArray();
+            var spriteTasks = assetDetailsList
+                .Select(uriWithId => imageLoader.GetSpriteAsync(uriWithId.Img))
+                .ToArray();
+
             var spriteResults = await Task.WhenAll(spriteTasks);
-            // Split resulsts per variable into own array
-            var sprites = spriteResults.Select(sprite => sprite).ToArray();
-            var assetIds = downloadedSprites.Select(tuple => tuple.Item2).ToArray();
+            var sprites = spriteResults.ToArray();
+            var assetIds = assetDetailsList.Select(uriWithId => uriWithId.AssetId).ToArray();
 
             return (sprites, assetIds);
         }
