@@ -84,7 +84,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             List<string> craftDetailsList = new List<string>();
             for (int i = 0;i < ingredientIndexCount; i++)
             {
-                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=1&order=desc&sort=asset_id";
+                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
                 var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
                 if (!deserializedJsonResult.Success)
                 {

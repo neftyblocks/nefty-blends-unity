@@ -17,13 +17,24 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public RectTransform ingredientContainer;
     [SerializeField] public RectTransform rewardContainer;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
-    [SerializeField] public int slotCount { get; set; } = 40;
+    [SerializeField] public int slotCount { get; set; } = 100;
 
     public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites)
     {
         DisplayRollImage(rollSprite);
         DisplayRequirementsImage(requirementSprites);
         DisplayIngredientImage(ingredientSprites);
+    }
+
+    private void InstantiateSlots(int slotCount, GameObject slotPrefab, RectTransform container)
+    {
+        GameObject[] slots = new GameObject[slotCount];
+
+        for (int i = 0; i < slotCount; i++)
+        {
+            slots[i] = Instantiate(slotPrefab, container);
+            slots[i].tag = "Craft";
+        }
     }
 
     public void InstantiateRequirementSlots(int slotCount)
@@ -37,7 +48,7 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void InstantiateOwnedIngredientSlots(int slotcount)
+    public void InstantiateIngredientSlots(int slotcount)
     {
         ingredientSlots = new GameObject[slotcount];
 
@@ -72,9 +83,9 @@ public class CraftingUI : MonoBehaviour
     }
     public void DisplayIngredientImage(Sprite[] downloadedSprites)
     {
-        if (downloadedSprites != null || downloadedSprites.Length > 0)
+        if (downloadedSprites != null)
         {
-            InstantiateOwnedIngredientSlots(downloadedSprites.Length);
+            InstantiateIngredientSlots(downloadedSprites.Length);
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");

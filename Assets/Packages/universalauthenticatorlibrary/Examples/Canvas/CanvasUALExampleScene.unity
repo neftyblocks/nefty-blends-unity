@@ -7230,6 +7230,7 @@ GameObject:
   - component: {fileID: 2092993614}
   - component: {fileID: 2092993613}
   - component: {fileID: 2092993612}
+  - component: {fileID: 2092993615}
   m_Layer: 0
   m_Name: Scroll View
   m_TagString: Untagged
@@ -7278,7 +7279,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 0
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 10
+  m_ScrollSensitivity: 40
   m_Viewport: {fileID: 1172488405}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 1014568337}
@@ -7327,6 +7328,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092993610}
   m_CullTransparentMesh: 1
+--- !u!114 &2092993615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092993610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbb3c116b7db98a4e943898be7f990db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ingredientPrefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
+  ingredientContainer: {fileID: 1784170739}
 --- !u!1 &2097156880
 GameObject:
   m_ObjectHideFlags: 0

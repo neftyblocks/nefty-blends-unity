@@ -12,7 +12,7 @@ public class BlendMainUI : MonoBehaviour
     [SerializeField] public GameObject blendPrefab;
     [SerializeField] public RectTransform blendPrefabContainer;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
-    [SerializeField] public int slotCount { get; set; } = 40;
+    [SerializeField] public int slotCount { get; set; } = 100;
 
     void Awake()
     {
