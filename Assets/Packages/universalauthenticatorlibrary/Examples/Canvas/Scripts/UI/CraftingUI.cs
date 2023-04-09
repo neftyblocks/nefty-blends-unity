@@ -55,7 +55,7 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayRequirementsImage(Sprite[] downloadedSprites ,int[] requiredAssetAmount)
+    public void DisplayRequirementsImage(Sprite[] downloadedSprites ,int[] requiredAssetAmount, int[] templateId)
     {
         if (downloadedSprites != null)
         {
@@ -69,6 +69,7 @@ public class CraftingUI : MonoBehaviour
                 {
                     Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
                     nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+                    nftImage.GetComponentInParent<TemplateNFT>().SetTemplateId(templateId[i]);
                     requirementSlotIndex++;
                 }
             }
@@ -88,10 +89,10 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount)
+    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount, int[] templateId)
     {
         DisplayRollImage(rollSprite);
-        DisplayRequirementsImage(requirementSprites, requiredAssetAmount);
+        DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
         DisplayIngredientImage(ingredientSprites);
     }
 

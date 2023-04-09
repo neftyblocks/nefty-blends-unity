@@ -94,7 +94,8 @@ public class NeftyBlend
 
     public partial class IngredientTemplate
     {
-        public long TemplateId { get; set; }
+        [JsonProperty("template_id")]
+        public int TemplateId { get; set; }
         public string Contract { get; set; }
         public bool IsTransferable { get; set; }
         public bool IsBurnable { get; set; }

@@ -20,11 +20,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     public async void ReceiveBlendId(int blendId)
     {
-        var (rollSprites, requirementSprites,ingredientIndexCount, requiredAssetAmount) = await GetRequiredAssets(blendId);
+        var (rollSprites, requirementSprites,ingredientIndexCount, requiredAssetAmount,templateId) = await GetRequiredAssets(blendId);
         var ingredientSprites = await GetIngredientAssets(blendId, ingredientIndexCount);
 
         uIManager.EnableCraftingUI();
-        craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount);
+        craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId);
     }
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
     {
@@ -33,7 +33,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    public async Task<(Sprite[], Sprite[], int, int[])> GetRequiredAssets(int blendId)
+    public async Task<(Sprite[], Sprite[], int, int[], int[])> GetRequiredAssets(int blendId)
     {
         var uniqueIngredientCountIndex = 0;
 
@@ -45,20 +45,26 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             if (!deserializedJsonResult.Success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return (null, null, 0,null);
+                return (null, null, 0,null,null);
             }
 
             uniqueIngredientCountIndex = deserializedJsonResult.MainData.Ingredients.Count;
             var rollSprites = await Task.WhenAll(deserializedJsonResult.MainData.Rolls.Select(i => imageLoader.GetSpriteAsync(i.Outcomes[0].Results[0].Template.ImmutableData.Img)));
             var requirementSprites = await Task.WhenAll(deserializedJsonResult.MainData.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
             var requiredAssetAmount = deserializedJsonResult.MainData.Ingredients.Select(i => i.Amount).ToArray();
-           
-            return (rollSprites, requirementSprites, uniqueIngredientCountIndex, requiredAssetAmount);
+            var templateId = deserializedJsonResult.MainData.Ingredients.Select(i => i.Template.TemplateId).ToArray();
+
+            foreach(var temp in templateId)
+            {
+                Debug.Log(temp);
+            }
+
+            return (rollSprites, requirementSprites, uniqueIngredientCountIndex, requiredAssetAmount,templateId);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null, null, 0,null);
+            return (null, null, 0, null, null);
         }
     }
 
