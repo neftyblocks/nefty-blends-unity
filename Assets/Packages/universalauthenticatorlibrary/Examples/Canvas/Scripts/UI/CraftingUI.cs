@@ -38,7 +38,7 @@ public class CraftingUI : MonoBehaviour
         InstantiateSlots(slotCount, requirementPrefab, requirementContainer, ref requirementSlots);
     }
 
-    public void InstantiateIngredientSlots(int slotcount)
+    public void InstantiateIngredientSlots(int slotCount)
     {
         ResetSlots(ingredientSlots);
         InstantiateSlots(slotCount, ingredientPrefab, ingredientContainer, ref ingredientSlots);

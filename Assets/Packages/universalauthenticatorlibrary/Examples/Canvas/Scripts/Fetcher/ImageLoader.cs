@@ -29,7 +29,6 @@ public class ImageLoader : MonoBehaviour
     {
         if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
         {
-            Debug.Log($"{imageUri} already cached");
             return sprite;
         }
 
