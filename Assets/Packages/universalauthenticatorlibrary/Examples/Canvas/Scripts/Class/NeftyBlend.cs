@@ -43,7 +43,7 @@ public class NeftyBlend
     {
         public string Type { get; set; }
         public long Index { get; set; }
-        public long Amount { get; set; }
+        public int Amount { get; set; }
         public Effect Effect { get; set; }
         public Attributes Attributes { get; set; }
         public string DisplayData { get; set; }

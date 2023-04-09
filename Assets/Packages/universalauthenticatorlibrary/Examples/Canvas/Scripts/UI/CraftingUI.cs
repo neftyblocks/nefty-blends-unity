@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -53,15 +55,22 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayRequirementsImage(Sprite[] downloadedSprites)
+    public void DisplayRequirementsImage(Sprite[] downloadedSprites ,int[] requiredAssetAmount)
     {
         if (downloadedSprites != null)
         {
-            InstantiateRequirementSlots(downloadedSprites.Length);
-            for (int i = 0; i < downloadedSprites.Length; i++)
+            int totalRequiredAssets = requiredAssetAmount.Sum();
+            InstantiateRequirementSlots(totalRequiredAssets);
+            int requirementSlotIndex = 0;
+
+            for (int i = 0; i < requiredAssetAmount.Length; i++)
             {
-                Transform nftImage = requirementSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+                for (int j = 0; j < requiredAssetAmount[i]; j++)
+                {
+                    Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
+                    nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+                    requirementSlotIndex++;
+                }
             }
         }
     }
@@ -79,10 +88,10 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites)
+    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount)
     {
         DisplayRollImage(rollSprite);
-        DisplayRequirementsImage(requirementSprites);
+        DisplayRequirementsImage(requirementSprites, requiredAssetAmount);
         DisplayIngredientImage(ingredientSprites);
     }
 
