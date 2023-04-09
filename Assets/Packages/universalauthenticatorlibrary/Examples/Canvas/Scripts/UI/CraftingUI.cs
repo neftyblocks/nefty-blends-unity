@@ -69,31 +69,33 @@ public class CraftingUI : MonoBehaviour
                 {
                     Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
                     nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    nftImage.GetComponentInParent<TemplateNFT>().SetTemplateId(templateId[i]);
+                    requirementSlots[i].GetComponent<TemplateNFT>().SetTemplateId(templateId[i]);
                     requirementSlotIndex++;
                 }
             }
         }
     }
 
-    public void DisplayIngredientImage(Sprite[] downloadedSprites)
+    public void DisplayIngredientImage(Sprite[] downloadedSprites, string[] assetIds)
     {
         if (downloadedSprites != null)
         {
             InstantiateIngredientSlots(downloadedSprites.Length);
+
             for (int i = 0; i < downloadedSprites.Length; i++)
             {
                 Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
                 nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
+                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
             }
         }
     }
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount, int[] templateId)
+    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount, int[] templateId, string[] assetIds)
     {
         DisplayRollImage(rollSprite);
         DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
-        DisplayIngredientImage(ingredientSprites);
+        DisplayIngredientImage(ingredientSprites, assetIds);
     }
 
     public void ResetSlots(GameObject[] gameObjects)

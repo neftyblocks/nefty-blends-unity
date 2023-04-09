@@ -21,10 +21,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async void ReceiveBlendId(int blendId)
     {
         var (rollSprites, requirementSprites,ingredientIndexCount, requiredAssetAmount,templateId) = await GetRequiredAssets(blendId);
-        var ingredientSprites = await GetIngredientAssets(blendId, ingredientIndexCount);
+        var (ingredientSprites,assetIds) = await GetIngredientAssets(blendId, ingredientIndexCount);
 
         uIManager.EnableCraftingUI();
-        craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId);
+        craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId, assetIds);
     }
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
     {
@@ -54,11 +54,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             var requiredAssetAmount = deserializedJsonResult.MainData.Ingredients.Select(i => i.Amount).ToArray();
             var templateId = deserializedJsonResult.MainData.Ingredients.Select(i => i.Template.TemplateId).ToArray();
 
-            foreach(var temp in templateId)
-            {
-                Debug.Log(temp);
-            }
-
             return (rollSprites, requirementSprites, uniqueIngredientCountIndex, requiredAssetAmount,templateId);
         }
         catch (Exception ex)
@@ -68,11 +63,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
     }
 
-    public async Task<Sprite[]> GetIngredientAssets(int blendId, int ingredientIndexCount)
+    public async Task<(Sprite[], string[])> GetIngredientAssets(int blendId, int ingredientIndexCount)
     {
         try
         {
-            List<string> craftDetailsList = new List<string>();
+            List<(string,string)> craftDetailsList = new List<(string, string)>();
             for (int i = 0;i < ingredientIndexCount; i++)
             {
                 var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
@@ -80,25 +75,27 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 if (!deserializedJsonResult.Success)
                 {
                     Debug.LogError("No data found for the given ingredient.");
-                    return null;
+                    return (null,null);
                 }
                 foreach (var ingredient in deserializedJsonResult.DataData)
                 {
                     var ingredientOutcome = ingredient.Data.Img;
-                    craftDetailsList.Add(ingredientOutcome);
+                    var assetId = ingredient.AssetId;
+                    craftDetailsList.Add((ingredientOutcome, assetId));
                 }
 
             }
             // Download or Get from cache an Sprite
-            var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri)).ToArray();
+            var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
+            var assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
             var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
 
-            return spriteIngredientResults; 
+            return (spriteIngredientResults,assetIds); 
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: {ex}");
-            return (null);
+            return (null, null);
         }
     }
 }
