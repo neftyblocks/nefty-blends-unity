@@ -16,15 +16,23 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         // Event: When Blend Image is clicked
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
+        TemplateUIElementController.UserSelectedTemplate += ReceiveTemplateId;
     }
 
     public async void ReceiveBlendId(int blendId)
     {
+        Debug.Log(blendId);
         var (rollSprites, requirementSprites,ingredientIndexCount, requiredAssetAmount,templateId) = await GetRequiredAssets(blendId);
         var (ingredientSprites,assetIds) = await GetIngredientAssets(blendId, ingredientIndexCount);
 
         uIManager.EnableCraftingUI();
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId, assetIds);
+    }
+
+    public async void ReceiveTemplateId(int blendId)
+    {
+        Debug.Log(blendId);
+
     }
 
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
