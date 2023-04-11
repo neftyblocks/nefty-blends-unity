@@ -22,6 +22,7 @@ public class ImageLoader : MonoBehaviour
         {
             throw new UnityException(request.error);
         }
+
         return request.downloadHandler.text;
     }
 

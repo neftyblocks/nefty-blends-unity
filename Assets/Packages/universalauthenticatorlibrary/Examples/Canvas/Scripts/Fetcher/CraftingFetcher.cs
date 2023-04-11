@@ -26,6 +26,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         uIManager.EnableCraftingUI();
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId, assetIds);
     }
+
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
@@ -49,7 +50,12 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             }
 
             uniqueIngredientCountIndex = deserializedJsonResult.MainData.Ingredients.Count;
-            var rollSprites = await Task.WhenAll(deserializedJsonResult.MainData.Rolls.Select(i => imageLoader.GetSpriteAsync(i.Outcomes[0].Results[0].Template.ImmutableData.Img)));
+            var rollSprites = await Task.WhenAll(deserializedJsonResult.MainData.Rolls
+                 .SelectMany(i => i.Outcomes)
+                 .SelectMany(o => o.Results)
+                 .Select(r => r.Template?.ImmutableData?.Img)
+                 .Where(img => img != null)
+                 .Select(imageLoader.GetSpriteAsync));
             var requirementSprites = await Task.WhenAll(deserializedJsonResult.MainData.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
             var requiredAssetAmount = deserializedJsonResult.MainData.Ingredients.Select(i => i.Amount).ToArray();
             var templateId = deserializedJsonResult.MainData.Ingredients.Select(i => i.Template.TemplateId).ToArray();
@@ -85,7 +91,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 }
 
             }
-            // Download or Get from cache an Sprite
+
             var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
             var assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
             var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);

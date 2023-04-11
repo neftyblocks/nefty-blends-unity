@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,17 +10,20 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] private CraftingFetcher craftingFetcher;
     [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] public GameObject[] requirementSlots;
-    [SerializeField] public GameObject[] rewardSlots;
+    [SerializeField] public GameObject[] rollSlots;
     [SerializeField] public GameObject recipeUI;
     [SerializeField] public GameObject ingredientUI;
     [SerializeField] public GameObject requirementPrefab;
     [SerializeField] public GameObject ingredientPrefab;
-    [SerializeField] public GameObject rewardPrefab;
+    [SerializeField] public GameObject rollPrefab;
+    [SerializeField] public GameObject rollPaginationArrow;
     [SerializeField] public RectTransform requirementContainer;
     [SerializeField] public RectTransform ingredientContainer;
-    [SerializeField] public RectTransform rewardContainer;
+    [SerializeField] public RectTransform rollContainer;
+    [SerializeField] public Sprite[] rollImages { get; set; }
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 100;
+    int currentRollSpriteIndex = 0;
 
     private void InstantiateSlots(int slotCount, GameObject slotPrefab, RectTransform container, ref GameObject[] slots)
     {
@@ -44,14 +48,50 @@ public class CraftingUI : MonoBehaviour
         InstantiateSlots(slotCount, ingredientPrefab, ingredientContainer, ref ingredientSlots);
     }
 
+    public void DisplayRollPaginationArrows(Sprite[] rollSprite)
+    {
+        if (rollSprite.Length >= 2)
+        {
+            rollPaginationArrow.SetActive(true);
+        }
+        else
+        {
+            rollPaginationArrow.SetActive(false);
+        }
+    }
+
+    public void DisplayNextRollSprite()
+    {
+        currentRollSpriteIndex = (currentRollSpriteIndex + 1) % rollImages.Length;
+        Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
+        nftImage.GetComponent<Image>().sprite = rollImages[currentRollSpriteIndex];
+    }
+
+    public void DisplayPreviousRollSprite()
+    {
+        currentRollSpriteIndex--;
+        if (currentRollSpriteIndex < 0)
+        {
+            currentRollSpriteIndex = rollImages.Length - 1;
+        }
+        Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
+        nftImage.GetComponent<Image>().sprite = rollImages[currentRollSpriteIndex];
+    }
+
+    public void InstantiateRollSlots(int slotCount)
+    {
+        ResetSlots(rollSlots);
+        InstantiateSlots(slotCount, rollPrefab, rollContainer, ref rollSlots);
+    }
+
     public void DisplayRollImage(Sprite[] downloadedSprites)
     {
-        if (downloadedSprites != null)
+        InstantiateRollSlots(1);
+        rollImages = downloadedSprites;
+        if (downloadedSprites != null && downloadedSprites.Length > 0)
         {
-            for (int i = 0; i < downloadedSprites.Length; i++)
-            {
-               rewardContainer.GetComponent<Image>().sprite = downloadedSprites[i];
-            }
+            Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
+            nftImage.GetComponent<Image>().sprite = downloadedSprites[0];
         }
     }
 
@@ -96,6 +136,7 @@ public class CraftingUI : MonoBehaviour
         DisplayRollImage(rollSprite);
         DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
         DisplayIngredientImage(ingredientSprites, assetIds);
+        DisplayRollPaginationArrows(rollSprite);
     }
 
     public void ResetSlots(GameObject[] gameObjects)
@@ -115,5 +156,7 @@ public class CraftingUI : MonoBehaviour
     {
         recipeUI.SetActive(!recipeUI.activeSelf);
         ingredientUI.SetActive(!ingredientUI.activeSelf);
+        TextMeshProUGUI tabSwitcherText = gameObject.transform.Find("Utility/TabSwitcherButton/TabSwitcherText").GetComponent<TextMeshProUGUI>();
+        tabSwitcherText.text = recipeUI.activeSelf ? "Requirements" : "Inventory";
     }
 }
