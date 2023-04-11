@@ -108,8 +108,8 @@ public class CraftingUI : MonoBehaviour
                 {
                     Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
                     nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    requirementSlots[i].GetComponent<TemplateNFT>().SetTemplateId(templateId[i]);
-                    requirementSlots[i].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(templateId[i]);
+                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
                     requirementSlotIndex++;
                 }
             }
