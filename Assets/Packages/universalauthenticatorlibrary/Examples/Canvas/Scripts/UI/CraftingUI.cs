@@ -137,6 +137,20 @@ public class CraftingUI : MonoBehaviour
         DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
         DisplayIngredientImage(ingredientSprites, assetIds);
         DisplayRollPaginationArrows(rollSprite);
+        DisplaySelectedIngredient();
+    }
+
+    public void DisplaySelectedIngredient()
+    {
+        if (ingredientSlots != null)
+        {
+            for (int i = 0; i < ingredientSlots.Length; i++)
+            {
+                Transform selectedIngredient = ingredientSlots[i].transform.Find("SelectedIngredient");
+                selectedIngredient.GetComponent<NFT>().SetAsssetId();
+                selectedIngredient.GetComponent<TextMeshPro>().text = ;
+            }
+        }
     }
 
     public void ResetSlots(GameObject[] gameObjects)

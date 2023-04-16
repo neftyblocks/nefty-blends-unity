@@ -10,29 +10,32 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     [SerializeField] public PluginController pluginController;
     [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public CraftingUI craftingUI;
+    [SerializeField] public CraftAssetPopupUI craftAssetPopupUI;
+    [SerializeField] public CraftAssetPopupController craftAssetPopupController;
     [SerializeField] public UIManager uIManager;
 
     private void OnEnable()
     {
         // Event: When Blend Image is clicked
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
-        TemplateUIElementController.UserSelectedTemplate += ReceiveTemplateId;
+        TemplateUIElementController.UserSelectedIngredient += ReceiveIngredients;
     }
 
     public async void ReceiveBlendId(int blendId)
     {
-        Debug.Log(blendId);
         var (rollSprites, requirementSprites,ingredientIndexCount, requiredAssetAmount,templateId) = await GetRequiredAssets(blendId);
-        var (ingredientSprites,assetIds) = await GetIngredientAssets(blendId, ingredientIndexCount);
-
+        var (ingredientSprites,assetIds) = await GetAllIndexIngredientAssets(blendId, ingredientIndexCount);
+        craftAssetPopupController.currentBlendId = blendId;
         uIManager.EnableCraftingUI();
         craftingUI.DisplayAssetImages(rollSprites, requirementSprites, ingredientSprites, requiredAssetAmount,templateId, assetIds);
     }
 
-    public async void ReceiveTemplateId(int blendId)
+    public async void ReceiveIngredients(int ingredientIndex)
     {
-        Debug.Log(blendId);
-
+        var blendId = craftAssetPopupController.currentBlendId;
+        var (ingredientSprites, assetIds, assetNames, mintNumbers) = await GetExactIndexIngredientAssets(blendId, ingredientIndex);
+        uIManager.EnableAssetPopup();
+        craftAssetPopupUI.DisplayAssetImages(ingredientSprites, assetIds, assetNames, mintNumbers);
     }
 
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
@@ -77,7 +80,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
     }
 
-    public async Task<(Sprite[], string[])> GetIngredientAssets(int blendId, int ingredientIndexCount)
+    public async Task<(Sprite[], string[])> GetAllIndexIngredientAssets(int blendId, int ingredientIndexCount)
     {
         try
         {
@@ -97,7 +100,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                     var assetId = ingredient.AssetId;
                     craftDetailsList.Add((ingredientOutcome, assetId));
                 }
-
             }
 
             var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
@@ -110,6 +112,44 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         {
             Debug.Log($"Error: {ex}");
             return (null, null);
+        }
+    }
+
+    public async Task<(Sprite[], string[], string[], int[])> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
+    {
+        try
+        {
+            List<(string, string, string, int)> craftDetailsList = new List<(string, string, string, int)>();
+            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
+            var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
+            if (!deserializedJsonResult.Success)
+            {
+                Debug.LogError("No data found for the given ingredient.");
+                return (null, null, null, null);
+            }
+            foreach (var ingredient in deserializedJsonResult.DataData)
+            {
+                var ingredientOutcome = ingredient.Data.Img;
+                var assetId = ingredient.AssetId;
+                var assetName = ingredient.Name;
+                var mintNumber = ingredient.TemplateMint;
+
+                craftDetailsList.Add((ingredientOutcome, assetId, assetName, mintNumber));
+            }
+
+            var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
+            var assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
+            var assetNames = craftDetailsList.Select(i => i.Item3).ToArray();
+            var mintNumbers = craftDetailsList.Select(i => i.Item4).ToArray();
+
+            var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
+
+            return (spriteIngredientResults, assetIds,assetNames,mintNumbers);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Error: {ex}");
+            return (null, null,null,null);
         }
     }
 }

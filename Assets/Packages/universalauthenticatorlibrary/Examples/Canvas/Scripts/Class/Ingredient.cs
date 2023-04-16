@@ -25,7 +25,8 @@ public class Ingredient
         public Template Template { get; set; }
         public MutableData MutableData { get; set; }
         public MutableData ImmutableData { get; set; }
-        public long TemplateMint { get; set; }
+        [JsonProperty("template_mint")]
+        public int TemplateMint { get; set; }
         public List<object> BackedTokens { get; set; }
         public object BurnedByAccount { get; set; }
         public object BurnedAtBlock { get; set; }

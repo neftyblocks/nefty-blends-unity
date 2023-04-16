@@ -7,8 +7,8 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
 {
     [SerializeField] public GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
-    public delegate void UserSelectedBlendInEventHandler(int blendId);
-    public static event UserSelectedBlendInEventHandler UserSelectedTemplate;
+    public delegate void UserSelectedBlendInEventHandler(int ingredientIndex);
+    public static event UserSelectedBlendInEventHandler UserSelectedIngredient;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -24,8 +24,8 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
     }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        int blendId = gameObject.GetComponent<TemplateNFT>().GetBlendId();
-        UserSelectedTemplate(blendId);
+        int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
+        UserSelectedIngredient(ingredientIndex);
     }
 
     public bool IsClicked()

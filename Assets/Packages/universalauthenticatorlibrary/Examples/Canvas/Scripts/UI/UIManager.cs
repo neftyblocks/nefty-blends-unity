@@ -7,13 +7,16 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject inventoryUI;
     [SerializeField] private GameObject blendMenuUI;
     [SerializeField] private GameObject craftingUI;
+    [SerializeField] private GameObject assetPopup;
+
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
     public enum UIType
     {
         InventoryMenu,
         BlendMenu,
-        CraftingMenu
+        CraftingMenu,
+        AssetPopupMenu
     }
 
     private void Awake()
@@ -21,6 +24,8 @@ public class UIManager : MonoBehaviour
         UIs.Add(UIType.InventoryMenu, inventoryUI);
         UIs.Add(UIType.BlendMenu, blendMenuUI);
         UIs.Add(UIType.CraftingMenu, craftingUI);
+        UIs.Add(UIType.AssetPopupMenu, assetPopup);
+
 
         if (!UIs[UIType.InventoryMenu].activeInHierarchy)
         {
@@ -79,4 +84,17 @@ public class UIManager : MonoBehaviour
         }
         UIs[UIType.CraftingMenu].SetActive(true);
     }
+    public void EnableAssetPopup()
+    {
+        foreach (KeyValuePair<UIType, GameObject> ui in UIs)
+        {
+            if (ui.Key != UIType.AssetPopupMenu && ui.Value.activeInHierarchy)
+            {
+                ui.Value.SetActive(false);
+            }
+        }
+        UIs[UIType.CraftingMenu].SetActive(true);
+        UIs[UIType.AssetPopupMenu].SetActive(true);
+    }
+
 }

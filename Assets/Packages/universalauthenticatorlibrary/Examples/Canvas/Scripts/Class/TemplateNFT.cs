@@ -11,7 +11,7 @@ public class TemplateNFT : MonoBehaviour
     {
         templateId = id;
     }
-    public int GetBlendId()
+    public int GetTemplateId()
     {
         return templateId;
     }

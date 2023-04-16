@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -5,6 +6,9 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 {
     [SerializeField] public GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
+    [SerializeField] private TextMeshProUGUI assetNameText;
+    [SerializeField] private TextMeshProUGUI mintNumberText;
+
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -26,5 +30,15 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public bool IsClicked()
     {
         return isClicked;
+    }
+
+    public void SetAssetNameText(string text)
+    {
+        assetNameText.text = text;
+    }
+
+    public void SetMintNumberText(string text)
+    {
+        mintNumberText.text = text;
     }
 }
