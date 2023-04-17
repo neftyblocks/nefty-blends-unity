@@ -4,20 +4,24 @@ using UnityEngine;
 
 public class BlendController : MonoBehaviour
 {
+    [SerializeField] public GameObject requirementPanel;
    public bool CanBlend()
-    {
-        if (true)
+   {
+        foreach (Transform child in requirementPanel.transform)
         {
-            return true;
+            if (child.GetComponent<TemplateUIElementController>().selectedAssetId == null || child.GetComponent<TemplateUIElementController>().selectedAssetId == "")
+            {
+                return false; // return false if any child is empty
+            }
         }
-        return false;
+        return true; 
     }
 
     public void SubmitBlend()
     {
         if (CanBlend())
         {
-
+            Debug.Log("All assets are selected.");
         }
         else
         {
