@@ -147,8 +147,8 @@ public class CraftingUI : MonoBehaviour
             for (int i = 0; i < ingredientSlots.Length; i++)
             {
                 Transform selectedIngredient = ingredientSlots[i].transform.Find("SelectedIngredient");
-                selectedIngredient.GetComponent<NFT>().SetAsssetId();
-                selectedIngredient.GetComponent<TextMeshPro>().text = ;
+/*                selectedIngredient.GetComponent<NFT>().SetAsssetId();
+                selectedIngredient.GetComponent<TextMeshPro>().text = ;*/
             }
         }
     }

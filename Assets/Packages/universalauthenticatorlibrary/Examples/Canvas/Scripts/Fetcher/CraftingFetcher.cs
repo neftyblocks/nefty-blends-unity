@@ -13,12 +13,15 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     [SerializeField] public CraftAssetPopupUI craftAssetPopupUI;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
     [SerializeField] public UIManager uIManager;
+    [SerializeField] public GameObject currentSelectedIngredient;
 
     private void OnEnable()
     {
         // Event: When Blend Image is clicked
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
         TemplateUIElementController.UserSelectedIngredient += ReceiveIngredients;
+        TemplateUIElementController.UserSelectedGameobject += selectedObject;
+
     }
 
     public async void ReceiveBlendId(int blendId)
@@ -36,6 +39,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         var (ingredientSprites, assetIds, assetNames, mintNumbers) = await GetExactIndexIngredientAssets(blendId, ingredientIndex);
         uIManager.EnableAssetPopup();
         craftAssetPopupUI.DisplayAssetImages(ingredientSprites, assetIds, assetNames, mintNumbers);
+    }
+
+    public void selectedObject(GameObject gameObject)
+    {
+        currentSelectedIngredient = gameObject;
     }
 
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
@@ -136,12 +144,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
                 craftDetailsList.Add((ingredientOutcome, assetId, assetName, mintNumber));
             }
-
             var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
             var assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
             var assetNames = craftDetailsList.Select(i => i.Item3).ToArray();
             var mintNumbers = craftDetailsList.Select(i => i.Item4).ToArray();
-
             var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
 
             return (spriteIngredientResults, assetIds,assetNames,mintNumbers);

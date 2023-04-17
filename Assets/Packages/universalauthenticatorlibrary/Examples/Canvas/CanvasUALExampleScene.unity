@@ -3776,6 +3776,7 @@ MonoBehaviour:
   craftAssetPopupUI: {fileID: 1194180357}
   craftAssetPopupController: {fileID: 1863190185}
   uIManager: {fileID: 1202977173}
+  currentSelectedIngredient: {fileID: 0}
 --- !u!1 &992204290
 GameObject:
   m_ObjectHideFlags: 0

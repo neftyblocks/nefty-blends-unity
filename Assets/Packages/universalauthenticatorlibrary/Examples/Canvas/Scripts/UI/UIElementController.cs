@@ -9,7 +9,6 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] private TextMeshProUGUI assetNameText;
     [SerializeField] private TextMeshProUGUI mintNumberText;
 
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         selectionBoardImage.SetActive(true);
@@ -25,6 +24,7 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         isClicked = isClicked ? false : true;
+
     }
 
     public bool IsClicked()
