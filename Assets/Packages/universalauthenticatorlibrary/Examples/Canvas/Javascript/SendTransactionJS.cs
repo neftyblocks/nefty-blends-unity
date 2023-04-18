@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class JS : MonoBehaviour
+public class SendTransactionJS : MonoBehaviour
 {
     [DllImport("__Internal")]
-    private static extern void Hello(int blend_id, string[] asset_ids, int count);
+    private static extern void SubmitBlend(int blendId, string[] assetIds, int count);
 
     [DllImport("__Internal")]
     private static extern void HelloString(string str);
@@ -23,15 +23,8 @@ public class JS : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void StringArray(string[] array, int size);
 
-    void Start()
+    public void SendTransactionBlend(int blendId, string[] assetIds)
     {
-
-    }
-
-    public void Test()
-    {
-        string[] myArray = new string[] { "123", "124", "124" }; 
-        Hello(123, myArray, myArray.Length);
-    
+        SubmitBlend(blendId, assetIds, assetIds.Length);
     }
 }

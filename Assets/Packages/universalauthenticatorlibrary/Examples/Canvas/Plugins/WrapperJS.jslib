@@ -1,5 +1,5 @@
 mergeInto(LibraryManager.library, {
-  Hello: async function (blend_id, asset_ids, count) {
+  SubmitBlend: async function (blend_id, asset_ids, count) {
   let asset_array = [];
 
   for (var i = 0; i < count; i++) {

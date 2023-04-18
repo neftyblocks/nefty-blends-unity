@@ -8598,6 +8598,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requirementPanel: {fileID: 943324713}
+  sendTransactionJS: {fileID: 281018658}
+  craftAssetPopupController: {fileID: 1863190185}
 --- !u!224 &2087280232
 RectTransform:
   m_ObjectHideFlags: 0

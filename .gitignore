@@ -73,3 +73,7 @@ crashlytics-build.properties
 Assets/Prefabs/UI.prefab
 
 Assets/Prefabs/UI.prefab.meta
+
+# Ignore temporaries from GameCI
+/[Aa]rtifacts/
+/[Cc]odeCoverage/
