@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Asset
   - Blend
   - Craft
+  - Asset
   layers:
   - Default
   - TransparentFX
@@ -14,7 +14,7 @@ TagManager:
   - 
   - Water
   - UI
-  - Background
+  - 
   - 
   - 
   - 
@@ -43,7 +43,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Background
-    uniqueID: 410821909
     locked: 0
