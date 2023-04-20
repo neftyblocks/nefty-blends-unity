@@ -68,16 +68,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 return (null, null, 0,null,null);
             }
 
-            uniqueIngredientCountIndex = deserializedJsonResult.MainData.Ingredients.Count;
-            var rollSprites = await Task.WhenAll(deserializedJsonResult.MainData.Rolls
+            uniqueIngredientCountIndex = deserializedJsonResult.Details.Ingredients.Count;
+            var rollSprites = await Task.WhenAll(deserializedJsonResult.Details.Rolls
                  .SelectMany(i => i.Outcomes)
                  .SelectMany(o => o.Results)
                  .Select(r => r.Template?.ImmutableData?.Img)
                  .Where(img => img != null)
                  .Select(imageLoader.GetSpriteAsync));
-            var requirementSprites = await Task.WhenAll(deserializedJsonResult.MainData.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
-            var requiredAssetAmount = deserializedJsonResult.MainData.Ingredients.Select(i => i.Amount).ToArray();
-            var templateId = deserializedJsonResult.MainData.Ingredients.Select(i => i.Template.TemplateId).ToArray();
+            var requirementSprites = await Task.WhenAll(deserializedJsonResult.Details.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
+            var requiredAssetAmount = deserializedJsonResult.Details.Ingredients.Select(i => i.Amount).ToArray();
+            var templateId = deserializedJsonResult.Details.Ingredients.Select(i => i.Template.TemplateId).ToArray();
 
             return (rollSprites, requirementSprites, uniqueIngredientCountIndex, requiredAssetAmount,templateId);
         }
@@ -102,7 +102,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                     Debug.LogError("No data found for the given ingredient.");
                     return (null,null);
                 }
-                foreach (var ingredient in deserializedJsonResult.DataData)
+                foreach (var ingredient in deserializedJsonResult.details)
                 {
                     var ingredientOutcome = ingredient.Data.Img;
                     var assetId = ingredient.AssetId;
@@ -135,7 +135,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 Debug.LogError("No data found for the given ingredient.");
                 return (null, null, null, null);
             }
-            foreach (var ingredient in deserializedJsonResult.DataData)
+            foreach (var ingredient in deserializedJsonResult.details)
             {
                 var ingredientOutcome = ingredient.Data.Img;
                 var assetId = ingredient.AssetId;

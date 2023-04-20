@@ -24,7 +24,6 @@ public class CraftAssetPopupUI : MonoBehaviour
             {
                 Destroy(gameObjects[i]);
             }
-
             gameObjects[i] = null;
         }
     }

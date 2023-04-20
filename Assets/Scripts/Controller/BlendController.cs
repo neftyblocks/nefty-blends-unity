@@ -16,6 +16,7 @@ public class BlendController : MonoBehaviour
                 return false; // return false if any child is empty
             }
         }
+
         return true; 
     }
 

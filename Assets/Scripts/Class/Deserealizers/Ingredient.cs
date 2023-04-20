@@ -8,11 +8,11 @@ public class Ingredient
     
     public bool Success { get; set; }
     [JsonProperty("data")]
-    public List<Datum> DataData { get; set; }
+    public List<Details> details { get; set; }
     public long QueryTime { get; set; }
     
 
-    public partial class Datum
+    public partial class Details
     {
         public string Contract { get; set; }
         [JsonProperty("asset_id")]

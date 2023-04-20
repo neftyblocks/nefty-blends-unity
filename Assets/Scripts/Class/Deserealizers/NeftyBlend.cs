@@ -7,7 +7,7 @@ public class NeftyBlend
 {
     public bool Success { get; set; }
     [JsonProperty("data")]
-    public Data MainData { get; set; }
+    public Data Details { get; set; }
     public long QueryTime { get; set; }
 
     public partial class Data

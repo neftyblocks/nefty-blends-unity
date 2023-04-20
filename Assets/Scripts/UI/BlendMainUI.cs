@@ -1,20 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BlendMainUI : MonoBehaviour
 {
-    [SerializeField] private DashboardController dashboardController;
     [SerializeField] private BlendFetcherController blendFetcherController;
-    [SerializeField] public GameObject[] blendSlots;
-    [SerializeField] public GameObject blendPrefab;
-    [SerializeField] public RectTransform blendPrefabContainer;
-    [SerializeField] public int apiCurrentPage { get; set; } = 1;
-    [SerializeField] public int slotCount { get; set; } = 100;
+    [SerializeField] private GameObject[] blendSlots;
+    [SerializeField] private GameObject blendSlotPrefab;
+    [SerializeField] private RectTransform blendPrefabContainer;
+    [SerializeField] private int apiCurrentPage { get; set; } = 1;
+    [SerializeField] private  int slotCount { get; set; } = 100;
 
-    void Awake()
+    void Start()
     {
         InstantiateBlendSlots();
         DisplayAssetImages();
@@ -22,18 +18,18 @@ public class BlendMainUI : MonoBehaviour
 
     public async void DisplayAssetImages()
     {
-        var (downloadedSprites, blendIds,contractNames) = await blendFetcherController.GetBlendAssets(slotCount, apiCurrentPage);
+        var blendAsset = await blendFetcherController.FetchBlendAssetsAsync(slotCount, apiCurrentPage);
 
-        if (downloadedSprites != null)
+        if (blendAsset != null)
         {
-            for (int i = 0; i < downloadedSprites.Length; i++)
+            for (int i = 0; i < blendAsset.sprites.Length; i++)
             {
-                if (downloadedSprites[i] != null)
+                if (blendAsset.sprites[i] != null)
                 {
                     Transform nftImage = blendSlots[i].transform.Find("NFT_Image");
-                    nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendIds[i]);
-                    blendSlots[i].GetComponent<BlendNFT>().SetContractName(contractNames[i]);
+                    nftImage.GetComponent<Image>().sprite = blendAsset.sprites[i];
+                    blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAsset.assetIds[i]);
+                    blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAsset.contractNames[i]);
                 }
             }
         }
@@ -43,7 +39,7 @@ public class BlendMainUI : MonoBehaviour
         blendSlots = new GameObject[slotCount];
         for (int i = 0; i < slotCount; i++)
         {
-            blendSlots[i] = Instantiate(blendPrefab, blendPrefabContainer);
+            blendSlots[i] = Instantiate(blendSlotPrefab, blendPrefabContainer);
             blendSlots[i].tag = "Blend";
         }
     }
