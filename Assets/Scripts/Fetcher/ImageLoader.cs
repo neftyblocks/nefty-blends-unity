@@ -33,7 +33,7 @@ public class ImageLoader : MonoBehaviour
             return sprite;
         }
 
-        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
+        var url = $"{ PluginController.ipfsUrl }?ipfs={ imageUri }&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
         var operation = request.SendWebRequest();
 

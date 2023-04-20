@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -131,12 +130,12 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount, int[] templateId, string[] assetIds)
-    {
-        DisplayRollImage(rollSprite);
-        DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
-        DisplayIngredientImage(ingredientSprites, assetIds);
-        DisplayRollPaginationArrows(rollSprite);
+    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {   
+        DisplayRollImage(requiredAssetResult.rollSprites);
+        DisplayRequirementsImage(requiredAssetResult.requirementSprites, requiredAssetResult.requiredAssetAmount, requiredAssetResult.templateId);
+        DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
+        DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
         DisplaySelectedIngredient();
     }
 

@@ -44,19 +44,19 @@ public class CraftAssetPopupUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(Sprite[] downloadedSprites, string[] assetIds, string[] assetNames, int[] mintNumbers)
+    public void DisplayAssetImages(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
-        if (downloadedSprites != null)
+        if (exactIndexIngredientAssetsResult.sprites != null)
         {
-            InstantiateCraftAssetPopupUI(downloadedSprites,assetIds);
+            InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult.sprites, exactIndexIngredientAssetsResult.assetIds);
 
-            for (int i = 0; i < downloadedSprites.Length; i++)
+            for (int i = 0; i < exactIndexIngredientAssetsResult.sprites.Length; i++)
             {
                 Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
-                ingredientSlots[i].GetComponent<NFT>().SetAssetName(assetNames[i]);
-                ingredientSlots[i].GetComponent<NFT>().SetMintNumber(mintNumbers[i]);
+                nftImage.GetComponent<Image>().sprite = exactIndexIngredientAssetsResult.sprites[i];
+                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(exactIndexIngredientAssetsResult.assetIds[i]);
+                ingredientSlots[i].GetComponent<NFT>().SetAssetName(exactIndexIngredientAssetsResult.assetNames[i]);
+                ingredientSlots[i].GetComponent<NFT>().SetMintNumber(exactIndexIngredientAssetsResult.mintNumbers[i]);
             }
             UpdateAssetText();
         }

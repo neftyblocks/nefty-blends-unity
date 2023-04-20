@@ -27,16 +27,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            var requiredAssets = await GetRequiredAssets(blendId);
-            var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssets.uniqueIngredientCountIndex);
+            var requiredAssetsResult = await GetRequiredAssets(blendId);
+            var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult.uniqueIngredientCountIndex);
 
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
-            craftingUI.DisplayAssetImages(requiredAssets.rollSprites, requiredAssets.requirementSprites, ingredientAssetsResult.ingredientSprites, requiredAssets.requiredAssetAmount, requiredAssets.templateId, ingredientAssetsResult.assetIds);
+            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult);
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error receiving blend ID: {ex}");
+            Debug.LogError($"Error receiving blend ID: { ex }");
         }
     }
 
@@ -48,11 +48,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             var exactIndexIngredientAssetsResult = await GetExactIndexIngredientAssets(blendId, ingredientIndex);
 
             uIManager.EnableAssetPopup();
-            craftAssetPopupUI.DisplayAssetImages(exactIndexIngredientAssetsResult.sprites, exactIndexIngredientAssetsResult.assetIds, exactIndexIngredientAssetsResult.assetNames, exactIndexIngredientAssetsResult.mintNumbers);
+            craftAssetPopupUI.DisplayAssetImages(exactIndexIngredientAssetsResult);
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error receiving ingredients: {ex}");
+            Debug.LogError($"Error receiving ingredients: { ex }");
         }
     }
 
@@ -65,15 +65,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
-    }
-
-    public class RequiredAssetsResult
-    {
-        public Sprite[] rollSprites { get; set; }
-        public Sprite[] requirementSprites { get; set; }
-        public int uniqueIngredientCountIndex { get; set; }
-        public int[] requiredAssetAmount { get; set; }
-        public int[] templateId { get; set; }
     }
 
     public async Task<RequiredAssetsResult> GetRequiredAssets(int blendId)
@@ -105,15 +96,9 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: {ex}");
+            Debug.Log($"Error: { ex }");
             return null;
         }
-    }
-
-    public class IndexIngredientAssetsResult
-    {
-        public Sprite[] ingredientSprites { get; set; }
-        public string[] assetIds { get; set; }
     }
 
     public async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, int ingredientIndexCount)
@@ -146,17 +131,9 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: {ex}");
+            Debug.Log($"Error: { ex }");
             return null;
         }
-    }
-
-    public class ExactIndexIngredientAssetsResult
-    {
-        public Sprite[] sprites { get; set; }
-        public string[] assetIds { get; set; }
-        public string[] assetNames { get; set; }
-        public int[] mintNumbers { get; set; }
     }
 
     public async Task<ExactIndexIngredientAssetsResult> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
@@ -196,7 +173,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: {ex}");
+            Debug.Log($"Error: { ex }");
             return null;
         }
     }
