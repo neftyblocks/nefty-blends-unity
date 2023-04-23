@@ -13,8 +13,6 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
     public static event UserSelectedGameobjectInEventHandler UserSelectedGameobject;
     [SerializeField] public string selectedAssetId;
 
-    
-
     public void OnPointerEnter(PointerEventData eventData)
     {
         selectionBoardImage.SetActive(true);

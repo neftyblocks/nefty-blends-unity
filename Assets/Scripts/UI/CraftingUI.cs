@@ -131,25 +131,11 @@ public class CraftingUI : MonoBehaviour
     }
 
     public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult)
-    {   
+    {
         DisplayRollImage(requiredAssetResult.rollSprites);
         DisplayRequirementsImage(requiredAssetResult.requirementSprites, requiredAssetResult.requiredAssetAmount, requiredAssetResult.templateId);
         DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
         DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
-        DisplaySelectedIngredient();
-    }
-
-    public void DisplaySelectedIngredient()
-    {
-        if (ingredientSlots != null)
-        {
-            for (int i = 0; i < ingredientSlots.Length; i++)
-            {
-                Transform selectedIngredient = ingredientSlots[i].transform.Find("SelectedIngredient");
-/*                selectedIngredient.GetComponent<NFT>().SetAsssetId();
-                selectedIngredient.GetComponent<TextMeshPro>().text = ;*/
-            }
-        }
     }
 
     public void ResetSlots(GameObject[] gameObjects)
