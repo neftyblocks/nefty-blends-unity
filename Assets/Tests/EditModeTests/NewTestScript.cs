@@ -1,0 +1,165 @@
+using NUnit.Framework;
+using UnityEngine;
+using UnityEditor;
+using NSubstitute;
+using UnityEngine.TestTools;
+using System.Linq;
+using System;
+using Object = UnityEngine.Object;
+
+public class NewTestScript
+{
+
+    [Test]
+    public void CanBlend_ReturnsTrue()
+    {
+        // Create a new GameObject to hold the BlendController component
+        GameObject gameObject = new GameObject();
+
+        // Add the BlendController component to the GameObject
+        BlendController blendController = gameObject.AddComponent<BlendController>();
+
+        // Set up the test data
+        GameObject templateObject = new GameObject("TemplateUIElementControllerObject");
+        TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+        templateUIElementController.selectedAssetId = "some_asset_id";
+        GameObject requirementPanel = new GameObject();
+        requirementPanel.AddComponent<TemplateUIElementController>();
+        requirementPanel.GetComponent<TemplateUIElementController>().selectedAssetId = "some_asset_id";
+        requirementPanel.transform.SetParent(gameObject.transform);
+        blendController.requirementPanel = requirementPanel;
+
+        // Test CanBlend()
+        bool canBlend = blendController.CanBlend();
+        Assert.IsTrue(canBlend);
+    }
+    [Test]
+    public void CanBlend_ReturnsFalse()
+    {
+        // Create a new BlendController instance
+        GameObject blendObject = new GameObject("BlendControllerObject");
+        BlendController blendController = blendObject.AddComponent<BlendController>();
+
+        // Create a new TemplateUIElementController instance
+        GameObject templateObject = new GameObject("TemplateUIElementControllerObject");
+        TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+
+        // Set the selectedAssetId property to an empty string
+        templateUIElementController.selectedAssetId = "";
+
+        // Create a new requirement panel GameObject and set it as the parent of the TemplateUIElementController
+        GameObject requirementPanelObject = new GameObject("RequirementPanelObject");
+        templateObject.transform.SetParent(requirementPanelObject.transform);
+
+        // Set the requirementPanel to be the requirementPanelObject game object
+        blendController.requirementPanel = requirementPanelObject;
+
+        // Check that CanBlend() returns false
+        Assert.IsFalse(blendController.CanBlend());
+
+        // Clean up
+        Object.DestroyImmediate(blendObject);
+        Object.DestroyImmediate(templateObject);
+        Object.DestroyImmediate(requirementPanelObject);
+    }
+    [Test]
+    public void GetSelectedAssetIds_ReturnsArray()
+    {
+        // Create a new BlendController instance
+        GameObject blendObject = new GameObject("BlendControllerObject");
+        BlendController blendController = blendObject.AddComponent<BlendController>();
+
+        // Create two new TemplateUIElementController instances
+        GameObject templateObject1 = new GameObject("TemplateUIElementControllerObject1");
+        TemplateUIElementController templateUIElementController1 = templateObject1.AddComponent<TemplateUIElementController>();
+        templateUIElementController1.selectedAssetId = "some_asset_id_1";
+        GameObject templateObject2 = new GameObject("TemplateUIElementControllerObject2");
+        TemplateUIElementController templateUIElementController2 = templateObject2.AddComponent<TemplateUIElementController>();
+        templateUIElementController2.selectedAssetId = "some_asset_id_2";
+
+        // Create a new requirement panel GameObject and set it as the parent of the TemplateUIElementControllers
+        GameObject requirementPanelObject = new GameObject("RequirementPanelObject");
+        templateObject1.transform.SetParent(requirementPanelObject.transform);
+        templateObject2.transform.SetParent(requirementPanelObject.transform);
+
+        // Set the requirementPanel to be the requirementPanelObject game object
+        blendController.requirementPanel = requirementPanelObject.transform.gameObject;
+
+        // Call GetSelectedAssetIds() and check that it returns an array with the correct asset IDs
+        string[] selectedAssetIds = blendController.GetSelectedAssetIds();
+        Assert.AreEqual(2, selectedAssetIds.Length);
+        Assert.Contains("some_asset_id_1", selectedAssetIds);
+        Assert.Contains("some_asset_id_2", selectedAssetIds);
+
+        // Clean up
+        Object.DestroyImmediate(blendObject);
+        Object.DestroyImmediate(templateObject1);
+        Object.DestroyImmediate(templateObject2);
+        Object.DestroyImmediate(requirementPanelObject);
+    }
+
+    [Test]
+    public void GetSelectedAssetIds_ReturnsEmptyArray()
+    {
+        // Create a new BlendController instance
+        GameObject blendObject = new GameObject("BlendControllerObject");
+        BlendController blendController = blendObject.AddComponent<BlendController>();
+
+        // Call GetSelectedAssetIds() and check that it returns an empty array
+        string[] selectedAssetIds = blendController.GetSelectedAssetIds();
+        Assert.AreEqual(0, selectedAssetIds.Length);
+
+        // Clean up
+        Object.DestroyImmediate(blendObject);
+    }
+
+    [Test]
+    public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
+    {
+        GameObject blendObject = new GameObject("BlendControllerObject");
+        BlendController blendController = blendObject.AddComponent<BlendController>();
+        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
+        GameObject craftAsset = new GameObject("CraftAsset");
+        CraftAssetPopupController craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var requirementPanel = new GameObject();
+
+        blendController.craftAssetPopupController = craftAssetPopupController;
+        blendController.sendTransactionJS= SendTransactionJS;
+        blendController.requirementPanel= requirementPanel;
+        var expectedBlendId = 123;
+        craftAssetPopupController.currentBlendId = expectedBlendId;
+        string[] selectedAssetIds = new[] { "id1", "id2" };
+        foreach (var id in selectedAssetIds)
+        {
+            var child = new GameObject().AddComponent<TemplateUIElementController>();
+            child.selectedAssetId = id;
+            child.transform.SetParent(requirementPanel.transform);
+        }
+        blendController.SubmitBlend();
+
+        SendTransactionJS.Received().SendTransactionBlend(expectedBlendId, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)));
+    }
+
+    [Test]
+    public void SubmitBlend_DoesNotCallSendTransactionBlend()
+    {
+        // Arrange
+        GameObject blendObject = new GameObject("BlendControllerObject");
+        BlendController blendController = blendObject.AddComponent<BlendController>();
+        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
+        GameObject craftAsset = new GameObject("CraftAsset");
+        CraftAssetPopupController craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var requirementPanel = new GameObject();
+
+        blendController.craftAssetPopupController = craftAssetPopupController;
+        blendController.sendTransactionJS = SendTransactionJS;
+        blendController.requirementPanel = requirementPanel;
+
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        SendTransactionJS.DidNotReceive().SendTransactionBlend(Arg.Any<int>(), Arg.Any<string[]>());
+    }
+}
+

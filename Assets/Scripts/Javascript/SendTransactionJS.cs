@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public class SendTransactionJS : MonoBehaviour
+public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
 {
     [DllImport("__Internal")]
     private static extern void SubmitBlend(int blendId, string[] assetIds, int count);
