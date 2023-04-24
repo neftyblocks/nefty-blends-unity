@@ -27,12 +27,12 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            var requiredAssetsResult = await GetRequiredAssets(blendId);
+            var (requiredAssetsResult, rollResult) = await GetRequiredAssets(blendId);
             var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult.uniqueIngredientCountIndex);
 
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
-            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult);
+            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult);
         }
         catch (Exception ex)
         {
@@ -67,9 +67,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    public async Task<RequiredAssetsResult> GetRequiredAssets(int blendId)
+    public async Task<(RequiredAssetsResult,RollResult)> GetRequiredAssets(int blendId)
     {
         var result = new RequiredAssetsResult();
+        var rollResult = new RollResult();
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
@@ -78,7 +79,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             if (!deserializedJsonResult.Success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return null;
+                return (null, null);
             }
 
             result.uniqueIngredientCountIndex = deserializedJsonResult.Details.Ingredients.Count;
@@ -91,13 +92,24 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             result.requirementSprites = await Task.WhenAll(deserializedJsonResult.Details.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
             result.requiredAssetAmount = deserializedJsonResult.Details.Ingredients.Select(i => i.Amount).ToArray();
             result.templateId = deserializedJsonResult.Details.Ingredients.Select(i => i.Template.TemplateId).ToArray();
+            rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.Details.Rolls
+               .SelectMany(i => i.Outcomes)
+               .SelectMany(o => o.Results)
+               .Select(r => r.Template?.ImmutableData?.Img)
+               .Where(img => img != null)
+               .Select(imageLoader.GetSpriteAsync));
+            rollResult.rollPercentageRolls = deserializedJsonResult.Details.Rolls.SelectMany(i => i.Outcomes).Select(i => i.Odds).ToArray();
+            rollResult.rollNames = deserializedJsonResult.Details.Rolls
+               .SelectMany(i => i.Outcomes)
+               .SelectMany(o => o.Results).Select(i => i.Template?.ImmutableData?.Name).ToArray();
+            rollResult.totalOdds  = deserializedJsonResult.Details.Rolls[0].TotalOdds;
 
-            return result;
+            return (result,rollResult);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: { ex }");
-            return null;
+            return (null,null);
         }
     }
 

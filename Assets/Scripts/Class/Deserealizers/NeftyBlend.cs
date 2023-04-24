@@ -145,12 +145,13 @@ public class NeftyBlend
     {
         public long Index { get; set; }
         public List<Outcome> Outcomes { get; set; }
-        public long TotalOdds { get; set; }
+        [JsonProperty("total_odds")]
+        public int TotalOdds { get; set; }
     }
 
     public partial class Outcome
     {
-        public long Odds { get; set; }
+        public int Odds { get; set; }
         public List<Result> Results { get; set; }
     }
 
