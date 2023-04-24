@@ -7,6 +7,12 @@ public class BlendController : MonoBehaviour
     [SerializeField] public GameObject requirementPanel;
     [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
+
+    void Start()
+    {
+        sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
+    }
+
     public bool CanBlend()
     {
         if (requirementPanel == null || requirementPanel.transform.childCount == 0)
