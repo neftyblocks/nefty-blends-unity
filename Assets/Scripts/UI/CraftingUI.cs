@@ -94,6 +94,7 @@ public class CraftingUI : MonoBehaviour
             Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
             nftImage.GetComponent<Image>().sprite = downloadedSprites[0];
         }
+        GameObject.Find("ResultNameText").GetComponent<TextMeshProUGUI>().text = "test";
     }
 
     public void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)

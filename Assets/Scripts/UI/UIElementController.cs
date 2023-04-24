@@ -39,6 +39,6 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void SetMintNumberText(string text)
     {
-        mintNumberText.text = text;
+        mintNumberText.text = "#"+text;
     }
 }
