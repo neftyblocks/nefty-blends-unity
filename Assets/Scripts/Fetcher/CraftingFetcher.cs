@@ -106,7 +106,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         var result = new IndexIngredientAssetsResult();
         try
         {
-            List<(string, string)> craftDetailsList = new List<(string, string)>();
+            List<(string, string,int)> craftDetailsList = new List<(string, string, int)>();
             for (int i = 0; i < ingredientIndexCount; i++)
             {
                 var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
@@ -120,12 +120,14 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 {
                     var ingredientOutcome = ingredient.Data.Img;
                     var assetId = ingredient.AssetId;
-                    craftDetailsList.Add((ingredientOutcome, assetId));
+                    craftDetailsList.Add((ingredientOutcome, assetId,i));
                 }
             }
 
             result.ingredientSprites = await Task.WhenAll(craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)));
             result.assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
+            result.indexId = craftDetailsList.Select(i => i.Item3).ToArray();
+
 
             return result;
         }

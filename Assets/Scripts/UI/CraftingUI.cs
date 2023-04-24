@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -93,23 +96,69 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayRequirementsImage(Sprite[] downloadedSprites ,int[] requiredAssetAmount, int[] templateId)
+    public void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
-        if (downloadedSprites != null)
+        Dictionary<int, List<string>> indexToAssetIds = new Dictionary<int, List<string>>();
+        for (int i = 0; i < indexIngredientAssetsResult.indexId.Length; i++)
         {
-            int totalRequiredAssets = requiredAssetAmount.Sum();
-            InstantiateRequirementSlots(totalRequiredAssets);
-            int requirementSlotIndex = 0;
+            int index = indexIngredientAssetsResult.indexId[i];
+            string assetId = indexIngredientAssetsResult.assetIds[i];
 
-            for (int i = 0; i < requiredAssetAmount.Length; i++)
+            if (!indexToAssetIds.ContainsKey(index))
             {
-                for (int j = 0; j < requiredAssetAmount[i]; j++)
+                indexToAssetIds[index] = new List<string>();
+            }
+
+            indexToAssetIds[index].Add(assetId);
+        }
+
+        foreach (KeyValuePair<int, List<string>> kvp in indexToAssetIds)
+        {
+            int index = kvp.Key;
+            List<string> assetIds = kvp.Value;
+
+            Debug.Log("Index " + index + " has " + assetIds.Count + " assetIds:");
+            foreach (string assetId in assetIds)
+            {
+                Debug.Log(assetId);
+            }
+        }
+
+            if (requiredAssetResult.requirementSprites != null)
+        {
+            int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
+            InstantiateRequirementSlots(totalRequiredAssets);
+            int currentRequirementSlotIndex = 0;
+
+            for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
+            {
+                var assetCounter = 0;
+
+                for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
                 {
-                    Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
-                    nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(templateId[i]);
-                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
-                    requirementSlotIndex++;
+                    Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Image");
+                    nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(requiredAssetResult.templateId[i]);
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+
+                    if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i)
+                    {
+                        if (indexToAssetIds.ContainsKey(i))
+                        {
+                            if (assetCounter < indexToAssetIds[i].Count)
+                            {
+                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
+                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
+                                assetCounter++;
+                            }
+                            else
+                            {
+                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
+                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
+                            }
+                        }
+                    }
+                    currentRequirementSlotIndex++;
                 }
             }
         }
@@ -133,7 +182,7 @@ public class CraftingUI : MonoBehaviour
     public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         DisplayRollImage(requiredAssetResult.rollSprites);
-        DisplayRequirementsImage(requiredAssetResult.requirementSprites, requiredAssetResult.requiredAssetAmount, requiredAssetResult.templateId);
+        DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
         DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
         DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
     }
