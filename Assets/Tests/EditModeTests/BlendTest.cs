@@ -7,7 +7,7 @@ using System.Linq;
 using System;
 using Object = UnityEngine.Object;
 
-public class NewTestScript
+public class BlendTest
 {
 
     [Test]
@@ -20,13 +20,15 @@ public class NewTestScript
         BlendController blendController = gameObject.AddComponent<BlendController>();
 
         // Set up the test data
-        GameObject templateObject = new GameObject("TemplateUIElementControllerObject");
-        TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
-        templateUIElementController.selectedAssetId = "some_asset_id";
-        GameObject requirementPanel = new GameObject();
-        requirementPanel.AddComponent<TemplateUIElementController>();
-        requirementPanel.GetComponent<TemplateUIElementController>().selectedAssetId = "some_asset_id";
+        GameObject requirementPanel = new GameObject("RequirementPanel");
         requirementPanel.transform.SetParent(gameObject.transform);
+        for (int i = 0; i < 2; i++)
+        {
+            GameObject templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
+            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+            templateUIElementController.selectedAssetId = "some_asset_id";
+            templateObject.transform.SetParent(requirementPanel.transform);
+        }
         blendController.requirementPanel = requirementPanel;
 
         // Test CanBlend()
