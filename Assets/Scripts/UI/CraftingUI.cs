@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -19,7 +20,9 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public RectTransform requirementContainer;
     [SerializeField] public RectTransform ingredientContainer;
     [SerializeField] public RectTransform rollContainer;
-    [SerializeField] public Sprite[] rollImages { get; set; }
+    [SerializeField] private TextMeshProUGUI rollNameText;
+    [SerializeField] private TextMeshProUGUI rollPercentageText;
+    [SerializeField] public RollResult rollResults { get; set; }
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 100;
     int currentRollSpriteIndex = 0;
@@ -33,6 +36,16 @@ public class CraftingUI : MonoBehaviour
             slots[i] = Instantiate(slotPrefab, container);
             slots[i].tag = "Craft";
         }
+    }
+
+    public void SetRollNameText(string text)
+    {
+        rollNameText.text = text;
+    }
+
+    public void SetRollPercentageText(string text)
+    {
+        rollPercentageText.text = "Probability: " + text + "%";
     }
 
     public void InstantiateRequirementSlots(int slotCount)
@@ -61,9 +74,13 @@ public class CraftingUI : MonoBehaviour
 
     public void DisplayNextRollSprite()
     {
-        currentRollSpriteIndex = (currentRollSpriteIndex + 1) % rollImages.Length;
+        currentRollSpriteIndex = (currentRollSpriteIndex + 1) % rollResults.rollSprites.Length;
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
-        nftImage.GetComponent<Image>().sprite = rollImages[currentRollSpriteIndex];
+        nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
+        rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
+        float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
+        rollPercentage = (float)Math.Round(rollPercentage, 1);
+        rollPercentageText.text = rollPercentage.ToString() + "%";
     }
 
     public void DisplayPreviousRollSprite()
@@ -71,10 +88,14 @@ public class CraftingUI : MonoBehaviour
         currentRollSpriteIndex--;
         if (currentRollSpriteIndex < 0)
         {
-            currentRollSpriteIndex = rollImages.Length - 1;
+            currentRollSpriteIndex = rollResults.rollSprites.Length - 1;
         }
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
-        nftImage.GetComponent<Image>().sprite = rollImages[currentRollSpriteIndex];
+        nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
+        rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
+        float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
+        rollPercentage = (float)Math.Round(rollPercentage, 1);
+        rollPercentageText.text = rollPercentage.ToString() + "%";
     }
 
     public void InstantiateRollSlots(int slotCount)
@@ -83,34 +104,74 @@ public class CraftingUI : MonoBehaviour
         InstantiateSlots(slotCount, rollPrefab, rollContainer, ref rollSlots);
     }
 
-    public void DisplayRollImage(Sprite[] downloadedSprites)
+    public void DisplayRollData(RollResult rollResult)
     {
         InstantiateRollSlots(1);
-        rollImages = downloadedSprites;
-        if (downloadedSprites != null && downloadedSprites.Length > 0)
+        rollResults = rollResult;
+        
+        if (rollResult.rollSprites != null && rollResult.rollSprites.Length > 0)
         {
             Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
-            nftImage.GetComponent<Image>().sprite = downloadedSprites[0];
+            nftImage.GetComponent<Image>().sprite = rollResult.rollSprites[0];
+            rollNameText.text = rollResults.rollNames[0];
+            float rollPercentage = ((float)rollResults.rollPercentageRolls[0] / rollResults.totalOdds * 100);
+            rollPercentage = (float)Math.Round(rollPercentage, 1);
+            rollPercentageText.text = rollPercentage.ToString()+"%";
         }
     }
 
-    public void DisplayRequirementsImage(Sprite[] downloadedSprites ,int[] requiredAssetAmount, int[] templateId)
+    public void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
-        if (downloadedSprites != null)
-        {
-            int totalRequiredAssets = requiredAssetAmount.Sum();
-            InstantiateRequirementSlots(totalRequiredAssets);
-            int requirementSlotIndex = 0;
+        Dictionary<int, List<string>> indexToAssetIds = new Dictionary<int, List<string>>();
+        int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
 
-            for (int i = 0; i < requiredAssetAmount.Length; i++)
+        for (int i = 0; i < indexIngredientAssetsResult.indexId.Length; i++)
+        {
+            int index = indexIngredientAssetsResult.indexId[i];
+            string assetId = indexIngredientAssetsResult.assetIds[i];
+
+            if (!indexToAssetIds.ContainsKey(index))
             {
-                for (int j = 0; j < requiredAssetAmount[i]; j++)
+                indexToAssetIds[index] = new List<string>();
+            }
+
+            indexToAssetIds[index].Add(assetId);
+        }
+
+        if (requiredAssetResult.requirementSprites != null)
+        {
+            InstantiateRequirementSlots(totalRequiredAssets);
+            int currentRequirementSlotIndex = 0;
+
+            for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
+            {
+                int assetCounter = 0;
+
+                for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
                 {
-                    Transform nftImage = requirementSlots[requirementSlotIndex].transform.Find("NFT_Image");
-                    nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(templateId[i]);
-                    requirementSlots[requirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
-                    requirementSlotIndex++;
+                    Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Image");
+                    nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(requiredAssetResult.templateId[i]);
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+
+                    if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i)
+                    {
+                        if (indexToAssetIds.ContainsKey(i))
+                        {
+                            if (assetCounter < indexToAssetIds[i].Count)
+                            {
+                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
+                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
+                                assetCounter++;
+                            }
+                            else
+                            {
+                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
+                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
+                            }
+                        }
+                    }
+                    currentRequirementSlotIndex++;
                 }
             }
         }
@@ -131,26 +192,12 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(Sprite[] rollSprite, Sprite[] requirementSprites, Sprite[] ingredientSprites, int[] requiredAssetAmount, int[] templateId, string[] assetIds)
+    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult)
     {
-        DisplayRollImage(rollSprite);
-        DisplayRequirementsImage(requirementSprites, requiredAssetAmount, templateId);
-        DisplayIngredientImage(ingredientSprites, assetIds);
-        DisplayRollPaginationArrows(rollSprite);
-        DisplaySelectedIngredient();
-    }
-
-    public void DisplaySelectedIngredient()
-    {
-        if (ingredientSlots != null)
-        {
-            for (int i = 0; i < ingredientSlots.Length; i++)
-            {
-                Transform selectedIngredient = ingredientSlots[i].transform.Find("SelectedIngredient");
-/*                selectedIngredient.GetComponent<NFT>().SetAsssetId();
-                selectedIngredient.GetComponent<TextMeshPro>().text = ;*/
-            }
-        }
+        DisplayRollData(rollResult);
+        DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
+        DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
+        DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
     }
 
     public void ResetSlots(GameObject[] gameObjects)

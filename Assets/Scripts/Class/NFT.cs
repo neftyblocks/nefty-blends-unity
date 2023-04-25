@@ -8,7 +8,6 @@ public class NFT : MonoBehaviour
     [SerializeField] private string assetName;
     [SerializeField] private int mintNumber;
 
-
     public void SetAsssetId(string id)
     {
        assetId = id;
@@ -35,5 +34,4 @@ public class NFT : MonoBehaviour
     {
         return mintNumber;
     }
-
 }

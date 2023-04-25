@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 
 public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [SerializeField] public GameObject selectionBoardImage;
+    [SerializeField] private GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
     [SerializeField] private TextMeshProUGUI assetNameText;
     [SerializeField] private TextMeshProUGUI mintNumberText;
@@ -39,6 +39,6 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void SetMintNumberText(string text)
     {
-        mintNumberText.text = text;
+        mintNumberText.text = "#"+text;
     }
 }

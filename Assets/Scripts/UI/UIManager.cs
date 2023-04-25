@@ -96,5 +96,4 @@ public class UIManager : MonoBehaviour
         UIs[UIType.CraftingMenu].SetActive(true);
         UIs[UIType.AssetPopupMenu].SetActive(true);
     }
-
 }

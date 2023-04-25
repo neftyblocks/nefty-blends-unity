@@ -11,9 +11,9 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI totalAssetText;
     [SerializeField] private DashboardController dashboardController;
     [SerializeField] private InventoryFetcherController inventoryFetcherController;
-    [SerializeField] public GameObject[] inventorySlots;
-    [SerializeField] public GameObject inventoryAssetPrefab;
-    [SerializeField] public RectTransform inventoryContainer;
+    [SerializeField] private GameObject[] inventorySlots;
+    [SerializeField] private GameObject inventoryAssetPrefab;
+    [SerializeField] private RectTransform inventoryContainer;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 40;
 

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class CollectionUI : MonoBehaviour
 {
-    [SerializeField] public Sprite colletionImage;
-    [SerializeField] GameObject collectionImageUI;
-    [SerializeField] public CollectionFetcherController collectionFetcherController;
+    [SerializeField] private Sprite colletionImage;
+    [SerializeField] private GameObject collectionImageUI;
+    [SerializeField] private CollectionFetcherController collectionFetcherController;
 
     async void Start()
     {

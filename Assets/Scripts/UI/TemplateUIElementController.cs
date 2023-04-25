@@ -5,13 +5,13 @@ using UnityEngine.EventSystems;
 
 public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [SerializeField] public GameObject selectionBoardImage;
+    [SerializeField] private GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
     public delegate void UserSelectedBlendInEventHandler(int ingredientIndex);
     public static event UserSelectedBlendInEventHandler UserSelectedIngredient;
     public delegate void UserSelectedGameobjectInEventHandler(GameObject game);
     public static event UserSelectedGameobjectInEventHandler UserSelectedGameobject;
-    [SerializeField]public string selectedAssetId;
+    [SerializeField] public string selectedAssetId;
 
     public void OnPointerEnter(PointerEventData eventData)
     {
