@@ -1,6 +1,8 @@
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static BlendFetcherController;
 
 public class BlendListUI : MonoBehaviour
 {
@@ -15,39 +17,42 @@ public class BlendListUI : MonoBehaviour
         InstantiateBlendSlots();
     }
 
-    public void DisplayAssetImages(BlendFetcherController.BlendAssets blendAssets)
+    public void DisplayAssetImages(BlendAssets blendAssets)
     {
-        if (blendAssets != null)
+        for (int i = 0; i < blendAssets.sprites.Length; i++)
         {
-            for (int i = 0; i < blendAssets.sprites.Length; i++)
+            if (blendAssets.sprites[i] != null)
             {
-                if (blendAssets.sprites[i] != null)
-                {
-                    Transform nftImage = blendSlots[i].transform.Find("NFT_Image");
-                    nftImage.GetComponent<Image>().sprite = blendAssets.sprites[i];
-                    blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
-                    blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
-                }
+                Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
+                Transform blendName = blendSlots[i].transform.Find("Blend_Name");
+
+                blendName.GetComponent<TextMeshProUGUI>().text = blendAssets.blendNames[i];
+                blendImage.GetComponent<Image>().sprite = blendAssets.sprites[i];
+                blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
+                blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
             }
         }
     }
     public async void InstantiateBlendSlots()
     {
         var blendAsset = await blendFetcherController.FetchBlendAssets(apiCurrentPage);
-        var objectCount = blendAsset.sprites.Length;
-
-        blendSlots = new GameObject[objectCount];
-        for (int i = 0; i < objectCount; i++)
+        if (blendAsset != null)
         {
-            blendSlots[i] = Instantiate(blendSlotPrefab, blendPrefabContainer);
-            blendSlots[i].tag = "Blend";
+            var objectCount = blendAsset.sprites.Length;
+            blendSlots = new GameObject[objectCount];
+
+            for (int i = 0; i < objectCount; i++)
+            {
+                blendSlots[i] = Instantiate(blendSlotPrefab, blendPrefabContainer);
+                blendSlots[i].tag = "Blend";
+            }
+            DisplayAssetImages(blendAsset);
         }
-        DisplayAssetImages(blendAsset);
     }
 
     public async void RefreshBlendSlots()
     {
-        if(blendSlots != null || blendSlots.Length != 0)
+        if(blendSlots != null && blendSlots.Length != 0)
         {
             foreach (GameObject slot in blendSlots)
             {

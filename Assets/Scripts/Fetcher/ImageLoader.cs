@@ -28,12 +28,22 @@ public class ImageLoader : MonoBehaviour
 
     public async Task<Sprite> GetSpriteAsync(string imageUri)
     {
+        if (string.IsNullOrEmpty(imageUri))
+        {
+            var defaultImage = Resources.Load<Sprite>("UI/Burn_Image");
+            if (defaultImage == null)
+            {
+                throw new UnityException("Default image not found.");
+            }
+            return defaultImage;
+        }
+
         if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
         {
             return sprite;
         }
 
-        var url = $"{ PluginController.ipfsUrl }?ipfs={ imageUri }&width=300&static=false";
+        var url = $"{PluginController.ipfsUrl}?ipfs={imageUri}&width=300&static=false";
         var request = UnityWebRequestTexture.GetTexture(url);
         var operation = request.SendWebRequest();
 

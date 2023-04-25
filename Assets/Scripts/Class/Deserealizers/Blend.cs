@@ -1,23 +1,25 @@
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 public class Blend
 {
     public bool success { get; set; }
-    public List<Datum> data { get; set; }
+    public List<Data> data { get; set; }
     public long queryTime { get; set; }
 
-    public partial class Datum
+    public partial class Data
     {
         [JsonProperty("blend_id")]
         public int blendId { get; set; }
         public string contract { get; set; }
         public string collectionName { get; set; }
-        public string startTime { get; set; }
+        public long startTime { get; set; }
         public long endTime { get; set; }
         public long max { get; set; }
         public long useCount { get; set; }
-        public string displayData { get; set; }
+        [JsonProperty("display_data")]
+        public DisplayData displayData { get; set; }
         public string createdAtTime { get; set; }
         public long ingredientsCount { get; set; }
         public long securityId { get; set; }
@@ -26,8 +28,14 @@ public class Blend
         public long accountLimitCooldown { get; set; }
         public List<Ingredient> ingredients { get; set; }
         public List<Roll> rolls { get; set; }
-        public object upgrades { get; set; }
         public string category { get; set; }
+    }
+
+    public partial class DisplayData
+    {
+        public string name { get; set; }
+        public Uri image { get; set; }
+        public string description { get; set; }
     }
 
     public partial class Ingredient
@@ -37,7 +45,7 @@ public class Blend
         public long amount { get; set; }
         public Effect effect { get; set; }
         public Template template { get; set; }
-        public object displayData { get; set; }
+        public DisplayData displayData { get; set; }
     }
 
     public partial class Effect
@@ -86,9 +94,6 @@ public class Blend
     {
         public string img { get; set; }
         public string name { get; set; }
-        public string type { get; set; }
-        public string rarity { get; set; }
-        public string description { get; set; }
     }
 
     public partial class Schema
@@ -102,7 +107,7 @@ public class Blend
     public partial class Format
     {
         public string name { get; set; }
-        public TypeEnum type { get; set; }
+        public string type { get; set; }
     }
 
     public partial class Roll
@@ -123,6 +128,4 @@ public class Blend
         public string type { get; set; }
         public Template template { get; set; }
     }
-
-    public enum TypeEnum { Image, Ipfs, String, Uint64 }
 }

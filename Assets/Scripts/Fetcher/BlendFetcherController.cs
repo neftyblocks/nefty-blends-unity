@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class BlendFetcherController : MonoBehaviour,IFetcher
+public class BlendFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] private PluginController pluginController;
     [SerializeField] private ImageLoader imageLoader;
@@ -14,6 +14,7 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
         public Sprite[] sprites { get; set; }
         public int[] assetIds { get; set; }
         public string[] contractNames { get; set; }
+        public string[] blendNames { get; set; }
     }
 
     public async Task<Blend> GetDeserializedData<Blend>(string url)
@@ -26,30 +27,32 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
     {
         try
         {
-            var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit=100&order=desc&sort=created_at_time";
+            var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&page={currentPage}&limit=100&render_markdown=true&order=desc&sort=created_at_time";
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
-
             if (deserializedJsonResult.data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");
                 return null;
             }
 
-            var blendAssets = deserializedJsonResult.data
-                .Select(blend => (blend.rolls[0].outcomes[0].results[0].template.immutableData.img ?? "QmX8TS6johVqmrnuMNAYUV5kZ3ToFtgoWYK41NmAhMkufC", blend.blendId, blend.contract))
-                .ToList();
-
-            var spriteTasks = blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)).ToArray();
-            var spriteResults = await Task.WhenAll(spriteTasks);
-
-            var blendAssetList = new BlendAssets
+            var blendAssets = deserializedJsonResult.data.Select(blend =>
             {
-                sprites = spriteResults.ToArray(),
-                assetIds = blendAssets.Select(asset => asset.Item2).ToArray(),
-                contractNames = blendAssets.Select(asset => asset.Item3).ToArray()
-            };
+                var image = blend.rolls.SelectMany(roll => roll.outcomes)
+                    .SelectMany(outcome => outcome.results)
+                    .Select(result => result.template?.immutableData?.img)
+                    .FirstOrDefault();
 
-            return blendAssetList;
+                return (image, blend.blendId, blend.contract, blend.displayData.name);
+            }).ToList();
+            var spriteResults = await Task.WhenAll(blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)));
+
+            return new BlendAssets
+            {
+                sprites = spriteResults,
+                assetIds = blendAssets.Select(asset => asset.Item2).ToArray(),
+                contractNames = blendAssets.Select(asset => asset.Item3).ToArray(),
+                blendNames = blendAssets.Select(asset => asset.Item4).ToArray()
+            };
         }
         catch (Exception ex)
         {
