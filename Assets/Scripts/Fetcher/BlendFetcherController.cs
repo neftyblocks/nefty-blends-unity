@@ -22,11 +22,11 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
     }
 
-    public async Task<BlendAssets> FetchBlendAssetsAsync(int slotLimit, int currentPage)
+    public async Task<BlendAssets> FetchBlendAssets(int currentPage)
     {
         try
         {
-            var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
+            var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit=100&order=desc&sort=created_at_time";
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
 
             if (deserializedJsonResult.data.Count == 0)

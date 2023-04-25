@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -15,50 +16,47 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject inventoryAssetPrefab;
     [SerializeField] private RectTransform inventoryContainer;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
-    [SerializeField] public int slotCount { get; set; } = 40;
 
-    async void Awake()
+    async void Start()
     {
         InstantiateInventorySlots();
-        DisplayAssetImages();
         SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
     }
 
-    public async void DisplayAssetImages()
+    public void DisplayAssetImages(Sprite[] sprites, string[] assetIds)
     {
-        var (downloadedSprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(slotCount, apiCurrentPage);
-        if(downloadedSprites != null)
-        {
-            for (int i = 0; i < downloadedSprites.Length; i++)
-            {
-                Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                inventorySlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
-            }
-        }
-    }
-
-    public void InstantiateInventorySlots()
-    {
-        inventorySlots = new GameObject[slotCount];
-        for (int i = 0; i < slotCount; i++)
+        for (int i = 0; i < sprites.Length; i++)
         {
             inventorySlots[i] = Instantiate(inventoryAssetPrefab, inventoryContainer);
             inventorySlots[i].tag = "Asset";
+            Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
+            nftImage.GetComponent<Image>().sprite = sprites[i];
+            inventorySlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
         }
     }
-    // Discontinued -- keeping for now
 
-    /*   private void OnEnable()
-       {
-           DashboardController.UserLoggedIn += UpdateUI;
-       }*/
+    public async void RefreshInventorySlots()
+    {
+        foreach (GameObject slot in inventorySlots)
+        {
+            Destroy(slot);
+        }
 
-    /* private void UpdateUI()
-     {
-         SetWalletNameText(dashboardController.walletName);
-     }*/
+        apiCurrentPage = 1; 
+        var (sprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
 
+        inventorySlots = new GameObject[sprites.Length];
+        DisplayAssetImages(sprites, assetIds);
+        SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
+    }
+
+    public async void InstantiateInventorySlots()
+    {
+        var (sprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
+        inventorySlots = new GameObject[sprites.Length];
+        DisplayAssetImages(sprites,assetIds);
+    }
+ 
     public void SetWalletNameText(string wallet)
     {
         walletNameText.text = $"Welcome { wallet }";

@@ -15,15 +15,14 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
     }
 
-    public async Task<(Sprite[], string[])> GetInventoryAssets(int slotLimit, int currentPage)
+    public async Task<(Sprite[], string[])> GetInventoryAssets(int currentPage)
     {
         try
         {
-            var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={ currentPage }&limit={ slotLimit }&only_whitelisted=true&collection_name={ pluginController.GetCollectionName() }";
+            var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?sort=transferred&order=desc&owner={ pluginController.GetWalletName() }&page={ currentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
 
             var assetDetailsList = deserializedJsonResult.details
-                .Take(slotLimit)
                 .Select(detail => (detail.data.img, detail.assetId))
                 .ToList();
 
@@ -46,7 +45,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
 
     public async Task<int> GetInventoryAssetsCount()
     {
-        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={"cabba.wam"}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
+        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={ pluginController.GetWalletName() }&only_whitelisted=false&collection_name={pluginController.GetCollectionName()}";
         var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
         return deserializedJsonResult.data;
     }

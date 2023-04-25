@@ -1,11 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ScrollRectController : MonoBehaviour
 {
-    private ScrollRect scrollRect;
+  /*  private ScrollRect scrollRect;
     [SerializeField] private GameObject ingredientPrefab;
     [SerializeField] private RectTransform ingredientContainer;
     public event System.Action ScrollRectTouchedBottom;
@@ -40,7 +39,7 @@ public class ScrollRectController : MonoBehaviour
         yield return null;
         // Set the scroll position to the start of the new items
         scrollRect.verticalNormalizedPosition = 0.125f;
-    }
+    }*/
 
     /*private void OnEnable()
     {
