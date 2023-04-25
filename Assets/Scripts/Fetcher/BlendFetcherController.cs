@@ -29,14 +29,14 @@ public class BlendFetcherController : MonoBehaviour,IFetcher
             var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={ pluginController.GetCollectionName() }&visibility=visible&render_markdown=false&page={ currentPage }&limit={ slotLimit }&order=desc&sort=created_at_time";
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
 
-            if (deserializedJsonResult.Data.Count == 0)
+            if (deserializedJsonResult.data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");
                 return null;
             }
 
-            var blendAssets = deserializedJsonResult.Data
-                .Select(blend => (blend.Rolls[0].Outcomes[0].Results[0].Template.ImmutableData.Img ?? "QmX8TS6johVqmrnuMNAYUV5kZ3ToFtgoWYK41NmAhMkufC", blend.BlendId, blend.Contract))
+            var blendAssets = deserializedJsonResult.data
+                .Select(blend => (blend.rolls[0].outcomes[0].results[0].template.immutableData.img ?? "QmX8TS6johVqmrnuMNAYUV5kZ3ToFtgoWYK41NmAhMkufC", blend.blendId, blend.contract))
                 .ToList();
 
             var spriteTasks = blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)).ToArray();

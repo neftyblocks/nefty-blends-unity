@@ -24,16 +24,16 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
 
             var assetDetailsList = deserializedJsonResult.details
                 .Take(slotLimit)
-                .Select(detail => (detail.Data.Img, detail.AssetId))
+                .Select(detail => (detail.data.img, detail.assetId))
                 .ToList();
 
             var spriteTasks = assetDetailsList
-                .Select(uriWithId => imageLoader.GetSpriteAsync(uriWithId.Img))
+                .Select(uriWithId => imageLoader.GetSpriteAsync(uriWithId.img))
                 .ToArray();
 
             var spriteResults = await Task.WhenAll(spriteTasks);
             var sprites = spriteResults.ToArray();
-            var assetIds = assetDetailsList.Select(uriWithId => uriWithId.AssetId).ToArray();
+            var assetIds = assetDetailsList.Select(uriWithId => uriWithId.assetId).ToArray();
 
             return (sprites, assetIds);
         }
@@ -48,6 +48,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     {
         var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={"cabba.wam"}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
         var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
-        return deserializedJsonResult.Data;
+        return deserializedJsonResult.data;
     }
 }

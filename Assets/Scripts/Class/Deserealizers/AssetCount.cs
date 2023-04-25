@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AssetCount
 {
-    public bool Success { get; set; }
-    public int Data { get; set; }
-    public long QueryTime { get; set; }
+    public bool success { get; set; }
+    public int data { get; set; }
+    public long queryTime { get; set; }
 }

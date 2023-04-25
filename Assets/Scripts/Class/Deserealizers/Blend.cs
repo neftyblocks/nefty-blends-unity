@@ -1,133 +1,128 @@
 using Newtonsoft.Json;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Blend
 {
-   
-        public bool Success { get; set; }
-        public List<Datum> Data { get; set; }
-        public long QueryTime { get; set; }
-    
+    public bool success { get; set; }
+    public List<Datum> data { get; set; }
+    public long queryTime { get; set; }
 
     public partial class Datum
     {
         [JsonProperty("blend_id")]
-        public int BlendId { get; set; }
-        public string Contract { get; set; }
-        public string CollectionName { get; set; }
-        public string StartTime { get; set; }
-        public long EndTime { get; set; }
-        public long Max { get; set; }
-        public long UseCount { get; set; }
-        public string DisplayData { get; set; }
-        public string CreatedAtTime { get; set; }
-        public long IngredientsCount { get; set; }
-        public long SecurityId { get; set; }
-        public bool IsHidden { get; set; }
-        public long AccountLimit { get; set; }
-        public long AccountLimitCooldown { get; set; }
-        public List<Ingredient> Ingredients { get; set; }
-        public List<Roll> Rolls { get; set; }
-        public object Upgrades { get; set; }
-        public string Category { get; set; }
+        public int blendId { get; set; }
+        public string contract { get; set; }
+        public string collectionName { get; set; }
+        public string startTime { get; set; }
+        public long endTime { get; set; }
+        public long max { get; set; }
+        public long useCount { get; set; }
+        public string displayData { get; set; }
+        public string createdAtTime { get; set; }
+        public long ingredientsCount { get; set; }
+        public long securityId { get; set; }
+        public bool isHidden { get; set; }
+        public long accountLimit { get; set; }
+        public long accountLimitCooldown { get; set; }
+        public List<Ingredient> ingredients { get; set; }
+        public List<Roll> rolls { get; set; }
+        public object upgrades { get; set; }
+        public string category { get; set; }
     }
 
     public partial class Ingredient
     {
-        public string Type { get; set; }
-        public long Index { get; set; }
-        public long Amount { get; set; }
-        public Effect Effect { get; set; }
-        public Template Template { get; set; }
-        public object DisplayData { get; set; }
+        public string type { get; set; }
+        public long index { get; set; }
+        public long amount { get; set; }
+        public Effect effect { get; set; }
+        public Template template { get; set; }
+        public object displayData { get; set; }
     }
 
     public partial class Effect
     {
-        public string Type { get; set; }
-        public Payload Payload { get; set; }
+        public string type { get; set; }
+        public Payload payload { get; set; }
     }
 
     public partial class Payload
     {
-        public long Type { get; set; }
+        public long type { get; set; }
     }
 
     public partial class Template
     {
-        public long TemplateId { get; set; }
-        public string Contract { get; set; }
-        public bool IsTransferable { get; set; }
-        public bool IsBurnable { get; set; }
-        public long IssuedSupply { get; set; }
-        public long MaxSupply { get; set; }
-        public Collection Collection { get; set; }
-        public Schema Schema { get; set; }
+        public long templateId { get; set; }
+        public string contract { get; set; }
+        public bool isTransferable { get; set; }
+        public bool isBurnable { get; set; }
+        public long issuedSupply { get; set; }
+        public long maxSupply { get; set; }
+        public Collection collection { get; set; }
+        public Schema schema { get; set; }
         [JsonProperty("immutable_data")]
-        public ImmutableData ImmutableData { get; set; }
-        public string CreatedAtTime { get; set; }
-        public long CreatedAtBlock { get; set; }
-        public string Name { get; set; }
+        public ImmutableData immutableData { get; set; }
+        public string createdAtTime { get; set; }
+        public long createdAtBlock { get; set; }
+        public string name { get; set; }
     }
 
     public partial class Collection
     {
-        public string CollectionName { get; set; }
-        public string Name { get; set; }
-        public string Img { get; set; }
-        public string Author { get; set; }
-        public bool AllowNotify { get; set; }
-        public List<string> AuthorizedAccounts { get; set; }
-        public List<string> NotifyAccounts { get; set; }
-        public double MarketFee { get; set; }
-        public long CreatedAtBlock { get; set; }
-        public string CreatedAtTime { get; set; }
+        public string collectionName { get; set; }
+        public string name { get; set; }
+        public string img { get; set; }
+        public string author { get; set; }
+        public bool allowNotify { get; set; }
+        public List<string> authorizedAccounts { get; set; }
+        public List<string> notifyAccounts { get; set; }
+        public double marketFee { get; set; }
+        public long createdAtBlock { get; set; }
+        public string createdAtTime { get; set; }
     }
 
     public partial class ImmutableData
     {
-        public string Img { get; set; }
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Rarity { get; set; }
-        public string Description { get; set; }
+        public string img { get; set; }
+        public string name { get; set; }
+        public string type { get; set; }
+        public string rarity { get; set; }
+        public string description { get; set; }
     }
 
     public partial class Schema
     {
-        public string SchemaName { get; set; }
-        public List<Format> Format { get; set; }
-        public long CreatedAtBlock { get; set; }
-        public string CreatedAtTime { get; set; }
+        public string schemaName { get; set; }
+        public List<Format> format { get; set; }
+        public long createdAtBlock { get; set; }
+        public string createdAtTime { get; set; }
     }
 
     public partial class Format
     {
-        public string Name { get; set; }
-        public TypeEnum Type { get; set; }
+        public string name { get; set; }
+        public TypeEnum type { get; set; }
     }
 
     public partial class Roll
     {
-        public long Index { get; set; }
-        public List<Outcome> Outcomes { get; set; }
-        public long TotalOdds { get; set; }
+        public long index { get; set; }
+        public List<Outcome> outcomes { get; set; }
+        public long totalOdds { get; set; }
     }
 
     public partial class Outcome
     {
-        public long Odds { get; set; }
-        public List<Result> Results { get; set; }
+        public long odds { get; set; }
+        public List<Result> results { get; set; }
     }
 
     public partial class Result
     {
-        public string Type { get; set; }
-        public Template Template { get; set; }
+        public string type { get; set; }
+        public Template template { get; set; }
     }
 
-    public enum TypeEnum { Image, Ipfs, String, Uint64 };
-
+    public enum TypeEnum { Image, Ipfs, String, Uint64 }
 }

@@ -76,33 +76,33 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
 
-            if (!deserializedJsonResult.Success)
+            if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
                 return (null, null);
             }
 
-            result.uniqueIngredientCountIndex = deserializedJsonResult.Details.Ingredients.Count;
-            result.rollSprites = await Task.WhenAll(deserializedJsonResult.Details.Rolls
-                 .SelectMany(i => i.Outcomes)
-                 .SelectMany(o => o.Results)
-                 .Select(r => r.Template?.ImmutableData?.Img)
+            result.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
+            result.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
+                 .SelectMany(i => i.outcomes)
+                 .SelectMany(o => o.results)
+                 .Select(r => r.template?.immutableData?.img)
                  .Where(img => img != null)
                  .Select(imageLoader.GetSpriteAsync));
-            result.requirementSprites = await Task.WhenAll(deserializedJsonResult.Details.Ingredients.Select(i => imageLoader.GetSpriteAsync(i.Template.ImmutableData.Img)));
-            result.requiredAssetAmount = deserializedJsonResult.Details.Ingredients.Select(i => i.Amount).ToArray();
-            result.templateId = deserializedJsonResult.Details.Ingredients.Select(i => i.Template.TemplateId).ToArray();
-            rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.Details.Rolls
-               .SelectMany(i => i.Outcomes)
-               .SelectMany(o => o.Results)
-               .Select(r => r.Template?.ImmutableData?.Img)
+            result.requirementSprites = await Task.WhenAll(deserializedJsonResult.details.ingredients.Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img)));
+            result.requiredAssetAmount = deserializedJsonResult.details.ingredients.Select(i => i.amount).ToArray();
+            result.templateId = deserializedJsonResult.details.ingredients.Select(i => i.template.templateId).ToArray();
+            rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
+               .SelectMany(i => i.outcomes)
+               .SelectMany(o => o.results)
+               .Select(r => r.template?.immutableData?.img)
                .Where(img => img != null)
                .Select(imageLoader.GetSpriteAsync));
-            rollResult.rollPercentageRolls = deserializedJsonResult.Details.Rolls.SelectMany(i => i.Outcomes).Select(i => i.Odds).ToArray();
-            rollResult.rollNames = deserializedJsonResult.Details.Rolls
-               .SelectMany(i => i.Outcomes)
-               .SelectMany(o => o.Results).Select(i => i.Template?.ImmutableData?.Name).ToArray();
-            rollResult.totalOdds  = deserializedJsonResult.Details.Rolls[0].TotalOdds;
+            rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls.SelectMany(i => i.outcomes).Select(i => i.odds).ToArray();
+            rollResult.rollNames = deserializedJsonResult.details.rolls
+               .SelectMany(i => i.outcomes)
+               .SelectMany(o => o.results).Select(i => i.template?.immutableData?.name).ToArray();
+            rollResult.totalOdds  = deserializedJsonResult.details.rolls[0].totalOdds;
 
             return (result,rollResult);
         }
@@ -123,15 +123,15 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             {
                 var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
                 var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
-                if (!deserializedJsonResult.Success)
+                if (!deserializedJsonResult.success)
                 {
                     Debug.LogError("No data found for the given ingredient.");
                     return null;
                 }
                 foreach (var ingredient in deserializedJsonResult.details)
                 {
-                    var ingredientOutcome = ingredient.Data.Img;
-                    var assetId = ingredient.AssetId;
+                    var ingredientOutcome = ingredient.data.img;
+                    var assetId = ingredient.assetId;
                     craftDetailsList.Add((ingredientOutcome, assetId,i));
                 }
             }
@@ -157,17 +157,17 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             List<(string, string, string, int)> craftDetailsList = new List<(string, string, string, int)>();
             var url = $"{ PluginController.apiUrl }/neftyblends/v1/blends/blend.nefty/{ blendId }/ingredients/{ ingredientIndex }/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
             var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
-            if (!deserializedJsonResult.Success)
+            if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given ingredient.");
                 return null;
             }
             foreach (var ingredient in deserializedJsonResult.details)
             {
-                var ingredientOutcome = ingredient.Data.Img;
-                var assetId = ingredient.AssetId;
-                var assetName = ingredient.Name;
-                var mintNumber = ingredient.TemplateMint;
+                var ingredientOutcome = ingredient.data.img;
+                var assetId = ingredient.assetId;
+                var assetName = ingredient.name;
+                var mintNumber = ingredient.templateMint;
 
                 craftDetailsList.Add((ingredientOutcome, assetId, assetName, mintNumber));
             }

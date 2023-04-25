@@ -3,72 +3,72 @@ using System.Collections.Generic;
 
 public class Asset
 {
-    public bool Success { get; set; }
+    public bool success { get; set; }
     [JsonProperty("data")]
     public List<Details> details { get; set; }
-    public long QueryTime { get; set; }
+    public long queryTime { get; set; }
 
     public partial class Details
     {
-        public string Contract { get; set; }
+        public string contract { get; set; }
         [JsonProperty("asset_id")]
-        public string AssetId { get; set; }
-        public string Owner { get; set; }
-        public bool IsTransferable { get; set; }
-        public bool IsBurnable { get; set; }
-        public Collection Collection { get; set; }
-        public Schema Schema { get; set; }
-        public Template Template { get; set; }
-        public MutableData MutableData { get; set; }
-        public ImmutableData ImmutableData { get; set; }
-        public long TemplateMint { get; set; }
-        public List<object> BackedTokens { get; set; }
-        public object BurnedByAccount { get; set; }
-        public object BurnedAtBlock { get; set; }
-        public object BurnedAtTime { get; set; }
-        public long UpdatedAtBlock { get; set; }
-        public string UpdatedAtTime { get; set; }
-        public long TransferredAtBlock { get; set; }
-        public string TransferredAtTime { get; set; }
-        public long MintedAtBlock { get; set; }
-        public string MintedAtTime { get; set; }
-        public Data Data { get; set; }
-        public string Name { get; set; }
+        public string assetId { get; set; }
+        public string owner { get; set; }
+        public bool isTransferable { get; set; }
+        public bool isBurnable { get; set; }
+        public Collection collection { get; set; }
+        public Schema schema { get; set; }
+        public Template template { get; set; }
+        public MutableData mutableData { get; set; }
+        public ImmutableData immutableData { get; set; }
+        public long templateMint { get; set; }
+        public List<object> backedTokens { get; set; }
+        public object burnedByAccount { get; set; }
+        public object burnedAtBlock { get; set; }
+        public object burnedAtTime { get; set; }
+        public long updatedAtBlock { get; set; }
+        public string updatedAtTime { get; set; }
+        public long transferredAtBlock { get; set; }
+        public string transferredAtTime { get; set; }
+        public long mintedAtBlock { get; set; }
+        public string mintedAtTime { get; set; }
+        public Data data { get; set; }
+        public string name { get; set; }
     }
 
     public partial class Collection
     {
-        public string CollectionName { get; set; }
-        public string Name { get; set; }
-        public string Img { get; set; }
-        public string Author { get; set; }
-        public bool AllowNotify { get; set; }
-        public string[] AuthorizedAccounts { get; set; }
-        public string[] NotifyAccounts { get; set; }
-        public double MarketFee { get; set; }
-        public long CreatedAtBlock { get; set; }
-        public string CreatedAtTime { get; set; }
+        public string collectionName { get; set; }
+        public string name { get; set; }
+        public string img { get; set; }
+        public string author { get; set; }
+        public bool allowNotify { get; set; }
+        public string[] authorizedAccounts { get; set; }
+        public string[] notifyAccounts { get; set; }
+        public double marketFee { get; set; }
+        public long createdAtBlock { get; set; }
+        public string createdAtTime { get; set; }
     }
 
     public partial class Data
     {
-        public string Img { get; set; }
-        public string Info { get; set; }
-        public string Name { get; set; }
-        public string Product { get; set; }
-        public long? Quantity { get; set; }
-        public string Description { get; set; }
-        public string Rarity { get; set; }
-        public string Type { get; set; }
-        public long? Slots { get; set; }
+        public string img { get; set; }
+        public string info { get; set; }
+        public string name { get; set; }
+        public string product { get; set; }
+        public long? quantity { get; set; }
+        public string description { get; set; }
+        public string rarity { get; set; }
+        public string type { get; set; }
+        public long? slots { get; set; }
     }
 
     public partial class ImmutableData
     {
-        public string Img { get; set; }
-        public string Name { get; set; }
-        public string Product { get; set; }
-        public long? Quantity { get; set; }
+        public string img { get; set; }
+        public string name { get; set; }
+        public string product { get; set; }
+        public long? quantity { get; set; }
     }
 
     public partial class MutableData
@@ -77,27 +77,27 @@ public class Asset
 
     public partial class Schema
     {
-        public string SchemaName { get; set; }
-        public List<Format> Format { get; set; }
-        public long CreatedAtBlock { get; set; }
-        public string CreatedAtTime { get; set; }
+        public string schemaName { get; set; }
+        public List<Format> format { get; set; }
+        public long createdAtBlock { get; set; }
+        public string createdAtTime { get; set; }
     }
 
     public partial class Format
     {
-        public string Name { get; set; }
-        public string Type { get; set; }
+        public string name { get; set; }
+        public string type { get; set; }
     }
 
     public partial class Template
     {
-        public long TemplateId { get; set; }
-        public long MaxSupply { get; set; }
-        public bool IsTransferable { get; set; }
-        public bool IsBurnable { get; set; }
-        public long IssuedSupply { get; set; }
-        public Data ImmutableData { get; set; }
-        public string CreatedAtTime { get; set; }
-        public long CreatedAtBlock { get; set; }
+        public long templateId { get; set; }
+        public long maxSupply { get; set; }
+        public bool isTransferable { get; set; }
+        public bool isBurnable { get; set; }
+        public long issuedSupply { get; set; }
+        public Data immutableData { get; set; }
+        public string createdAtTime { get; set; }
+        public long createdAtBlock { get; set; }
     }
 }
