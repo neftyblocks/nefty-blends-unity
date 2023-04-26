@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -52,7 +53,7 @@ public class BlendListUI : MonoBehaviour
 
     public async void RefreshBlendSlots()
     {
-        if(blendSlots != null && blendSlots.Length != 0)
+        if (blendSlots != null && blendSlots.Length != 0)
         {
             foreach (GameObject slot in blendSlots)
             {

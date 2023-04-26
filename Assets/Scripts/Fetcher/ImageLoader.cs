@@ -64,7 +64,6 @@ public class ImageLoader : MonoBehaviour
         {
             _spriteCache.Add(imageUri, sprite);
         }
-
         return sprite;
     }
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,29 +46,44 @@ public class UIManager : MonoBehaviour
 
     public void EnableBlendMainMenuUI()
     {
-        foreach (KeyValuePair<UIType, GameObject> ui in UIs)
+        GameObject blendMenu = UIs[UIType.BlendMenu];
+        if (blendMenu.activeSelf)
         {
-            if (ui.Key != UIType.BlendMenu && ui.Value.activeInHierarchy)
+            Debug.Log("Exit early");
+            return; 
+        }
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.BlendMenu && kvp.Value.activeSelf)
             {
-                ui.Value.SetActive(false);
+                kvp.Value.SetActive(false);
             }
         }
 
-        UIs[UIType.BlendMenu].SetActive(true);
+        blendMenu.SetActive(true);
         blendMenuUI.GetComponentInChildren<BlendListUI>().RefreshBlendSlots();
     }
 
     public void EnableInventoryMainMenuUI()
     {
-        foreach (KeyValuePair<UIType, GameObject> ui in UIs)
+        GameObject inventoryMenu = UIs[UIType.InventoryMenu];
+
+        if (inventoryMenu.activeSelf)
         {
-            if (ui.Key != UIType.InventoryMenu && ui.Value.activeInHierarchy)
+            Debug.Log("Exit early");
+            return; 
+        }
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.InventoryMenu && kvp.Value.activeSelf)
             {
-                ui.Value.SetActive(false);
+                kvp.Value.SetActive(false);
             }
         }
 
-        UIs[UIType.InventoryMenu].SetActive(true);
+        inventoryMenu.SetActive(true);
         inventoryUI.GetComponentInChildren<InventoryUI>().RefreshInventorySlots();
     }
 

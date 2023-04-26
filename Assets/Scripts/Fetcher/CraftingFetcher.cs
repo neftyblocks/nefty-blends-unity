@@ -29,7 +29,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         {
             var (requiredAssetsResult, rollResult) = await GetRequiredAssets(blendId);
             var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult.uniqueIngredientCountIndex);
-
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
             craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult);
@@ -83,25 +82,18 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             }
 
             result.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
-            result.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
-                 .SelectMany(i => i.outcomes)
-                 .SelectMany(o => o.results)
-                 .Select(r => r.template?.immutableData?.img)
-                 .Where(img => img != null)
-                 .Select(imageLoader.GetSpriteAsync));
             result.requirementSprites = await Task.WhenAll(deserializedJsonResult.details.ingredients.Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img)));
             result.requiredAssetAmount = deserializedJsonResult.details.ingredients.Select(i => i.amount).ToArray();
             result.templateId = deserializedJsonResult.details.ingredients.Select(i => i.template.templateId).ToArray();
             rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
-               .SelectMany(i => i.outcomes)
-               .SelectMany(o => o.results)
-               .Select(r => r.template?.immutableData?.img)
-               .Where(img => img != null)
-               .Select(imageLoader.GetSpriteAsync));
+                .SelectMany(i => i.outcomes)
+                .Select(r => r.results.Count > 0 ? r.results[0].template?.immutableData.img : null)
+                .Select(imageLoader.GetSpriteAsync));
             rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls.SelectMany(i => i.outcomes).Select(i => i.odds).ToArray();
             rollResult.rollNames = deserializedJsonResult.details.rolls
-               .SelectMany(i => i.outcomes)
-               .SelectMany(o => o.results).Select(i => i.template?.immutableData?.name).ToArray();
+                .SelectMany(i => i.outcomes)
+                .Select(o => o.results.Count > 0 ? o.results[0].template?.immutableData?.name : "burn")
+                .ToArray();
             rollResult.totalOdds  = deserializedJsonResult.details.rolls[0].totalOdds;
 
             return (result,rollResult);

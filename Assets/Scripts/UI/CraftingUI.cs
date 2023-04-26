@@ -197,7 +197,7 @@ public class CraftingUI : MonoBehaviour
         DisplayRollData(rollResult);
         DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
         DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
-        DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
+        DisplayRollPaginationArrows(rollResult.rollSprites);
     }
 
     public void ResetSlots(GameObject[] gameObjects)

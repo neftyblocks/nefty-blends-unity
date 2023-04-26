@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class RequiredAssetsResult
 {
-    public Sprite[] rollSprites { get; set; }
     public Sprite[] requirementSprites { get; set; }
     public int uniqueIngredientCountIndex { get; set; }
     public int[] requiredAssetAmount { get; set; }
