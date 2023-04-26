@@ -7,10 +7,10 @@ public class CraftAssetPopupUI : MonoBehaviour
     [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject[] ingredientSlots;
 
-    public void InstantiateCraftAssetPopupUI(Sprite[] downloadedSprites, string[] assetIds)
+    public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         ResetSlots(ingredientSlots);
-        InstantiateSlots(downloadedSprites.Length, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
+        InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Length, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
     }
 
     public void ResetSlots(GameObject[] gameObjects)
@@ -45,7 +45,7 @@ public class CraftAssetPopupUI : MonoBehaviour
     {
         if (exactIndexIngredientAssetsResult.sprites != null)
         {
-            InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult.sprites, exactIndexIngredientAssetsResult.assetIds);
+            InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult);
 
             for (int i = 0; i < exactIndexIngredientAssetsResult.sprites.Length; i++)
             {

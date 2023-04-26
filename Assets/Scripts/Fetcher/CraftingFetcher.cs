@@ -113,7 +113,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             List<(string, string,int)> craftDetailsList = new List<(string, string, int)>();
             for (int i = 0; i < ingredientIndexCount; i++)
             {
-                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
+                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={ pluginController.GetWalletName() }&page=1&limit=100&order=desc&sort=asset_id";
                 var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
                 if (!deserializedJsonResult.success)
                 {
@@ -132,7 +132,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             result.assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
             result.indexId = craftDetailsList.Select(i => i.Item3).ToArray();
 
-
             return result;
         }
         catch (Exception ex)
@@ -146,27 +145,18 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            List<(string, string, string, int)> craftDetailsList = new List<(string, string, string, int)>();
-            var url = $"{ PluginController.apiUrl }/neftyblends/v1/blends/blend.nefty/{ blendId }/ingredients/{ ingredientIndex }/assets?owner={"4rmxq.wam"}&page=1&limit=100&order=desc&sort=asset_id";
+            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={ pluginController.GetWalletName() }&page=1&limit=100&order=desc&sort=asset_id";
             var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
             if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given ingredient.");
                 return null;
             }
-            foreach (var ingredient in deserializedJsonResult.details)
-            {
-                var ingredientOutcome = ingredient.data.img;
-                var assetId = ingredient.assetId;
-                var assetName = ingredient.name;
-                var mintNumber = ingredient.templateMint;
 
-                craftDetailsList.Add((ingredientOutcome, assetId, assetName, mintNumber));
-            }
-            var downloadedIngredientSprites = craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)).ToArray();
-            var assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
-            var assetNames = craftDetailsList.Select(i => i.Item3).ToArray();
-            var mintNumbers = craftDetailsList.Select(i => i.Item4).ToArray();
+            var downloadedIngredientSprites = deserializedJsonResult.details.Select(i => imageLoader.GetSpriteAsync(i.data.img)).ToArray();
+            var assetIds = deserializedJsonResult.details.Select(i => i.assetId).ToArray();
+            var assetNames = deserializedJsonResult.details.Select(i => i.name).ToArray();
+            var mintNumbers = deserializedJsonResult.details.Select(i => i.templateMint).ToArray();
             var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
 
             return new ExactIndexIngredientAssetsResult
@@ -179,7 +169,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: { ex }");
+            Debug.Log($"Error: {ex}");
             return null;
         }
     }
