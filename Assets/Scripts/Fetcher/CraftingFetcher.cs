@@ -68,7 +68,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     public async Task<(RequiredAssetsResult,RollResult)> GetRequiredAssets(int blendId)
     {
-        var result = new RequiredAssetsResult();
+        var requiredAssetsResult = new RequiredAssetsResult();
         var rollResult = new RollResult();
         try
         {
@@ -81,22 +81,62 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 return (null, null);
             }
 
-            result.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
-            result.requirementSprites = await Task.WhenAll(deserializedJsonResult.details.ingredients.Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img)));
-            result.requiredAssetAmount = deserializedJsonResult.details.ingredients.Select(i => i.amount).ToArray();
-            result.templateId = deserializedJsonResult.details.ingredients.Select(i => i.template.templateId).ToArray();
+            switch (deserializedJsonResult.details.ingredients[0].type)
+            {
+                case "TEMPLATE_INGREDIENT":
+                    requiredAssetsResult.templateId = deserializedJsonResult.details.ingredients
+                        .Select(i => i.template.templateId)
+                        .ToArray();
+                    requiredAssetsResult.requirementSprites = await Task.WhenAll(deserializedJsonResult.details.ingredients
+                        .Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img)));
+                    break;
+                case "SCHEMA_INGREDIENT":
+                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
+                        .Select(i => i.schema.schemaName)
+                        .ToArray();
+                    break;
+                case "COLLECTION_INGREDIENT":
+                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
+                        .Select(i => i.collection.collectionName)
+                        .ToArray();
+                    break;
+                case "FT_INGREDIENT":
+                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
+                        .Select(i => i.ftAmount.amount.ToString())
+                        .ToArray();
+                    break;
+                case "ATTRIBUTE_INGREDIENT":
+                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
+                        .Select(i => i.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault())
+                        .ToArray();
+                    break;
+                default:
+                    break;
+            }
+
+            requiredAssetsResult.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
+            requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
+                .Select(i => i.amount)
+                .ToArray();
+
             rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
-                .Select(r => r.results.Count > 0 ? r.results[0].template?.immutableData.img : null)
+                .Select(r => r.results.FirstOrDefault()?.template?.immutableData.img)
                 .Select(imageLoader.GetSpriteAsync));
-            rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls.SelectMany(i => i.outcomes).Select(i => i.odds).ToArray();
+
+            rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls
+                .SelectMany(i => i.outcomes)
+                .Select(i => i.odds)
+                .ToArray();
+
             rollResult.rollNames = deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
-                .Select(o => o.results.Count > 0 ? o.results[0].template?.immutableData?.name : "burn")
+                .Select(o => o.results.FirstOrDefault()?.template?.immutableData?.name ?? "burn")
                 .ToArray();
-            rollResult.totalOdds  = deserializedJsonResult.details.rolls[0].totalOdds;
 
-            return (result,rollResult);
+            rollResult.totalOdds = deserializedJsonResult.details.rolls[0].totalOdds;
+
+            return (requiredAssetsResult, rollResult);
         }
         catch (Exception ex)
         {
@@ -146,6 +186,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={ pluginController.GetWalletName() }&page=1&limit=100&order=desc&sort=asset_id";
+            Debug.Log(url);
             var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
             if (!deserializedJsonResult.success)
             {

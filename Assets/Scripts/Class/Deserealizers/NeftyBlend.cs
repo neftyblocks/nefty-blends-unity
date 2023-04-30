@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
-using System.Collections;
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class NeftyBlend
 {
@@ -45,22 +44,36 @@ public class NeftyBlend
         public long index { get; set; }
         public int amount { get; set; }
         public Effect effect { get; set; }
+        [JsonProperty("ft_amount")]
+        public FtAmount ftAmount { get; set; }
         public Attributes attributes { get; set; }
+        public Collection collection { get; set; }
         public string displayData { get; set; }
         public IngredientSchema schema { get; set; }
         public IngredientTemplate template { get; set; }
     }
 
+    public partial class FtAmount
+    {
+        public int amount { get; set; }
+        public string tokenSymbol { get; set; }
+        public string tokenContract { get; set; }
+        public long tokenPrecision { get; set; }
+    }
+
     public partial class Attributes
     {
+        [JsonProperty("attributes")]
         public List<Attribute> attributesAttributes { get; set; }
         public string schemaName { get; set; }
+        [JsonProperty("collection_name")]
         public string collectionName { get; set; }
     }
 
     public partial class Attribute
     {
         public string name { get; set; }
+        [JsonProperty("allowed_values")]
         public List<string> allowedValues { get; set; }
     }
 
@@ -78,6 +91,7 @@ public class NeftyBlend
     public partial class IngredientSchema
     {
         public string contract { get; set; }
+        [JsonProperty("schema_name")]
         public string schemaName { get; set; }
         public List<Format> format { get; set; }
         public long createdAtBlock { get; set; }
@@ -112,6 +126,7 @@ public class NeftyBlend
 
     public partial class Collection
     {
+        [JsonProperty("collection_name")]
         public string collectionName { get; set; }
         public string name { get; set; }
         public string img { get; set; }
@@ -171,16 +186,9 @@ public class NeftyBlend
 
     public partial class ImmutableData
     {
-        public string era { get; set; }
         public string img { get; set; }
         public string name { get; set; }
         public string rarity { get; set; }
-        public long zosId { get; set; }
-        public string description { get; set; }
-        public long shieldStrength { get; set; }
     }
-
     public enum TypeEnum { Image, String, Uint64, IPFS };
-
-
 }

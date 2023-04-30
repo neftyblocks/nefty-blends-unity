@@ -5,6 +5,8 @@ using UnityEngine;
 public class RequiredAssetsResult
 {
     public Sprite[] requirementSprites { get; set; }
+    public string[] requirementText { get; set; }
+    public string[] requirementType { get; set; }
     public int uniqueIngredientCountIndex { get; set; }
     public int[] requiredAssetAmount { get; set; }
     public int[] templateId { get; set; }

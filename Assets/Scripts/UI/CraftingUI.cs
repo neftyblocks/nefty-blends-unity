@@ -138,41 +138,45 @@ public class CraftingUI : MonoBehaviour
             indexToAssetIds[index].Add(assetId);
         }
 
-        if (requiredAssetResult.requirementSprites != null)
+        InstantiateRequirementSlots(totalRequiredAssets);
+        int currentRequirementSlotIndex = 0;
+
+        for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
         {
-            InstantiateRequirementSlots(totalRequiredAssets);
-            int currentRequirementSlotIndex = 0;
+            int assetCounter = 0;
 
-            for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
+            for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
             {
-                int assetCounter = 0;
+                Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites != null ? "NFT_Image" : "NFT_Text");
 
-                for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
+                if (requiredAssetResult.requirementSprites != null)
                 {
-                    Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Image");
                     nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
                     requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(requiredAssetResult.templateId[i]);
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
-
-                    if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i)
-                    {
-                        if (indexToAssetIds.ContainsKey(i))
-                        {
-                            if (assetCounter < indexToAssetIds[i].Count)
-                            {
-                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
-                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
-                                assetCounter++;
-                            }
-                            else
-                            {
-                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
-                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
-                            }
-                        }
-                    }
-                    currentRequirementSlotIndex++;
                 }
+                else
+                {
+                    nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+                }
+
+                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+
+                if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i && indexToAssetIds.ContainsKey(i))
+                {
+                    if (assetCounter < indexToAssetIds[i].Count)
+                    {
+                        requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
+                        requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
+                        assetCounter++;
+                    }
+                    else
+                    {
+                        requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
+                        requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
+                    }
+                }
+
+                currentRequirementSlotIndex++;
             }
         }
     }
