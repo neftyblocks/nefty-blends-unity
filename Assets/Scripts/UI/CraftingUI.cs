@@ -141,7 +141,7 @@ public class CraftingUI : MonoBehaviour
         InstantiateRequirementSlots(totalRequiredAssets);
         int currentRequirementSlotIndex = 0;
 
-        for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
+        for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Count; i++)
         {
             int assetCounter = 0;
 

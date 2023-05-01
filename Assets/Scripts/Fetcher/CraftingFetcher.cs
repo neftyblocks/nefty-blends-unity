@@ -81,43 +81,47 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 return (null, null);
             }
 
-            switch (deserializedJsonResult.details.ingredients[0].type)
+            foreach (var ingredient in deserializedJsonResult.details.ingredients)
             {
-                case "TEMPLATE_INGREDIENT":
+                switch (ingredient.type)
+                {
+                    case "TEMPLATE_INGREDIENT":
                     requiredAssetsResult.templateId = deserializedJsonResult.details.ingredients
                         .Select(i => i.template.templateId)
-                        .ToArray();
-                    requiredAssetsResult.requirementSprites = await Task.WhenAll(deserializedJsonResult.details.ingredients
-                        .Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img)));
-                    break;
+                        .ToList();
+                    requiredAssetsResult.requirementSprites = (await Task.WhenAll(deserializedJsonResult.details.ingredients
+                        .Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img))))
+                        .ToList();
+                        break;
                 case "SCHEMA_INGREDIENT":
                     requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
                         .Select(i => i.schema.schemaName)
-                        .ToArray();
+                        .ToList();
                     break;
                 case "COLLECTION_INGREDIENT":
                     requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
                         .Select(i => i.collection.collectionName)
-                        .ToArray();
+                        .ToList();
                     break;
                 case "FT_INGREDIENT":
                     requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
                         .Select(i => i.ftAmount.amount.ToString())
-                        .ToArray();
+                        .ToList();
                     break;
                 case "ATTRIBUTE_INGREDIENT":
                     requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
                         .Select(i => i.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault())
-                        .ToArray();
-                    break;
+                        .ToList();
+                    break;  
                 default:
                     break;
             }
+        }
 
             requiredAssetsResult.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
             requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
                 .Select(i => i.amount)
-                .ToArray();
+                .ToList();
 
             rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
