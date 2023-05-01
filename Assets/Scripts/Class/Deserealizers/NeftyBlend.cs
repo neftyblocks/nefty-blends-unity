@@ -41,7 +41,7 @@ public class NeftyBlend
     public partial class Ingredient
     {
         public string type { get; set; }
-        public long index { get; set; }
+        public int index { get; set; }
         public int amount { get; set; }
         public Effect effect { get; set; }
         [JsonProperty("ft_amount")]

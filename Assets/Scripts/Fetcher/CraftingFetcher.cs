@@ -28,7 +28,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         try
         {
             var (requiredAssetsResult, rollResult) = await GetRequiredAssets(blendId);
-            var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult.uniqueIngredientCountIndex);
+            var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult);
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
             craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult);
@@ -86,40 +86,36 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 switch (ingredient.type)
                 {
                     case "TEMPLATE_INGREDIENT":
-                    requiredAssetsResult.templateId = deserializedJsonResult.details.ingredients
-                        .Select(i => i.template.templateId)
-                        .ToList();
-                    requiredAssetsResult.requirementSprites = (await Task.WhenAll(deserializedJsonResult.details.ingredients
-                        .Select(i => imageLoader.GetSpriteAsync(i.template.immutableData.img))))
-                        .ToList();
+                        requiredAssetsResult.requirementType.Add(ingredient.type);
+                        requiredAssetsResult.templateId.Add(ingredient.template.templateId);
+                        requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.img));
                         break;
-                case "SCHEMA_INGREDIENT":
-                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
-                        .Select(i => i.schema.schemaName)
-                        .ToList();
-                    break;
-                case "COLLECTION_INGREDIENT":
-                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
-                        .Select(i => i.collection.collectionName)
-                        .ToList();
-                    break;
-                case "FT_INGREDIENT":
-                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
-                        .Select(i => i.ftAmount.amount.ToString())
-                        .ToList();
-                    break;
-                case "ATTRIBUTE_INGREDIENT":
-                    requiredAssetsResult.requirementText = deserializedJsonResult.details.ingredients
-                        .Select(i => i.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault())
-                        .ToList();
-                    break;  
-                default:
-                    break;
+                    case "SCHEMA_INGREDIENT":
+                        requiredAssetsResult.requirementType.Add(ingredient.type);
+                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementText.Add(ingredient.schema.schemaName);
+                        break;
+                    case "COLLECTION_INGREDIENT":
+                        requiredAssetsResult.requirementType.Add(ingredient.type);
+                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementText.Add(ingredient.collection.collectionName);
+                        break;
+                    case "FT_INGREDIENT":
+                        requiredAssetsResult.requirementType.Add(ingredient.type);
+                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementText.Add(ingredient.ftAmount.amount.ToString());
+                        break;
+                    case "ATTRIBUTE_INGREDIENT":
+                        requiredAssetsResult.requirementType.Add(ingredient.type);
+                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementText.Add(ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault());
+                        break;
+                    default:
+                        break;
+                }
+                requiredAssetsResult.ingredientIndex.Add(ingredient.index);
             }
-        }
-
-            requiredAssetsResult.uniqueIngredientCountIndex = deserializedJsonResult.details.ingredients.Count;
-            requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
+           requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
                 .Select(i => i.amount)
                 .ToList();
 
@@ -149,15 +145,14 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
     }
 
-    public async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, int ingredientIndexCount)
+    public async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, RequiredAssetsResult requiredAssetsResult)
     {
-        var result = new IndexIngredientAssetsResult();
+        var ingredientAssetsResult = new IndexIngredientAssetsResult();
         try
         {
-            List<(string, string,int)> craftDetailsList = new List<(string, string, int)>();
-            for (int i = 0; i < ingredientIndexCount; i++)
+            foreach (var index in requiredAssetsResult.ingredientIndex)
             {
-                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{i}/assets?owner={ pluginController.GetWalletName() }&page=1&limit=100&order=desc&sort=asset_id";
+                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{index}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
                 var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
                 if (!deserializedJsonResult.success)
                 {
@@ -168,19 +163,17 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 {
                     var ingredientOutcome = ingredient.data.img;
                     var assetId = ingredient.assetId;
-                    craftDetailsList.Add((ingredientOutcome, assetId,i));
+                    ingredientAssetsResult.ingredientSprites.Add(await imageLoader.GetSpriteAsync(ingredientOutcome));
+                    ingredientAssetsResult.assetIds.Add(ingredient.assetId);
+                    ingredientAssetsResult.indexId.Add(index);
                 }
             }
 
-            result.ingredientSprites = await Task.WhenAll(craftDetailsList.Select(uri => imageLoader.GetSpriteAsync(uri.Item1)));
-            result.assetIds = craftDetailsList.Select(i => i.Item2).ToArray();
-            result.indexId = craftDetailsList.Select(i => i.Item3).ToArray();
-
-            return result;
+            return ingredientAssetsResult;
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: { ex }");
+            Debug.Log($"Error: {ex}");
             return null;
         }
     }

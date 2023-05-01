@@ -125,7 +125,7 @@ public class CraftingUI : MonoBehaviour
         Dictionary<int, List<string>> indexToAssetIds = new Dictionary<int, List<string>>();
         int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
 
-        for (int i = 0; i < indexIngredientAssetsResult.indexId.Length; i++)
+        for (int i = 0; i < indexIngredientAssetsResult.indexId.Count; i++)
         {
             int index = indexIngredientAssetsResult.indexId[i];
             string assetId = indexIngredientAssetsResult.assetIds[i];
@@ -147,51 +147,52 @@ public class CraftingUI : MonoBehaviour
 
             for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
             {
-                Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites != null ? "NFT_Image" : "NFT_Text");
-
-                if (requiredAssetResult.requirementSprites != null)
+                Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites[i] != null ? "NFT_Image" : "NFT_Text");
+                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+                if (requiredAssetResult.requirementSprites[i] != null)
                 {
                     nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(requiredAssetResult.templateId[i]);
                 }
                 else
                 {
                     nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
                 }
 
-                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+                var currentRequirementSlot = requirementSlots[currentRequirementSlotIndex];
+                var templateNFT = currentRequirementSlot.GetComponent<TemplateNFT>();
+                var templateUIElementController = currentRequirementSlot.GetComponent<TemplateUIElementController>();
 
-                if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i && indexToAssetIds.ContainsKey(i))
+                if (templateNFT.GetBlendIngredientIndex() == i && indexToAssetIds.ContainsKey(i))
                 {
                     if (assetCounter < indexToAssetIds[i].Count)
                     {
-                        requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
-                        requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
+                        templateUIElementController.selectedAssetId = indexToAssetIds[i][assetCounter];
+                        currentRequirementSlot.transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
                         assetCounter++;
                     }
                     else
                     {
-                        requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
-                        requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
+                        templateUIElementController.selectedAssetId = "";
+                        currentRequirementSlot.transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
                     }
                 }
-
                 currentRequirementSlotIndex++;
             }
         }
     }
 
-    public void DisplayIngredientImage(Sprite[] downloadedSprites, string[] assetIds)
+    public void DisplayIngredientImage(IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
-        if (downloadedSprites != null)
+        var resultCount = indexIngredientAssetsResult.ingredientSprites.Count;
+        if (indexIngredientAssetsResult.ingredientSprites != null)
         {
-            InstantiateIngredientSlots(downloadedSprites.Length);
-
-            for (int i = 0; i < downloadedSprites.Length; i++)
+            InstantiateIngredientSlots(resultCount);
+            for (int i = 0; i < resultCount; i++)
             {
                 Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
+                nftImage.GetComponent<Image>().sprite = indexIngredientAssetsResult.ingredientSprites[i];
+                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(indexIngredientAssetsResult.assetIds[i]);
             }
         }
     }
@@ -200,7 +201,7 @@ public class CraftingUI : MonoBehaviour
     {
         DisplayRollData(rollResult);
         DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
-        DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
+        DisplayIngredientImage(indexIngredientAssetsResult);
         DisplayRollPaginationArrows(rollResult.rollSprites);
     }
 

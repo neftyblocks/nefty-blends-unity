@@ -4,17 +4,8 @@ using UnityEngine;
 
 public class TemplateNFT : MonoBehaviour
 {
-    [SerializeField] private int templateId;
     [SerializeField] private int blendIngredientIndex;
-
-    public void SetTemplateId(int id)
-    {
-        templateId = id;
-    }
-    public int GetTemplateId()
-    {
-        return templateId;
-    }
+    [SerializeField] private string requirementType;
 
     public void SetBlendIngredientIndex(int id)
     {
@@ -23,5 +14,14 @@ public class TemplateNFT : MonoBehaviour
     public int GetBlendIngredientIndex()
     {
         return blendIngredientIndex;
+    }
+
+    public void SetRequirementType(string type)
+    {
+        requirementType = type;
+    }
+    public string GetRequirementType()
+    {
+        return requirementType;
     }
 }

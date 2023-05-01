@@ -27,11 +27,15 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
     }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
-        int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
-        UserSelectedIngredient(ingredientIndex);
-        UserSelectedGameobject(gameObject);
-        GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SelectedTemplateObject = gameObject;
+        if (gameObject.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
+        {
+            int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
+            UserSelectedIngredient(ingredientIndex);
+            UserSelectedGameobject(gameObject);
+            GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SelectedTemplateObject = gameObject;
+        }
     }
+       
 
     public bool IsClicked()
     {
