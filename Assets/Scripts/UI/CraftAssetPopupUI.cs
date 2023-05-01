@@ -10,7 +10,7 @@ public class CraftAssetPopupUI : MonoBehaviour
     public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         ResetSlots(ingredientSlots);
-        InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Length, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
+        InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
     }
 
     public void ResetSlots(GameObject[] gameObjects)
@@ -43,11 +43,11 @@ public class CraftAssetPopupUI : MonoBehaviour
 
     public void DisplayAssetImages(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
-        if (exactIndexIngredientAssetsResult.sprites != null)
+        if (exactIndexIngredientAssetsResult != null)
         {
             InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult);
 
-            for (int i = 0; i < exactIndexIngredientAssetsResult.sprites.Length; i++)
+            for (int i = 0; i < exactIndexIngredientAssetsResult.sprites.Count; i++)
             {
                 Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
                 nftImage.GetComponent<Image>().sprite = exactIndexIngredientAssetsResult.sprites[i];

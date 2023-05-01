@@ -150,25 +150,28 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         var ingredientAssetsResult = new IndexIngredientAssetsResult();
         try
         {
-            foreach (var index in requiredAssetsResult.ingredientIndex)
+            for (int i = 0; i < requiredAssetsResult.ingredientIndex.Count; i++)
             {
-                var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{index}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
-                var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
-                if (!deserializedJsonResult.success)
+                var index = requiredAssetsResult.ingredientIndex[i];
+                if (!requiredAssetsResult.requirementType[i].Equals("FT_INGREDIENT"))
                 {
-                    Debug.LogError("No data found for the given ingredient.");
-                    return null;
-                }
-                foreach (var ingredient in deserializedJsonResult.details)
-                {
-                    var ingredientOutcome = ingredient.data.img;
-                    var assetId = ingredient.assetId;
-                    ingredientAssetsResult.ingredientSprites.Add(await imageLoader.GetSpriteAsync(ingredientOutcome));
-                    ingredientAssetsResult.assetIds.Add(ingredient.assetId);
-                    ingredientAssetsResult.indexId.Add(index);
+                    var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{index}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
+                    var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
+                    if (!deserializedJsonResult.success)
+                    {
+                        Debug.LogError("No data found for the given ingredient.");
+                        return null;
+                    }
+                    foreach (var ingredient in deserializedJsonResult.details)
+                    {
+                        var ingredientOutcome = ingredient.data.img;
+                        var assetId = ingredient.assetId;
+                        ingredientAssetsResult.ingredientSprites.Add(await imageLoader.GetSpriteAsync(ingredientOutcome));
+                        ingredientAssetsResult.assetIds.Add(ingredient.assetId);
+                        ingredientAssetsResult.indexId.Add(index);
+                    }
                 }
             }
-
             return ingredientAssetsResult;
         }
         catch (Exception ex)
@@ -180,10 +183,10 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     public async Task<ExactIndexIngredientAssetsResult> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
     {
+        var ingredientAssetResult = new ExactIndexIngredientAssetsResult();
         try
         {
-            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={ pluginController.GetWalletName() }&page=1&limit=100&order=desc&sort=asset_id";
-            Debug.Log(url);
+            var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
             var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
             if (!deserializedJsonResult.success)
             {
@@ -191,19 +194,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 return null;
             }
 
-            var downloadedIngredientSprites = deserializedJsonResult.details.Select(i => imageLoader.GetSpriteAsync(i.data.img)).ToArray();
-            var assetIds = deserializedJsonResult.details.Select(i => i.assetId).ToArray();
-            var assetNames = deserializedJsonResult.details.Select(i => i.name).ToArray();
-            var mintNumbers = deserializedJsonResult.details.Select(i => i.templateMint).ToArray();
-            var spriteIngredientResults = await Task.WhenAll(downloadedIngredientSprites);
+            var details = deserializedJsonResult.details;
 
-            return new ExactIndexIngredientAssetsResult
-            {
-                sprites = spriteIngredientResults,
-                assetIds = assetIds,
-                assetNames = assetNames,
-                mintNumbers = mintNumbers
-            };
+            ingredientAssetResult.assetIds.AddRange(details.Select(detail => detail.assetId));
+            ingredientAssetResult.assetNames.AddRange(details.Select(detail => detail.name));
+            ingredientAssetResult.mintNumbers.AddRange(details.Select(detail => detail.templateMint));
+
+            var downloadedSprites = await Task.WhenAll(details.Select(detail => imageLoader.GetSpriteAsync(detail.data.img)));
+            ingredientAssetResult.sprites = downloadedSprites.ToList();
+
+            return ingredientAssetResult;
         }
         catch (Exception ex)
         {

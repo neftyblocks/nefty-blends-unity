@@ -122,29 +122,13 @@ public class CraftingUI : MonoBehaviour
 
     public void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
-        Dictionary<int, List<string>> indexToAssetIds = new Dictionary<int, List<string>>();
         int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
-
-        for (int i = 0; i < indexIngredientAssetsResult.indexId.Count; i++)
-        {
-            int index = indexIngredientAssetsResult.indexId[i];
-            string assetId = indexIngredientAssetsResult.assetIds[i];
-
-            if (!indexToAssetIds.ContainsKey(index))
-            {
-                indexToAssetIds[index] = new List<string>();
-            }
-
-            indexToAssetIds[index].Add(assetId);
-        }
-
-        InstantiateRequirementSlots(totalRequiredAssets);
         int currentRequirementSlotIndex = 0;
+        InstantiateRequirementSlots(totalRequiredAssets);
 
         for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Count; i++)
         {
-            int assetCounter = 0;
-
+            var assetCounter = 0;
             for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
             {
                 Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites[i] != null ? "NFT_Image" : "NFT_Text");
@@ -162,10 +146,13 @@ public class CraftingUI : MonoBehaviour
                 var currentRequirementSlot = requirementSlots[currentRequirementSlotIndex];
                 var templateNFT = currentRequirementSlot.GetComponent<TemplateNFT>();
                 var templateUIElementController = currentRequirementSlot.GetComponent<TemplateUIElementController>();
+                Debug.Log(indexIngredientAssetsResult.indexId.Count);
+                Debug.Log(indexIngredientAssetsResult.indexId.Count);
 
-                if (templateNFT.GetBlendIngredientIndex() == i && indexToAssetIds.ContainsKey(i))
+                if (templateNFT.GetBlendIngredientIndex() == indexIngredientAssetsResult.indexId[assetCounter])
                 {
-                    if (assetCounter < indexToAssetIds[i].Count)
+
+                    /*if (assetCounter < indexToAssetIds[i].Count)
                     {
                         templateUIElementController.selectedAssetId = indexToAssetIds[i][assetCounter];
                         currentRequirementSlot.transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
@@ -175,7 +162,7 @@ public class CraftingUI : MonoBehaviour
                     {
                         templateUIElementController.selectedAssetId = "";
                         currentRequirementSlot.transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
-                    }
+                    }*/
                 }
                 currentRequirementSlotIndex++;
             }
