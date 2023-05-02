@@ -139,6 +139,7 @@ public class CraftingUI : MonoBehaviour
                     requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
                     nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
                     requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
                     currentRequirementSlotIndex++;
                 }
             }

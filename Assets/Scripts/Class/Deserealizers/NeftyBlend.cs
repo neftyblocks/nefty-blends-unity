@@ -55,10 +55,14 @@ public class NeftyBlend
 
     public partial class FtAmount
     {
+        [JsonProperty("amount")]
         public int amount { get; set; }
+        [JsonProperty("token_symbol")]
         public string tokenSymbol { get; set; }
+        [JsonProperty("token_contract")]
         public string tokenContract { get; set; }
-        public long tokenPrecision { get; set; }
+        [JsonProperty("token_precision")]
+        public int tokenPrecision { get; set; }
     }
 
     public partial class Attributes

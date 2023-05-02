@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using UnityEngine;
 
 public interface ISendTransactionJS
 {
-    void SendTransactionBlend(int blendId, string[] assetIds);
+    void SendTransactionAsset(int blendId, string[] assetIds,int count);
+    void SendTransactionToken(int blendId, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int count);
+    void SendTransactionAssetAndToken(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount);
 }

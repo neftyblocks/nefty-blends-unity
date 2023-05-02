@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
-using UnityEditor;
 using NSubstitute;
-using UnityEngine.TestTools;
 using System.Linq;
 using System;
 using Object = UnityEngine.Object;
@@ -45,7 +43,7 @@ public class BlendTest
         // Create a new TemplateUIElementController instance
         GameObject templateObject = new GameObject("TemplateUIElementControllerObject");
         TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
-
+        templateObject.AddComponent<TemplateNFT>();
         // Set the selectedAssetId property to an empty string
         templateUIElementController.selectedAssetId = "";
 
@@ -75,8 +73,10 @@ public class BlendTest
         GameObject templateObject1 = new GameObject("TemplateUIElementControllerObject1");
         TemplateUIElementController templateUIElementController1 = templateObject1.AddComponent<TemplateUIElementController>();
         templateUIElementController1.selectedAssetId = "some_asset_id_1";
+        TemplateNFT templateNFT1 = templateObject1.AddComponent<TemplateNFT>();
         GameObject templateObject2 = new GameObject("TemplateUIElementControllerObject2");
         TemplateUIElementController templateUIElementController2 = templateObject2.AddComponent<TemplateUIElementController>();
+        TemplateNFT templateNFT2 = templateObject2.AddComponent<TemplateNFT>();
         templateUIElementController2.selectedAssetId = "some_asset_id_2";
 
         // Create a new requirement panel GameObject and set it as the parent of the TemplateUIElementControllers
@@ -88,7 +88,7 @@ public class BlendTest
         blendController.requirementPanel = requirementPanelObject.transform.gameObject;
 
         // Call GetSelectedAssetIds() and check that it returns an array with the correct asset IDs
-        string[] selectedAssetIds = blendController.GetSelectedAssetIds();
+        var selectedAssetIds = blendController.GetSelectedAssetList();
         Assert.AreEqual(2, selectedAssetIds.Length);
         Assert.Contains("some_asset_id_1", selectedAssetIds);
         Assert.Contains("some_asset_id_2", selectedAssetIds);
@@ -108,7 +108,7 @@ public class BlendTest
         BlendController blendController = blendObject.AddComponent<BlendController>();
 
         // Call GetSelectedAssetIds() and check that it returns an empty array
-        string[] selectedAssetIds = blendController.GetSelectedAssetIds();
+        string[] selectedAssetIds = blendController.GetSelectedAssetList();
         Assert.AreEqual(0, selectedAssetIds.Length);
 
         // Clean up
@@ -134,12 +134,13 @@ public class BlendTest
         foreach (var id in selectedAssetIds)
         {
             var child = new GameObject().AddComponent<TemplateUIElementController>();
+            child.gameObject.AddComponent<TemplateNFT>();
             child.selectedAssetId = id;
             child.transform.SetParent(requirementPanel.transform);
         }
         blendController.SubmitBlend();
 
-        SendTransactionJS.Received().SendTransactionBlend(expectedBlendId, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)));
+        SendTransactionJS.Received().SendTransactionAsset(expectedBlendId, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)),selectedAssetIds.Length);
     }
 
     [Test]
@@ -161,7 +162,7 @@ public class BlendTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.DidNotReceive().SendTransactionBlend(Arg.Any<int>(), Arg.Any<string[]>());
+        SendTransactionJS.DidNotReceive().SendTransactionAsset(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<int>());
     }
 }
 

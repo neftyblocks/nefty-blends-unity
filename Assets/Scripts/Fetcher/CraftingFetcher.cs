@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using static RequiredAssetsResult;
 
 public class CraftingFetcher : MonoBehaviour,IFetcher
 {
@@ -89,26 +90,41 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.templateId.Add(ingredient.template.templateId);
                         requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.img));
+                        requiredAssetsResult.fungibleToken.Add(null);
                         break;
                     case "SCHEMA_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.requirementSprites.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.schema.schemaName);
+                        requiredAssetsResult.fungibleToken.Add(null);
+
                         break;
                     case "COLLECTION_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.requirementSprites.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.collection.collectionName);
+                        requiredAssetsResult.fungibleToken.Add(null);
+
                         break;
                     case "FT_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.requirementSprites.Add(null);
-                        requiredAssetsResult.requirementText.Add(ingredient.ftAmount.amount.ToString());
+                        requiredAssetsResult.requirementText.Add((ingredient.ftAmount.amount / Math.Pow(10, ingredient.ftAmount.tokenPrecision)).ToString("0." + new string('0', ingredient.ftAmount.tokenPrecision)) + " " + ingredient.ftAmount.tokenSymbol);
+                        requiredAssetsResult.fungibleToken.Add(new FT
+                        {
+                            amount = ingredient.ftAmount.amount,
+                            tokenPrecision = ingredient.ftAmount.tokenPrecision,
+                            contractName = ingredient.ftAmount.tokenContract,
+                            tokenSymbol = ingredient.ftAmount.tokenSymbol
+                        });
+                        requiredAssetsResult.tokenContract.Add(ingredient.ftAmount.amount + ingredient.ftAmount.tokenSymbol.ToString());
                         break;
                     case "ATTRIBUTE_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.requirementSprites.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault());
+                        requiredAssetsResult.fungibleToken.Add(null);
+
                         break;
                     default:
                         break;
