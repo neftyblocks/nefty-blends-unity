@@ -80,9 +80,6 @@ mergeInto(LibraryManager.library, {
       token_quantities.push(UTF8ToString(HEAP32[(tokenQuantity + i * 4) >> 2]));
       token_symbols.push(UTF8ToString(HEAP32[(tokenSymbol + i * 4) >> 2]));
     }
-    console.log(contract_names[0]);
-    console.log(token_symbols[0])
-    console.log(token_quantities[0])
 
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
@@ -94,8 +91,8 @@ mergeInto(LibraryManager.library, {
     }
 
     actions.push(AnnounceDeposit(blend_id, asset_array, assetCount)),
-    actions.push(TransferAsset(blend_id, asset_array, assetCount)),
-    actions.push(NoSecurityFuse(blend_id, asset_array));
+      actions.push(TransferAsset(blend_id, asset_array, assetCount)),
+      actions.push(NoSecurityFuse(blend_id, asset_array));
 
     try {
       const result = await wax.api.transact(
@@ -105,8 +102,14 @@ mergeInto(LibraryManager.library, {
           expireSeconds: 60,
         }
       );
+      myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
     } catch (e) {
       console.log(e);
+      myGameInstance.SendMessage(
+        "ConfirmationPanel",
+        "ShowError",
+        e.toString()
+      );
     }
   },
 });

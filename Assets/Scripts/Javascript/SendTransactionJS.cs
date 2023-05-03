@@ -25,6 +25,4 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     {
         SubmitBlendTokenAndAsset(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount,assetCount);
     }
-
-
 }
