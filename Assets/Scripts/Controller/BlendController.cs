@@ -111,6 +111,38 @@ public class BlendController : MonoBehaviour
         return tokenSymbolList.ToArray();
     }
 
+    /* public void SubmitBlend()
+     {
+         if (CanBlend())
+         {
+             var assetList = GetSelectedAssetList();
+             var contractNameArray = GetContractNameList();
+             var tokenQuantityArray = GetTokenQuantityList().ToArray();
+             var tokenSymbolArray = GetTokenSymbolList().ToArray();
+
+             if (contractNameArray != null)
+             {
+                 if(assetList == null || assetList.Length <= 0)
+                 {
+
+
+                     sendTransactionJS.SendTransactionToken(craftAssetPopupController.currentBlendId, contractNameArray, tokenQuantityArray,tokenSymbolArray, tokenQuantityArray.Length);
+                     return;
+
+                 }
+                 sendTransactionJS.SendTransactionAssetAndToken(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenQuantityArray, tokenSymbolArray, tokenQuantityArray.Length,assetList.Length);
+                 return;
+
+             }
+             sendTransactionJS.SendTransactionAsset(craftAssetPopupController.currentBlendId, assetList,assetList.Length);
+             return;
+         }
+         else
+         {
+             Debug.Log("User doesn't have all assets for blend");
+         }
+     }*/
+
     public void SubmitBlend()
     {
         if (CanBlend())
@@ -120,22 +152,10 @@ public class BlendController : MonoBehaviour
             var tokenQuantityArray = GetTokenQuantityList().ToArray();
             var tokenSymbolArray = GetTokenSymbolList().ToArray();
 
-            if (contractNameArray != null)
+            if (assetList != null && contractNameArray != null && tokenQuantityArray != null && tokenSymbolArray!= null)
             {
-                if(assetList == null || assetList.Length <= 0)
-                {
-                   
-
-                    sendTransactionJS.SendTransactionToken(craftAssetPopupController.currentBlendId, contractNameArray, tokenQuantityArray,tokenSymbolArray, tokenQuantityArray.Length);
-                    return;
-
-                }
-                sendTransactionJS.SendTransactionAssetAndToken(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenQuantityArray, tokenSymbolArray, tokenQuantityArray.Length,assetList.Length);
-                return;
-
+                sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length);
             }
-            sendTransactionJS.SendTransactionAsset(craftAssetPopupController.currentBlendId, assetList,assetList.Length);
-            return;
         }
         else
         {

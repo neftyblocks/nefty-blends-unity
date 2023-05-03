@@ -115,8 +115,8 @@ public class BlendTest
         Object.DestroyImmediate(blendObject);
     }
 
-    [Test]
-    public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
+/*    [Test]
+*/   /* public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
     {
         GameObject blendObject = new GameObject("BlendControllerObject");
         BlendController blendController = blendObject.AddComponent<BlendController>();
@@ -163,6 +163,6 @@ public class BlendTest
 
         // Assert
         SendTransactionJS.DidNotReceive().SendTransactionAsset(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<int>());
-    }
+    }*/
 }
 

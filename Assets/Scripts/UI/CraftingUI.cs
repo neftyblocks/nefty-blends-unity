@@ -149,6 +149,7 @@ public class CraftingUI : MonoBehaviour
                 {
                     Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites[i] != null ? "NFT_Image" : "NFT_Text");
                     requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
 
                     if (requiredAssetResult.requirementSprites[i] != null)
                     {
@@ -158,59 +159,36 @@ public class CraftingUI : MonoBehaviour
                     {
                         nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
                     }
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
-
-                    bool assetIdSelected = false;
-                    string selectedAssetId = "";
-                    String[] priorityOrder = { "TEMPLATE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT", "ATTRIBUTE_INGREDIENT" };
-
-                    foreach (var item in priorityOrder)
-                    {
-                        if (!assetIdSelected)
-                        {
-                            for (int k = 0; k < indexIngredientAssetsResult.indexId.Count; k++)
-                            {
-                                // Check if the current asset ID has already been selected
-                                if (selectedAssetIds.Contains(indexIngredientAssetsResult.assetIds[k]))
-                                {
-                                    continue; // Skip this asset ID if it has already been selected
-                                }
-
-                                // Check if the current asset ID has already been assigned to another requirement slot
-                                bool assetIdAssigned = false;
-                                for (int l = 0; l < currentRequirementSlotIndex; l++)
-                                {
-                                    if (requirementSlots[l].GetComponent<TemplateUIElementController>().selectedAssetId == indexIngredientAssetsResult.assetIds[k])
-                                    {
-                                        assetIdAssigned = true;
-                                        break;
-                                    }
-                                }
-
-                                if (requiredAssetResult.requirementType[i].Equals(item) && !assetIdAssigned)
-                                {
-                                    selectedAssetId = indexIngredientAssetsResult.assetIds[k];
-                                    assetIdSelected = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    // Update SelectedIngredient text if an asset ID was selected
-                    if (assetIdSelected)
-                    {
-                        requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = selectedAssetId;
-                        requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = selectedAssetId;
-                        selectedAssetIds.Add(selectedAssetId);
-                    }
                     currentRequirementSlotIndex++;
                 }
             }
         }
+        string[] priorityOrder = { "TEMPLATE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT", "ATTRIBUTE_INGREDIENT" };
+        var sortedRequirementSlots = requirementSlots.OrderBy(slot => Array.IndexOf(priorityOrder, slot.GetComponent<TemplateNFT>().GetRequirementType())).ToList();
+
+        foreach (var requirementSlot in sortedRequirementSlots)
+        {
+            if (requirementSlot.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
+            {
+                for (var i = 0; i < indexIngredientAssetsResult.assetIds.Count; i++)
+                {
+                    if (requirementSlot.GetComponent<TemplateNFT>().GetBlendIngredientIndex() == indexIngredientAssetsResult.indexId[i])
+                    {
+                        if (!selectedAssetIds.Contains(indexIngredientAssetsResult.assetIds[i]))
+                        {
+                            selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
+                            requirementSlot.GetComponent<TemplateUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
+                            requirementSlot.transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexIngredientAssetsResult.assetIds[i];
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
-
-        public void DisplayIngredientImage(IndexIngredientAssetsResult indexIngredientAssetsResult)
+    public void DisplayIngredientImage(IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         var resultCount = indexIngredientAssetsResult.ingredientSprites.Count;
         if (indexIngredientAssetsResult.ingredientSprites != null)
