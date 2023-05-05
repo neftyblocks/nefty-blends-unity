@@ -78,7 +78,7 @@ public class CraftingUI : MonoBehaviour
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
         nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
         rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
-        float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
+        float rollPercentage = (float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100;
         rollPercentage = (float)Math.Round(rollPercentage, 1);
         rollPercentageText.text = rollPercentage.ToString() + "%";
     }
@@ -126,46 +126,32 @@ public class CraftingUI : MonoBehaviour
         int currentRequirementSlotIndex = 0;
         var listSize = requiredAssetResult.requiredAssetAmount.Count;
 
-        // Define a list to keep track of selected asset IDs
-        List<string> selectedAssetIds = new List<string>();
-
         for (int i = 0; i < listSize; i++)
         {
             if (requiredAssetResult.requirementType[i] == "FT_INGREDIENT")
             {
                 for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
                 {
-                    Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Text");
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
-                    nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
-                    currentRequirementSlotIndex++;
+                    DisplayFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
+                    currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
                 }
             }
             else
             {
-                for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
-                {
-                    Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites[i] != null ? "NFT_Image" : "NFT_Text");
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+                DisplayNFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
+                currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
 
-                    if (requiredAssetResult.requirementSprites[i] != null)
-                    {
-                        nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
-                    }
-                    else
-                    {
-                        nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
-                    }
-                    currentRequirementSlotIndex++;
-                }
             }
         }
-        string[] priorityOrder = { "TEMPLATE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT", "ATTRIBUTE_INGREDIENT" };
+        SortAndSelectAssetsInRequirementSlots(requirementSlots,indexIngredientAssetsResult);
+    }
+
+    public void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
+        string[] priorityOrder = { "TEMPLATE_INGREDIENT", "ATTRIBUTE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT" };
         var sortedRequirementSlots = requirementSlots.OrderBy(slot => Array.IndexOf(priorityOrder, slot.GetComponent<TemplateNFT>().GetRequirementType())).ToList();
 
+        List<string> selectedAssetIds = new List<string>();
         foreach (var requirementSlot in sortedRequirementSlots)
         {
             if (requirementSlot.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
@@ -185,7 +171,39 @@ public class CraftingUI : MonoBehaviour
                 }
             }
         }
+    }
 
+    private void DisplayFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
+    {
+        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
+        {
+            Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Text");
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+            nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
+            currentRequirementSlotIndex++;
+        }
+    }
+
+    private void DisplayNFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
+    {
+        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
+        {
+            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSprites[i] != null ? "NFT_Image" : "NFT_Text");
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+
+            if (requiredAssetResult.requirementSprites[i] != null)
+            {
+                nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
+            }
+            else
+            {
+                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            }
+            currentRequirementSlotIndex++;
+        }
     }
 
     public void DisplayIngredientImage(IndexIngredientAssetsResult indexIngredientAssetsResult)
