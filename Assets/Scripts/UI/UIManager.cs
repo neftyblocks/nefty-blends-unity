@@ -18,13 +18,12 @@ public class UIManager : MonoBehaviour
         AssetPopupMenu
     }
 
-    private void Awake()
+    private void Start()
     {
         UIs.Add(UIType.InventoryMenu, inventoryUI);
         UIs.Add(UIType.BlendMenu, blendMenuUI);
         UIs.Add(UIType.CraftingMenu, craftingUI);
         UIs.Add(UIType.AssetPopupMenu, assetPopup);
-
 
         if (!UIs[UIType.InventoryMenu].activeInHierarchy)
         {
