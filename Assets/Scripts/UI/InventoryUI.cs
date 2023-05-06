@@ -64,6 +64,6 @@ public class InventoryUI : MonoBehaviour
 
     public void SetTotalAssetText(int assetCount)
     {
-        totalAssetText.text = $"Total assets - { assetCount }";
+        totalAssetText.text = $"NFTs - { assetCount }";
     }
 }
