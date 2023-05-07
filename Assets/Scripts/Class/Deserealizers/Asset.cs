@@ -21,7 +21,8 @@ public class Asset
         public Template template { get; set; }
         public MutableData mutableData { get; set; }
         public ImmutableData immutableData { get; set; }
-        public long templateMint { get; set; }
+        [JsonProperty("template_mint")]
+        public int templateMint { get; set; }
         public List<object> backedTokens { get; set; }
         public object burnedByAccount { get; set; }
         public object burnedAtBlock { get; set; }

@@ -15,31 +15,28 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
     }
 
-    public async Task<(Sprite[], string[])> GetInventoryAssets(int currentPage)
+    public async Task<InventoryAsset> GetInventoryAssets(int currentPage)
     {
+        var result = new InventoryAsset();
         try
         {
             var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?sort=transferred&order=desc&owner={ pluginController.GetWalletName() }&page={ currentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+            foreach (var detail in deserializedJsonResult.details)
+            {
+                var sprite = await imageLoader.GetSpriteAsync(detail.data.img);
+                result.inventoryAssetSprites.Add(sprite);
+                result.invenoryAssetIds.Add(detail.assetId);
+                result.inventoryAssetMintNumber.Add(detail.templateMint);
+                result.inventoryAssetName.Add(detail.name);
+            }
 
-            var assetDetailsList = deserializedJsonResult.details
-                .Select(detail => (detail.data.img, detail.assetId))
-                .ToList();
-
-            var spriteTasks = assetDetailsList
-                .Select(uriWithId => imageLoader.GetSpriteAsync(uriWithId.img))
-                .ToArray();
-
-            var spriteResults = await Task.WhenAll(spriteTasks);
-            var sprites = spriteResults.ToArray();
-            var assetIds = assetDetailsList.Select(uriWithId => uriWithId.assetId).ToArray();
-
-            return (sprites, assetIds);
+            return result;
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error: {ex}");
-            return (null, null);
+            return result;
         }
     }
 

@@ -23,15 +23,21 @@ public class InventoryUI : MonoBehaviour
         SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
     }
 
-    public void DisplayAssetImages(Sprite[] sprites, string[] assetIds)
+    public void DisplayAssetImages(InventoryAsset inventoryAsset)
     {
-        for (int i = 0; i < sprites.Length; i++)
+        for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
             inventorySlots[i] = Instantiate(inventoryAssetPrefab, inventoryContainer);
             inventorySlots[i].tag = "Asset";
+            inventorySlots[i].GetComponent<NFT>().SetAsssetId(inventoryAsset.invenoryAssetIds[i]);
+            inventorySlots[i].GetComponent<NFT>().SetAssetName(inventoryAsset.inventoryAssetName[i]);
+            inventorySlots[i].GetComponent<NFT>().SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
-            nftImage.GetComponent<Image>().sprite = sprites[i];
-            inventorySlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
+            Transform nftName = inventorySlots[i].transform.Find("Asset_Name_Background/Asset_Name_Text");
+            nftName.GetComponent<TextMeshProUGUI>().text = inventorySlots[i].GetComponent<NFT>().GetAssetName();
+            Transform nftMint = inventorySlots[i].transform.Find("Mint_Background/Mint_Number_Text");
+            nftMint.GetComponent<TextMeshProUGUI>().text = "#" + inventorySlots[i].GetComponent<NFT>().GetMintNumber().ToString();
+            nftImage.GetComponent<Image>().sprite = inventoryAsset.inventoryAssetSprites[i];
         }
     }
 
@@ -43,18 +49,18 @@ public class InventoryUI : MonoBehaviour
         }
 
         apiCurrentPage = 1; 
-        var (sprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
+        var result = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
 
-        inventorySlots = new GameObject[sprites.Length];
-        DisplayAssetImages(sprites, assetIds);
+        inventorySlots = new GameObject[result.inventoryAssetName.Count];
+        DisplayAssetImages(result);
         SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
     }
 
     public async void InstantiateInventorySlots()
     {
-        var (sprites, assetIds) = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
-        inventorySlots = new GameObject[sprites.Length];
-        DisplayAssetImages(sprites,assetIds);
+        var result = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
+        inventorySlots = new GameObject[result.inventoryAssetName.Count];
+        DisplayAssetImages(result);
     }
  
     public void SetWalletNameText(string wallet)

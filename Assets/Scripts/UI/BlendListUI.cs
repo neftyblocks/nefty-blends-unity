@@ -25,7 +25,7 @@ public class BlendListUI : MonoBehaviour
             if (blendAssets.sprites[i] != null)
             {
                 Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
-                Transform blendName = blendSlots[i].transform.Find("Blend_Name");
+                Transform blendName = blendSlots[i].transform.Find("Blend_Name_Background/Blend_Name_Text");
 
                 blendName.GetComponent<TextMeshProUGUI>().text = blendAssets.blendNames[i];
                 blendImage.GetComponent<Image>().sprite = blendAssets.sprites[i];
