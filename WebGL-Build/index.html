@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
-    <button id="login" onclick="login()">WAX Login</button><br /><br />
+    <div id="ual-div"></div>
+    <button onclick="login()"></button>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
       <div id="unity-loading-bar">
@@ -27,17 +28,13 @@
         <div id="unity-build-title">Neftyblocks-Plugin-NEW</div>
       </div>
     </div>
+    <script src="bundle.js"></script>
     <script>
-      const wax = new waxjs.WaxJS({
-        rpcEndpoint: "https://wax.greymass.com",
-        tryAutoLogin: true,
-      });
-      async function login() {
-        try {
-          const userAccount = await wax.login();
-        } catch (e) {}
+      function login() {
+        ual.loginUser(anchor);
       }
-
+    </script>
+    <script>
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
