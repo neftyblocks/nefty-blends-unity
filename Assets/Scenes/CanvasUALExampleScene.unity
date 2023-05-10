@@ -7848,7 +7848,7 @@ MonoBehaviour:
   dashboardController: {fileID: 82636088}
   inventoryFetcherController: {fileID: 799937291}
   inventorySlots: []
-  inventoryAssetPrefab: {fileID: 8658164907581310236, guid: 0c82fc6099831bb44b682ec7abe5f420, type: 3}
+  inventoryAssetPrefab: {fileID: 8658164907581310236, guid: 9d9d51aa2f0ded047ad073e7f3aa9ae5, type: 3}
   inventoryContainer: {fileID: 1784170739}
 --- !u!1 &1659114446
 GameObject:
