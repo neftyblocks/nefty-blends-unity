@@ -17,12 +17,6 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private RectTransform inventoryContainer;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
 
-    async void Start()
-    {
-        InstantiateInventorySlots();
-        SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
-    }
-
     public void DisplayAssetImages(InventoryAsset inventoryAsset)
     {
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)

@@ -55,6 +55,11 @@ public class BlendListUI : MonoBehaviour
     {
         if (blendSlots != null && blendSlots.Length != 0)
         {
+            foreach (Transform child in blendPrefabContainer)
+            {
+                Destroy(child.gameObject);
+            }
+
             foreach (GameObject slot in blendSlots)
             {
                 Destroy(slot);

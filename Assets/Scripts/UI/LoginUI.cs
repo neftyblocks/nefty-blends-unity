@@ -12,9 +12,7 @@ public class LoginUI : MonoBehaviour
     [SerializeField] public TextMeshProUGUI walletText;
     public void LoggedIn(string walletName)
     {
-        Debug.Log("hello");
         loginPanelUI.SetActive(false);
-        Debug.Log(walletName);
         pluginController.SetWalletName(walletName);
         uIManager.EnableInventoryMainMenuUI();
         walletText.text = walletName; 
