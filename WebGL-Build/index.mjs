@@ -6,7 +6,11 @@ const myCallback = async (arrayOfUsers) => {
   window.user = arrayOfUsers[0];
   window.accountName = await user.getAccountName();
   window.permission = (await user.requestPermission) || "active";
-  myGameInstance.SendMessage("LoginEnvironment", "LoggedIn");
+  myGameInstance.SendMessage(
+    "LoginEnvironment",
+    "LoggedIn",
+    window.accountName
+  );
 };
 
 const myChain = {
@@ -42,4 +46,5 @@ ual.init();
 window.wax = wax;
 window.anchor = anchor;
 window.ual = ual;
-module.exports = { myCallback, accountName, permission };
+window.accountName = accountName;
+window.permission = permission;

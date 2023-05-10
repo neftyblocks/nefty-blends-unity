@@ -6,12 +6,6 @@ public class LoginController : MonoBehaviour
 {
     [SerializeField] SendTransactionJS sendTransactionJS;
 
-   /* void Start()
-    {
-        IsLoggedIn(){
-
-        }
-    }*/
     public void LoginAnchor()
     {
         sendTransactionJS.LoginAnchor();
@@ -20,9 +14,4 @@ public class LoginController : MonoBehaviour
     {
         sendTransactionJS.LoginCloudWallet();
     }
-
- /*   public void IsLoggedIn()
-    {
-        sendTransactionJS.IsLoggedIn();
-    }*/
 }

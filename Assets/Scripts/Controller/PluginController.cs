@@ -3,7 +3,7 @@ using UnityEngine;
 public class PluginController : MonoBehaviour
 {
     [SerializeField] string collectionName;
-    [SerializeField] string walletName { get; set; } = "2qq4a.c.wam";
+    [SerializeField] string walletName { get; set; }
     public static string apiUrl = "https://aa.neftyblocks.com";
     public static string ipfsUrl = "https://resizer.neftyblocks.com";
     public string GetCollectionName()

@@ -12,9 +12,6 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     [DllImport("__Internal")]
     private static extern void LoginCloudWalletsJS();
 
-  /*  [DllImport("__Internal")]
-    private static extern void IsLoggedInJS();*/
-
     public void SendBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount)
     {
         SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount,assetCount);
@@ -28,9 +25,4 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     {
         LoginCloudWalletsJS();
     }
-
-   /* public void IsLoggedIn()
-    {
-        IsLoggedInJS();
-    }*/
 }

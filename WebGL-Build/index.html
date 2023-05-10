@@ -1,18 +1,16 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <script src="waxjs.js"></script>
-  <script src="test.js"></script>
-
+  <script src="blockchainTransactions.js"></script>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>CI/CD Unity WebGL Player | My project</title>
+    <title>Neftyblocks Plugin</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico" />
     <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
-    <div id="ual-div"></div>
-    <button onclick="login()"></button>
+    <div style="display: none" id="ual-div"></div>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
       <div id="unity-loading-bar">
@@ -108,8 +106,8 @@
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
 
-        canvas.style.width = "1920px";
-        canvas.style.height = "1080px";
+        canvas.style.width = "1600px";
+        canvas.style.height = "900px";
       }
 
       loadingBar.style.display = "block";
