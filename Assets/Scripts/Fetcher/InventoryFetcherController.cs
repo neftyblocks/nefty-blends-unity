@@ -22,6 +22,8 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
         {
             var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?sort=transferred&order=desc&owner={ pluginController.GetWalletName() }&page={ currentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+            Debug.Log(deserializedJsonResult);
+
             foreach (var detail in deserializedJsonResult.details)
             {
                 var sprite = await imageLoader.GetSpriteAsync(detail.data.img);

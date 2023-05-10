@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject loginUI;
     [SerializeField] private GameObject inventoryUI;
     [SerializeField] private GameObject blendMenuUI;
     [SerializeField] private GameObject craftingUI;
@@ -12,6 +13,7 @@ public class UIManager : MonoBehaviour
 
     public enum UIType
     {
+        LoginMenu,
         InventoryMenu,
         BlendMenu,
         CraftingMenu,
@@ -24,10 +26,11 @@ public class UIManager : MonoBehaviour
         UIs.Add(UIType.BlendMenu, blendMenuUI);
         UIs.Add(UIType.CraftingMenu, craftingUI);
         UIs.Add(UIType.AssetPopupMenu, assetPopup);
+        UIs.Add(UIType.LoginMenu, loginUI);
 
         if (!UIs[UIType.InventoryMenu].activeInHierarchy)
         {
-            EnableUI(UIType.InventoryMenu);
+            EnableUI(UIType.LoginMenu);
         }
     }
 

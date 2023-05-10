@@ -89,7 +89,6 @@ function OpenBalance(token_symbol) {
   };
 }
 
-
 mergeInto(LibraryManager.library, {
   SubmitBlend: async function (
     blend_id,

@@ -6,7 +6,11 @@ const myCallback = async (arrayOfUsers) => {
   window.user = arrayOfUsers[0];
   window.accountName = await user.getAccountName();
   window.permission = (await user.requestPermission) || "active";
-  myGameInstance.SendMessage("LoginEnvironment", "LoggedIn");
+  myGameInstance.SendMessage(
+    "LoginEnvironment",
+    "LoggedIn",
+    window.accountName
+  );
 };
 
 const myChain = {
