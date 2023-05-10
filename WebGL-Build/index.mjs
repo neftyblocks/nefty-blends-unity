@@ -46,4 +46,5 @@ ual.init();
 window.wax = wax;
 window.anchor = anchor;
 window.ual = ual;
-module.exports = { myCallback, accountName, permission };
+window.accountName = accountName;
+window.permission = permission;
