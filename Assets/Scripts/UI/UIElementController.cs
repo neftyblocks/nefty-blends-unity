@@ -25,6 +25,7 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     {
         isClicked = isClicked ? false : true;
         GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
+        Debug.Log("here");
     }
 
     public bool IsClicked()
