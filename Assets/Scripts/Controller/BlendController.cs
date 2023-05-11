@@ -39,6 +39,8 @@ public class BlendController : MonoBehaviour
         return true;
     }
 
+
+
     public string[] GetSelectedAssetList()
     {
         List<string> idsList = new List<string>();
