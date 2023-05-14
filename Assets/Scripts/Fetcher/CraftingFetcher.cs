@@ -28,11 +28,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            var (requiredAssetsResult, rollResult) = await GetRequiredAssets(blendId);
+            var (requiredAssetsResult, rollResult,securityId) = await GetRequiredAssets(blendId);
             var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult);
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
-            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult);
+            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult,securityId);
         }
         catch (Exception ex)
         {
@@ -67,7 +67,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    public async Task<(RequiredAssetsResult,RollResult)> GetRequiredAssets(int blendId)
+    public async Task<(RequiredAssetsResult,RollResult,int)> GetRequiredAssets(int blendId)
     {
         var requiredAssetsResult = new RequiredAssetsResult();
         var rollResult = new RollResult();
@@ -75,12 +75,13 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
-
+            
             if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return (null, null);
+                return (null, null,0);
             }
+            var securityId = deserializedJsonResult.details.securityId;
 
             foreach (var ingredient in deserializedJsonResult.details.ingredients)
             {
@@ -152,12 +153,12 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
             rollResult.totalOdds = deserializedJsonResult.details.rolls[0].totalOdds;
 
-            return (requiredAssetsResult, rollResult);
+            return (requiredAssetsResult, rollResult,securityId);
         }
         catch (Exception ex)
         {
             Debug.Log($"Error: { ex }");
-            return (null,null);
+            return (null, null, 0);
         }
     }
 

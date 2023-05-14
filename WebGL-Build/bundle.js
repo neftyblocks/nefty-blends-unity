@@ -2069,7 +2069,8 @@ ual.init();
 window.wax = wax;
 window.anchor = anchor;
 window.ual = ual;
-module.exports = { myCallback, accountName, permission };
+window.accountName = accountName;
+window.permission = permission;
 
 },{"@nefty/ual-anchor":8,"@nefty/ual-renderer":18,"@nefty/ual-wax":19}],6:[function(require,module,exports){
 (function (global){(function (){

@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
+    <button onclick="test()">Click Me</button>
+
     <div style="display: none" id="ual-div"></div>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
@@ -27,11 +29,6 @@
       </div>
     </div>
     <script src="bundle.js"></script>
-    <script>
-      function login() {
-        ual.loginUser(anchor);
-      }
-    </script>
     <script>
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");

@@ -7,6 +7,7 @@ using UnityEngine;
 public class BlendController : MonoBehaviour
 {
     [SerializeField] public GameObject requirementPanel;
+    [SerializeField] public BlendProtectionController blendProtectionController;
     [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
 
@@ -115,7 +116,7 @@ public class BlendController : MonoBehaviour
 
     public void SubmitBlend()
     {
-        if (CanBlend())
+        if (CanBlend() && (blendProtectionController.isWhitelisted && blendProtectionController.isSecured))
         {
             var assetList = GetSelectedAssetList();
             var contractNameArray = GetContractNameList();
@@ -126,6 +127,10 @@ public class BlendController : MonoBehaviour
             {
                 sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length);
             }
+        }
+        else
+        {
+            Debug.Log("cant");
         }
     }
 }

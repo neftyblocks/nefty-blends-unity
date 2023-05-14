@@ -88,3 +88,16 @@ function OpenBalance(token_symbol) {
     },
   };
 }
+
+async function FetchBlendProtection(rpc, security_id) {
+  let data = await rpc.get_table_rows({
+    json: true, // Get the response as json
+    code: "secure.nefty", // Contract that we target
+    scope: security_id, // Account that owns the data
+    table: "whitelists", // Table name
+    limit: 10, // Maximum number of rows that we want to get
+    reverse: false, // Optional: Get reversed data
+    show_payer: false, // Optional: Show ram payer
+  });
+  return data;
+}

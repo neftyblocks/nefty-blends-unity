@@ -24,7 +24,7 @@ mergeInto(LibraryManager.library, {
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
     }
-    
+
     for (let i = 0; i < contract_names.length; i++) {
       actions.push(OpenBalance(token_symbols[i]));
       actions.push(TransferToken(contract_names[i], token_quantities[i]));
@@ -57,5 +57,23 @@ mergeInto(LibraryManager.library, {
   },
   LoginCloudWalletsJS: async function () {
     ual.loginUser(wax);
+  },
+  IsBlendProtectionEligibleJS: async function (security_id) {
+    let isUserFound = false; // Variable to track if the user is found
+
+      let data = await FetchBlendProtection(user.rpc, security_id);
+
+      let userWallet = await accountName;
+      for (let whitelistedUser of data.rows) {
+        if (whitelistedUser.account == userWallet) {
+          isUserFound = true;
+          break; // Exit the loop since the user is found
+        }
+      }
+    myGameInstance.SendMessage(
+      "BlendProtectionController",
+      "IsWhitelisted",
+      isUserFound.toString()
+    );
   },
 });

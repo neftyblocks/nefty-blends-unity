@@ -19,9 +19,12 @@ public class NeftyBlend
         public long max { get; set; }
         public long useCount { get; set; }
         public DisplayData displayData { get; set; }
+        public long SecurityId { get; set; }
+
         public string createdAtTime { get; set; }
         public long ingredientsCount { get; set; }
-        public long securityId { get; set; }
+        [JsonProperty("security_id")]
+        public int securityId { get; set; }
         public bool isHidden { get; set; }
         public long accountLimit { get; set; }
         public long accountLimitCooldown { get; set; }

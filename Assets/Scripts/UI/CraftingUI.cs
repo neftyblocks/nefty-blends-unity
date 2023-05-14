@@ -7,6 +7,7 @@ using UnityEngine.UI;
 
 public class CraftingUI : MonoBehaviour
 {
+    [SerializeField] public BlendProtectionController blendProtectionController;
     [SerializeField] private CraftingFetcher craftingFetcher;
     [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] public GameObject[] requirementSlots;
@@ -222,12 +223,28 @@ public class CraftingUI : MonoBehaviour
     }
 
 
-    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult)
+    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult,int securityId)
     {
         DisplayRollData(rollResult);
         DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
         DisplayIngredientImage(indexIngredientAssetsResult);
         DisplayRollPaginationArrows(rollResult.rollSprites);
+        DisplayBlendProtection(securityId);
+    }
+
+    public void DisplayBlendProtection(int securityId) 
+    {
+        if(securityId != 0)
+        {
+            blendProtectionController.IsBlendWhitelisted(securityId);
+
+        }
+        else
+        {
+            blendProtectionController.isSecured = false;
+            blendProtectionController.whitelistUI.GetComponent<WhitelistUI>().DisplayWhitelistWarning(false);
+
+        }
     }
 
     public void ResetSlots(GameObject[] gameObjects)
