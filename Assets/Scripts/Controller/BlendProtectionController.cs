@@ -55,42 +55,38 @@ public class BlendProtectionController : MonoBehaviour
             {
                 case "COLLECTION_HOLDINGS":
                     var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
-                    string collectionName = collectionHoldings.collection_name;
-                    int amount = collectionHoldings.amount;
-                    int comparison_operator = collectionHoldings.comparison_operator;
-                    if (comparison_operator == 2)
-                    {
-                        amount = amount + 1;
-                    }
-                    await ownershipFetcher.OwnsCollection(collectionName,amount);
-                    Debug.Log("Coll:" + await ownershipFetcher.OwnsCollection(collectionName, amount));
-
+                    int collectionAmount = collectionHoldings.amount;
+                    AdjustAmount(ref collectionAmount, collectionHoldings.comparison_operator);
+                    await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, collectionAmount);
+                    Debug.Log("Coll: " + await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, collectionAmount));
                     break;
                 case "TEMPLATE_HOLDINGS":
                     var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
-                    string templateCollectionName = templateHoldings.collection_name;
-                    int templateId = templateHoldings.template_id;
                     int templateAmount = templateHoldings.amount;
-                    comparison_operator = templateHoldings.comparison_operator;
-                    amount = templateHoldings.amount;
-                    if (comparison_operator == 2)
-                    {
-                        amount = amount + 1;
-                    }
-                    await ownershipFetcher.OwnsTemplate(templateCollectionName,templateId, amount);
-                    Debug.Log("Template:"+ await ownershipFetcher.OwnsTemplate(templateCollectionName, templateId, amount));
+                    AdjustAmount(ref templateAmount, templateHoldings.comparison_operator);
+                    await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, templateAmount);
+                    Debug.Log("Template: " + await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, templateAmount));
                     break;
                 case "SCHEMA_HOLDINGS":
                     var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
-                    string schemaCollectionName = schemaHoldings.collection_name;
-                    string schemaName = schemaHoldings.schema_name;
                     int schemaAmount = schemaHoldings.amount;
-                    /// continue tommorow add conparuson operator && await 
+                    AdjustAmount(ref schemaAmount, schemaHoldings.comparison_operator);
+                    await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, schemaAmount);
+                    Debug.Log("Schema: " + await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, schemaAmount));
+
                     break;
                 default:
                     Debug.Log("Unknown filter type: " + filterType);
                     break;
             }
+        }
+    }
+
+    private void AdjustAmount(ref int amount, int comparisonOperator)
+    {
+        if (comparisonOperator == 2)
+        {
+            amount += 1;
         }
     }
 }

@@ -15,6 +15,12 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         return JsonConvert.DeserializeObject<Ownership>(jsonResponse);
     }
 
+    private async void Start()
+    {
+        bool ownsTemplate = await OwnsSchema2("auroratesttt", "rarities", 5);
+        Debug.Log("Owns Template: " + ownsTemplate);
+    }
+
     public async Task<bool> OwnsCollection(string collectionName, int amount)
     {
         try
@@ -42,9 +48,10 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
             var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}/{collectionName}";
             var deserializedJsonResult = await GetDeserializedData<OwnershipSchema>(url);
 
-            foreach (var schema in deserializedJsonResult.data.Schemas)
+            foreach (var schema in deserializedJsonResult.data.schemas)
             {
-                if (schema.SchemaName == schemaName && schema.Assets > amount)
+                Debug.Log(schema.schemaName.ToString() + " " + schemaName.ToString());
+                if (schema.schemaName == schemaName && schema.assets > amount)
                 {
                     return true;
                 }
@@ -81,6 +88,36 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
             return false;
         }
     }
+
+    public async Task<bool> OwnsSchema2(string collectionName, string schemaName, int amount)
+    {
+        try
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/blksmith.gm/{collectionName}";
+            var deserializedJsonResult = await GetDeserializedData<OwnershipSchema>(url);
+
+            foreach (var schema in deserializedJsonResult.data.schemas)
+            {
+                Debug.Log($"Schema Name: {schema.schemaName}, Provided Schema Name: {schemaName}");
+                Debug.Log($"Schema Assets: {schema.assets}, Required Amount: {amount}");
+
+                if (schema.schemaName == schemaName && schema.assets > amount)
+                {
+                    Debug.Log("Schema found with sufficient assets.");
+                    return true;
+                }
+            }
+
+            Debug.Log("No matching schema found or insufficient assets.");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error: {ex}");
+            return false;
+        }
+    }
+
 
     public async Task<int> GetInventoryAssetsCount()
     {
