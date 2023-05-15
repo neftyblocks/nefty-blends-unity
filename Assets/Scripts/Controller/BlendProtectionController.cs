@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ public class BlendProtectionController : MonoBehaviour
     [SerializeField] PluginController pluginController;
     [SerializeField] SendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
+    [SerializeField] OwnershipFetcher ownershipFetcher;
     public bool isWhitelisted { get; set; }
     public bool isSecured { get; set; }
 
@@ -38,6 +40,40 @@ public class BlendProtectionController : MonoBehaviour
             isWhitelisted = false;
             Debug.Log("user is not whitelisted ");
             whitelistUI.DisplayWhitelistWarning(true);
+        }
+    }
+
+    public void IsWhitelistedProof(string jsonResponse)
+    {
+        var deserealizedJson = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
+
+        foreach (List<object> filterData in deserealizedJson.filters)
+        {
+            string filterType = filterData[0] as string;
+            Dictionary<string, object> filterProperties = filterData[1] as Dictionary<string, object>;
+
+            switch (filterType)
+            {
+                case "COLLECTION_HOLDINGS":
+                    // Handle COLLECTION_HOLDINGS filter
+                    // Access filter properties from filterProperties dictionary
+                    break;
+                case "TEMPLATE_HOLDINGS":
+                    // Handle TEMPLATE_HOLDINGS filter
+                    // Access filter properties from filterProperties dictionary
+                    break;
+                case "SCHEMA_HOLDINGS":
+                    // Handle SCHEMA_HOLDINGS filter
+                    // Access filter properties from filterProperties dictionary
+                    break;
+                case "TOKEN_HOLDING":
+                    // Handle TOKEN_HOLDING filter
+                    // Access filter properties from filterProperties dictionary
+                    break;
+                default:
+                    // Unknown filter type
+                    break;
+            }
         }
     }
 }

@@ -6,7 +6,8 @@ mergeInto(LibraryManager.library, {
     tokenSymbol,
     tokenQuantity,
     ftCount,
-    assetCount
+    assetCount,
+    isSecured
   ) {
     let asset_array = [];
     let contract_names = [];
@@ -34,7 +35,16 @@ mergeInto(LibraryManager.library, {
       actions.push(AnnounceDeposit(blend_id, asset_array, assetCount));
       actions.push(TransferAsset(blend_id, asset_array, assetCount));
     }
-    actions.push(NoSecurityFuse(blend_id, asset_array));
+
+    // boolean isSecured returned as number 1 || 0
+    console.log(isSecured);
+    console.log(isSecured);
+
+    if (isSecured) {
+      actions.push(SecurityFuse(blend_id, asset_array));
+    } else {
+      actions.push(NoSecurityFuse(blend_id, asset_array));
+    }
 
     try {
       let tapos = {
@@ -61,19 +71,39 @@ mergeInto(LibraryManager.library, {
   IsBlendProtectionEligibleJS: async function (security_id) {
     let isUserFound = false; // Variable to track if the user is found
 
-      let data = await FetchBlendProtection(user.rpc, security_id);
+    let data = await FetchBlendWhitelistProtection(user.rpc, security_id);
+    let proofOfOwnership = await FetchBlendPoOProtection(
+      user.rpc,
+      security_id,
+      "auroratesttt"
+    );
+    let userWallet = await accountName;
 
-      let userWallet = await accountName;
+    if (data.rows.length != 0) {
       for (let whitelistedUser of data.rows) {
         if (whitelistedUser.account == userWallet) {
           isUserFound = true;
           break; // Exit the loop since the user is found
         }
       }
-    myGameInstance.SendMessage(
-      "BlendProtectionController",
-      "IsWhitelisted",
-      isUserFound.toString()
-    );
+      myGameInstance.SendMessage(
+        "BlendProtectionController",
+        "IsWhitelisted",
+        isUserFound.toString()
+      );
+    } else {
+      let json;
+      for (let ownership of proofOfOwnership.rows) {
+        if (ownership.security_id == security_id) {
+          json = ownership.group;
+          break; // Exit the loop since the user is found
+        }
+      }
+      myGameInstance.SendMessage(
+        "BlendProtectionController",
+        "IsWhitelistedProof",
+        JSON.stringify(json)
+      );
+    }
   },
 });

@@ -53,6 +53,31 @@ function NoSecurityFuse(blend_id, asset_array) {
   };
 }
 
+function SecurityFuse(blend_id, asset_array, security_check) {
+  return {
+    account: "blend.nefty",
+    name: "fuse",
+    authorization: [
+      {
+        actor: accountName,
+        permission: permission,
+      },
+    ],
+    data: {
+      transferred_assets: asset_array,
+      own_assets: [],
+      security_check: [
+        "WHITELIST_CHECK",
+        {
+          account_name: accountName,
+        },
+      ],
+      claimer: accountName,
+      blend_id: blend_id,
+    },
+  };
+}
+
 function TransferToken(contractName, quantity) {
   return {
     account: contractName,
@@ -89,7 +114,7 @@ function OpenBalance(token_symbol) {
   };
 }
 
-async function FetchBlendProtection(rpc, security_id) {
+async function FetchBlendWhitelistProtection(rpc, security_id) {
   let data = await rpc.get_table_rows({
     json: true, // Get the response as json
     code: "secure.nefty", // Contract that we target
@@ -99,5 +124,19 @@ async function FetchBlendProtection(rpc, security_id) {
     reverse: false, // Optional: Get reversed data
     show_payer: false, // Optional: Show ram payer
   });
+  console.log(data);
+  return data;
+}
+async function FetchBlendPoOProtection(rpc, security_id, collection_name) {
+  let data = await rpc.get_table_rows({
+    json: true, // Get the response as json
+    code: "secure.nefty", // Contract that we target
+    scope: collection_name, // Account that owns the data
+    table: "proofown", // Table name
+    limit: 10, // Maximum number of rows that we want to get
+    reverse: false, // Optional: Get reversed data
+    show_payer: false, // Optional: Show ram payer
+  });
+  console.log(data);
   return data;
 }

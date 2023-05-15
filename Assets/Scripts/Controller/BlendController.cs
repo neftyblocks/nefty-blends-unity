@@ -116,21 +116,39 @@ public class BlendController : MonoBehaviour
 
     public void SubmitBlend()
     {
-        if (CanBlend() && (blendProtectionController.isWhitelisted && blendProtectionController.isSecured))
+        if (!CanBlend())
         {
-            var assetList = GetSelectedAssetList();
-            var contractNameArray = GetContractNameList();
-            var tokenQuantityArray = GetTokenQuantityList().ToArray();
-            var tokenSymbolArray = GetTokenSymbolList().ToArray();
+            Debug.Log("Can't perform blend operation.");
+            return;
+        }
 
-            if (assetList != null && contractNameArray != null && tokenQuantityArray != null && tokenSymbolArray!= null)
-            {
-                sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length);
-            }
-        }
-        else
+        if (!blendProtectionController.isSecured)
         {
-            Debug.Log("cant");
+            PerformBlend(false);
+            return;
         }
+
+        if (!blendProtectionController.isWhitelisted)
+        {
+            Debug.Log("You need to be whitelisted to perform this action.");
+            return;
+        }
+        
+        PerformBlend(true);
+    }
+
+    private void PerformBlend(bool isSecured)
+    {
+        var assetList = GetSelectedAssetList();
+        var contractNameArray = GetContractNameList();
+        var tokenQuantityArray = GetTokenQuantityList().ToArray();
+        var tokenSymbolArray = GetTokenSymbolList().ToArray();
+
+        if (assetList == null || contractNameArray == null || tokenQuantityArray == null || tokenSymbolArray == null)
+        {
+            return;
+        }
+
+        sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length,isSecured);
     }
 }

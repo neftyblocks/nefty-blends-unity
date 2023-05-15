@@ -141,7 +141,7 @@ public class BlendTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+        SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length,Arg.Any<bool>());
     }
 
     [Test]
@@ -162,7 +162,7 @@ public class BlendTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>());
+        SendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>(),Arg.Any<bool>());
     }
 
     [Test]

@@ -4,7 +4,7 @@ using UnityEngine;
 public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
 {
     [DllImport("__Internal")]
-    private static extern void SubmitBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount);
+    private static extern void SubmitBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount, bool isSecured);
 
     [DllImport("__Internal")]
     private static extern void LoginAnchorJS();
@@ -15,9 +15,9 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     [DllImport("__Internal")]
     private static extern void IsBlendProtectionEligibleJS(int securityId);
 
-    public void SendBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount)
+    public void SendBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount,bool isSecured)
     {
-        SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount,assetCount);
+        SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount,assetCount,isSecured);
     }
 
     public void LoginAnchor()
