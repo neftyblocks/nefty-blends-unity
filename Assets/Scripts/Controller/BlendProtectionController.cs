@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class BlendProtectionController : MonoBehaviour
@@ -42,43 +43,56 @@ public class BlendProtectionController : MonoBehaviour
         }
     }
 
-    public async void IsWhitelistedProof(string jsonResponse)
+    public async Task IsWhitelistedProof(string jsonResponse)
     {
         var deserializedJsonResult = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
+        bool isWhitelisted = true;
+        bool filterResult = false;
 
         foreach (List<object> filter in deserializedJsonResult.filters)
         {
             string filterType = filter[0].ToString();
             string filterJson = filter[1].ToString();
-
+            Debug.Log(filterType);
             switch (filterType)
             {
                 case "COLLECTION_HOLDINGS":
                     var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
                     int collectionAmount = collectionHoldings.amount;
                     AdjustAmount(ref collectionAmount, collectionHoldings.comparison_operator);
-                    await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, collectionAmount);
-                    Debug.Log("Coll: " + await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, collectionAmount));
+                    filterResult = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, collectionAmount);
                     break;
                 case "TEMPLATE_HOLDINGS":
                     var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
                     int templateAmount = templateHoldings.amount;
                     AdjustAmount(ref templateAmount, templateHoldings.comparison_operator);
-                    await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, templateAmount);
-                    Debug.Log("Template: " + await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, templateAmount));
+                    filterResult = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, templateAmount);
                     break;
                 case "SCHEMA_HOLDINGS":
                     var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
                     int schemaAmount = schemaHoldings.amount;
                     AdjustAmount(ref schemaAmount, schemaHoldings.comparison_operator);
-                    await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, schemaAmount);
-                    Debug.Log("Schema: " + await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, schemaAmount));
-
+                    filterResult = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, schemaAmount);
                     break;
                 default:
                     Debug.Log("Unknown filter type: " + filterType);
                     break;
             }
+            if (!filterResult)
+            {
+                isWhitelisted = false;
+                Debug.Log("User is not whitelisted");
+                whitelistUI.DisplayWhitelistWarning(true);
+                // If it's false once, exit the loop immediately
+            }
+        }
+
+        
+
+        if (isWhitelisted)
+        {
+            Debug.Log("User is whitelisted");
+            whitelistUI.DisplayWhitelistWarning(false);
         }
     }
 

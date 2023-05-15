@@ -15,23 +15,21 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         return JsonConvert.DeserializeObject<Ownership>(jsonResponse);
     }
 
-    private async void Start()
-    {
-        bool ownsTemplate = await OwnsSchema2("auroratesttt", "rarities", 5);
-        Debug.Log("Owns Template: " + ownsTemplate);
-    }
-
     public async Task<bool> OwnsCollection(string collectionName, int amount)
     {
         try
         {
             var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}?collection_whitelist={collectionName}&only_whitelisted=false";
             var deserializedJsonResult = await GetDeserializedData<Ownership>(url);
+            Debug.Log(amount);
+            Debug.Log(deserializedJsonResult.data.collections[0].assets);
 
-            if (deserializedJsonResult.data.collections.Count > 0 && amount < deserializedJsonResult.data.collections[0].assets)
+            if (deserializedJsonResult.data.collections.Count > 0 && amount <= deserializedJsonResult.data.collections[0].assets)
             {
+                Debug.Log("OwnsCollection: Passed");
                 return true;
             }
+            Debug.Log("OwnsCollection: Failed");
             return false;
         }
         catch (Exception ex)
@@ -41,7 +39,7 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         }
     }
 
-    public async Task<bool> OwnsSchema(string collectionName,string schemaName, int amount)
+    public async Task<bool> OwnsSchema(string collectionName, string schemaName, int amount)
     {
         try
         {
@@ -50,12 +48,14 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
 
             foreach (var schema in deserializedJsonResult.data.schemas)
             {
-                Debug.Log(schema.schemaName.ToString() + " " + schemaName.ToString());
-                if (schema.schemaName == schemaName && schema.assets > amount)
+                if (schema.schemaName == schemaName && schema.assets >= amount)
                 {
+                    Debug.Log("OwnsSchema: Passed");
                     return true;
                 }
             }
+
+            Debug.Log("OwnsSchema: Failed");
             return false;
         }
         catch (Exception ex)
@@ -74,12 +74,14 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
 
             foreach (var template in deserializedJsonResult.data.templates)
             {
-                if (template.templateId == templateid && template.assets > amount)
+                if (template.templateId == templateid && template.assets >= amount)
                 {
+                    Debug.Log("OwnsTemplate: Passed");
                     return true;
                 }
             }
 
+            Debug.Log("OwnsTemplate: Failed");
             return false;
         }
         catch (Exception ex)
@@ -88,36 +90,6 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
             return false;
         }
     }
-
-    public async Task<bool> OwnsSchema2(string collectionName, string schemaName, int amount)
-    {
-        try
-        {
-            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/blksmith.gm/{collectionName}";
-            var deserializedJsonResult = await GetDeserializedData<OwnershipSchema>(url);
-
-            foreach (var schema in deserializedJsonResult.data.schemas)
-            {
-                Debug.Log($"Schema Name: {schema.schemaName}, Provided Schema Name: {schemaName}");
-                Debug.Log($"Schema Assets: {schema.assets}, Required Amount: {amount}");
-
-                if (schema.schemaName == schemaName && schema.assets > amount)
-                {
-                    Debug.Log("Schema found with sufficient assets.");
-                    return true;
-                }
-            }
-
-            Debug.Log("No matching schema found or insufficient assets.");
-            return false;
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"Error: {ex}");
-            return false;
-        }
-    }
-
 
     public async Task<int> GetInventoryAssetsCount()
     {
