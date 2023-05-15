@@ -5,33 +5,39 @@ using UnityEngine;
 
 public class ProtectionFilter 
 {
-    [JsonProperty("logical_operator")]
-    public int logicalOperator { get; set; }
-
-    [JsonProperty("filters")]
+    
+    public int logical_operator { get; set; }
     public List<List<object>> filters { get; set; }
+    
 
-    public class Filter
+    public class CollectionHoldings
     {
-        [JsonProperty("collection_name")]
-        public string collectionName { get; set; }
+        public string collection_name { get; set; }
+        public int comparison_operator { get; set; }
+        public int amount { get; set; }
+    }
 
-        [JsonProperty("template_id")]
-        public int? templateId { get; set; }
+    public class TemplateHoldings
+    {
+        public string collection_name { get; set; }
+        public int template_id { get; set; }
+        public int comparison_operator { get; set; }
+        public int amount { get; set; }
+    }
 
-        [JsonProperty("schema_name")]
-        public string schemaName { get; set; }
+    public class SchemaHoldings
+    {
+        public string collection_name { get; set; }
+        public string schema_name { get; set; }
+        public int comparison_operator { get; set; }
+        public int amount { get; set; }
+    }
 
-        [JsonProperty("token_contract")]
-        public string tokenContract { get; set; }
-
-        [JsonProperty("token_symbol")]
-        public string tokenSymbol { get; set; }
-
-        [JsonProperty("comparison_operator")]
-        public int comparisonOperator { get; set; }
-
-        [JsonProperty("amount")]
-        public object amount { get; set; }
+    public class TokenHolding
+    {
+        public string token_contract { get; set; }
+        public string token_symbol { get; set; }
+        public int comparison_operator { get; set; }
+        public string amount { get; set; }
     }
 }

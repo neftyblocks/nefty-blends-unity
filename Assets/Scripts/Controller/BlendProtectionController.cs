@@ -13,7 +13,6 @@ public class BlendProtectionController : MonoBehaviour
     public bool isWhitelisted { get; set; }
     public bool isSecured { get; set; }
 
-
     public void IsBlendWhitelisted(int securityId)
     {
         isWhitelisted = false;
@@ -45,33 +44,51 @@ public class BlendProtectionController : MonoBehaviour
 
     public void IsWhitelistedProof(string jsonResponse)
     {
-        var deserealizedJson = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
+        var deserializedJsonResult = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
 
-        foreach (List<object> filterData in deserealizedJson.filters)
+        foreach (List<object> filter in deserializedJsonResult.filters)
         {
-            string filterType = filterData[0] as string;
-            Dictionary<string, object> filterProperties = filterData[1] as Dictionary<string, object>;
+            string filterType = filter[0].ToString();
+            string filterJson = filter[1].ToString();
 
             switch (filterType)
             {
                 case "COLLECTION_HOLDINGS":
-                    // Handle COLLECTION_HOLDINGS filter
-                    // Access filter properties from filterProperties dictionary
+                    var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
+                    string collectionName = collectionHoldings.collection_name;
+                    int amount = collectionHoldings.amount;
+                    Debug.Log("Collection Name: " + collectionName);
+                    Debug.Log("Amount: " + amount);
                     break;
                 case "TEMPLATE_HOLDINGS":
-                    // Handle TEMPLATE_HOLDINGS filter
-                    // Access filter properties from filterProperties dictionary
+                    var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
+                    string templateCollectionName = templateHoldings.collection_name;
+                    int templateId = templateHoldings.template_id;
+                    int templateAmount = templateHoldings.amount;
+                    Debug.Log("Template Collection Name: " + templateCollectionName);
+                    Debug.Log("Template ID: " + templateId);
+                    Debug.Log("Template Amount: " + templateAmount);
                     break;
                 case "SCHEMA_HOLDINGS":
-                    // Handle SCHEMA_HOLDINGS filter
-                    // Access filter properties from filterProperties dictionary
+                    var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
+                    string schemaCollectionName = schemaHoldings.collection_name;
+                    string schemaName = schemaHoldings.schema_name;
+                    int schemaAmount = schemaHoldings.amount;
+                    Debug.Log("Schema Collection Name: " + schemaCollectionName);
+                    Debug.Log("Schema Name: " + schemaName);
+                    Debug.Log("Schema Amount: " + schemaAmount);
                     break;
                 case "TOKEN_HOLDING":
-                    // Handle TOKEN_HOLDING filter
-                    // Access filter properties from filterProperties dictionary
+                    var tokenHolding = JsonConvert.DeserializeObject<ProtectionFilter.TokenHolding>(filterJson);
+                    string tokenContract = tokenHolding.token_contract;
+                    string tokenSymbol = tokenHolding.token_symbol;
+                    string tokenAmount = tokenHolding.amount;
+                    Debug.Log("Token Contract: " + tokenContract);
+                    Debug.Log("Token Symbol: " + tokenSymbol);
+                    Debug.Log("Token Amount: " + tokenAmount);
                     break;
                 default:
-                    // Unknown filter type
+                    Debug.Log("Unknown filter type: " + filterType);
                     break;
             }
         }
