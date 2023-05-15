@@ -15,29 +15,70 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         return JsonConvert.DeserializeObject<Ownership>(jsonResponse);
     }
 
-    public async Task<InventoryAsset> GetInventoryAssets(string collectionNames)
+    public async Task<bool> OwnsCollection(string collectionName, int amount)
     {
-        var result = new InventoryAsset();
         try
         {
-            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}?collection_whitelist={collectionNames}&only_whitelisted=false";
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}?collection_whitelist={collectionName}&only_whitelisted=false";
             var deserializedJsonResult = await GetDeserializedData<Ownership>(url);
 
-            /*foreach (var detail in deserializedJsonResult.data.collections)
+            if (deserializedJsonResult.data.collections.Count > 0 && amount < deserializedJsonResult.data.collections[0].assets)
             {
-                var sprite = await imageLoader.GetSpriteAsync(detail.data.img);
-                result.inventoryAssetSprites.Add(sprite);
-                result.invenoryAssetIds.Add(detail.assetId);
-                result.inventoryAssetMintNumber.Add(detail.templateMint);
-                result.inventoryAssetName.Add(detail.name);
-            }*/
-
-            return result;
+                return true;
+            }
+            return false;
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error: {ex}");
-            return result;
+            return false;
+        }
+    }
+
+    public async Task<bool> OwnsSchema(string collectionName,string schemaName, int amount)
+    {
+        try
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}/{collectionName}";
+            var deserializedJsonResult = await GetDeserializedData<OwnershipSchema>(url);
+
+            foreach (var schema in deserializedJsonResult.data.Schemas)
+            {
+                if (schema.SchemaName == schemaName && schema.Assets > amount)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error: {ex}");
+            return false;
+        }
+    }
+
+    public async Task<bool> OwnsTemplate(string collectionName, int templateid, int amount)
+    {
+        try
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}?collection_whitelist={collectionName}&only_whitelisted=false";
+            var deserializedJsonResult = await GetDeserializedData<Ownership>(url);
+
+            foreach (var template in deserializedJsonResult.data.templates)
+            {
+                if (template.templateId == templateid && template.assets > amount)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error: {ex}");
+            return false;
         }
     }
 
