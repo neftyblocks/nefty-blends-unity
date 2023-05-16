@@ -53,6 +53,31 @@ function NoSecurityFuse(blend_id, asset_array) {
   };
 }
 
+// function SecurityFuse(blend_id, asset_array, security_check) {
+//   return {
+//     account: "blend.nefty",
+//     name: "fuse",
+//     authorization: [
+//       {
+//         actor: accountName,
+//         permission: permission,
+//       },
+//     ],
+//     data: {
+//       transferred_assets: asset_array,
+//       own_assets: [],
+//       security_check: [
+//         "WHITELIST_CHECK",
+//         {
+//           account_name: accountName,
+//         },
+//       ],
+//       claimer: accountName,
+//       blend_id: blend_id,
+//     },
+//   };
+// }
+
 function SecurityFuse(blend_id, asset_array, security_check) {
   return {
     account: "blend.nefty",
@@ -66,12 +91,7 @@ function SecurityFuse(blend_id, asset_array, security_check) {
     data: {
       transferred_assets: asset_array,
       own_assets: [],
-      security_check: [
-        "WHITELIST_CHECK",
-        {
-          account_name: accountName,
-        },
-      ],
+      security_check: security_check,
       claimer: accountName,
       blend_id: blend_id,
     },

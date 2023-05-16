@@ -116,6 +116,7 @@ public class BlendController : MonoBehaviour
 
     public void SubmitBlend()
     {
+        Debug.Log(blendProtectionController.isWhitelisted+"hm");
         if (!CanBlend())
         {
             Debug.Log("Can't perform blend operation.");
@@ -127,7 +128,7 @@ public class BlendController : MonoBehaviour
             PerformBlend(false);
             return;
         }
-
+        
         if (!blendProtectionController.isWhitelisted)
         {
             Debug.Log("You need to be whitelisted to perform this action.");
@@ -149,6 +150,6 @@ public class BlendController : MonoBehaviour
             return;
         }
 
-        sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length,isSecured);
+        sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length,isSecured, blendProtectionController.protectedAssets.ToArray(), blendProtectionController.protectedAssets.Count);
     }
 }

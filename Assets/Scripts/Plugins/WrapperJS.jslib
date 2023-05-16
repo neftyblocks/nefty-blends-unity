@@ -7,13 +7,16 @@ mergeInto(LibraryManager.library, {
     tokenQuantity,
     ftCount,
     assetCount,
-    isSecured
+    isSecured,
+    protectedAssets,
+    protectedAssetsCount
   ) {
+    console.log(protectedAssets);
     let asset_array = [];
     let contract_names = [];
     let token_quantities = [];
     let token_symbols = [];
-
+    let protectedAssetList = [];
     let actions = [];
 
     for (var i = 0; i < ftCount; i++) {
@@ -22,6 +25,12 @@ mergeInto(LibraryManager.library, {
       token_symbols.push(UTF8ToString(HEAP32[(tokenSymbol + i * 4) >> 2]));
     }
 
+    for (var i = 0; i < protectedAssetsCount; i++) {
+      protectedAssetList.push(
+        UTF8ToString(HEAP32[(protectedAssets + i * 4) >> 2])
+      );
+    }
+    console.log()
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
     }
@@ -41,7 +50,26 @@ mergeInto(LibraryManager.library, {
     console.log(isSecured);
 
     if (isSecured) {
-      actions.push(SecurityFuse(blend_id, asset_array));
+      if (protectedAssetList.length != 0) {
+        actions.push(
+          SecurityFuse(blend_id, asset_array, [
+            "OWNERSHIP_CHECK",
+            {
+              account_name: accountName,
+              asset_ids: protectedAssetList,
+            },
+          ])
+        );
+      } else {
+        actions.push(
+          SecurityFuse(blend_id, asset_array, [
+            "WHITELIST_CHECK",
+            {
+              account_name: accountName,
+            },
+          ])
+        );
+      }
     } else {
       actions.push(NoSecurityFuse(blend_id, asset_array));
     }

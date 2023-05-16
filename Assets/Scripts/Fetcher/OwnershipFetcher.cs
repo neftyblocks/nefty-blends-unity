@@ -21,8 +21,6 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         {
             var url = $"{PluginController.apiUrl}/atomicassets/v1/accounts/{pluginController.GetWalletName()}?collection_whitelist={collectionName}&only_whitelisted=false";
             var deserializedJsonResult = await GetDeserializedData<Ownership>(url);
-            Debug.Log(amount);
-            Debug.Log(deserializedJsonResult.data.collections[0].assets);
 
             if (deserializedJsonResult.data.collections.Count > 0 && amount <= deserializedJsonResult.data.collections[0].assets)
             {
@@ -88,6 +86,24 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         {
             Debug.LogError($"Error: {ex}");
             return false;
+        }
+    }
+
+    public async Task<Asset> RetrieveAsset(string filter)
+    {
+        try
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id" + filter;
+            Debug.Log(url);
+            var deserializedJsonResult = await GetDeserializedData<Asset>(url);
+
+            return deserializedJsonResult;
+
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Error: {ex}");
+            return null;
         }
     }
 
