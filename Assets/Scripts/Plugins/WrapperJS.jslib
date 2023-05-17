@@ -99,9 +99,9 @@ mergeInto(LibraryManager.library, {
   IsBlendProtectionEligibleJS: async function (security_id) {
     let isUserFound = false; // Variable to track if the user is found
 
-    let data = await FetchBlendWhitelistProtection(user.rpc, security_id);
+    let data = await FetchBlendWhitelistProtection(security_id);
     let proofOfOwnership = await FetchBlendPoOProtection(
-      user.rpc,
+     
       security_id,
       "auroratesttt"
     );

@@ -17,10 +17,6 @@ public class BlendProtectionController : MonoBehaviour
     public bool isSecured { get; set; }
     public List<string> protectedAssets { get; set; }
 
-    private void Update()
-    {
-        Debug.Log(isWhitelisted);
-    }
     public void IsBlendWhitelisted(int securityId)
     {
         Debug.Log("a");

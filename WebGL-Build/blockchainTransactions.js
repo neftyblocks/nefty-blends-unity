@@ -134,8 +134,8 @@ function OpenBalance(token_symbol) {
   };
 }
 
-async function FetchBlendWhitelistProtection(rpc, security_id) {
-  let data = await rpc.get_table_rows({
+async function FetchBlendWhitelistProtection(security_id) {
+  let data = await rpcEndpoint.get_table_rows({
     json: true, // Get the response as json
     code: "secure.nefty", // Contract that we target
     scope: security_id, // Account that owns the data
@@ -147,8 +147,9 @@ async function FetchBlendWhitelistProtection(rpc, security_id) {
   console.log(data);
   return data;
 }
-async function FetchBlendPoOProtection(rpc, security_id, collection_name) {
-  let data = await rpc.get_table_rows({
+async function FetchBlendPoOProtection(security_id, collection_name) {
+  console.log(rpcEndpoint);
+  let data = await rpcEndpoint.get_table_rows({
     json: true, // Get the response as json
     code: "secure.nefty", // Contract that we target
     scope: collection_name, // Account that owns the data
