@@ -14,7 +14,9 @@ public class BlendProtectionController : MonoBehaviour
     [SerializeField] public WhitelistUI whitelistUI;
     [SerializeField] public OwnershipFetcher ownershipFetcher;
     public bool isWhitelisted { get; set; }
+    public bool ownsProof { get; set; }
     public bool isSecured { get; set; }
+
     public List<string> protectedAssets { get; set; } = new List<string>();
 
     public void IsBlendWhitelisted(int securityId)
@@ -45,15 +47,24 @@ public class BlendProtectionController : MonoBehaviour
     {
         UpdateWhitelistedState(response == "true");
     }
+    private void Initialize()
+    {
+        isWhitelisted = true;
+        ownsProof = true;
+        protectedAssets = new List<string>();
+    }
+
+    private ProtectionFilter DeserializeJson(string jsonResponse)
+    {
+        return JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
+    }
 
     public async Task IsWhitelistedProof(string jsonResponse)
     {
-        var deserializedJsonResult = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
-        isWhitelisted = true;
-        bool filterResult = false;
+        Initialize();
+        List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>();
+        var deserializedJsonResult = DeserializeJson(jsonResponse);
 
-        List<(string, string, string, string,int)> filterList = new List<(string, string, string, string, int)>();
-        protectedAssets = new List<string>();
         foreach (List<object> filter in deserializedJsonResult.filters)
         {
             string filterType = filter[0].ToString();
@@ -69,7 +80,7 @@ public class BlendProtectionController : MonoBehaviour
                     var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
                     amount = collectionHoldings.amount;
                     AdjustAmount(ref amount, collectionHoldings.comparison_operator);
-                    filterResult = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, amount);
+                    ownsProof = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, amount);
                     collectionName = collectionHoldings.collection_name;
                     entityType = "Collection";
                     break;
@@ -77,7 +88,7 @@ public class BlendProtectionController : MonoBehaviour
                     var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
                      amount = templateHoldings.amount;
                     AdjustAmount(ref amount, templateHoldings.comparison_operator);
-                    filterResult = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, amount);
+                    ownsProof = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, amount);
                     collectionName = templateHoldings.collection_name;
                     templateId = templateHoldings.template_id.ToString();
                     entityType = "Template";
@@ -86,7 +97,7 @@ public class BlendProtectionController : MonoBehaviour
                     var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
                      amount = schemaHoldings.amount;
                     AdjustAmount(ref amount, schemaHoldings.comparison_operator);
-                    filterResult = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, amount);
+                    ownsProof = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, amount);
                     collectionName = schemaHoldings.collection_name;
                     schemaName = schemaHoldings.schema_name;
                     entityType = "Schema";
@@ -101,11 +112,12 @@ public class BlendProtectionController : MonoBehaviour
                 filterList.Add((collectionName, templateId, schemaName, entityType, amount));
             }
             
-            if (!filterResult)
+            if (!ownsProof)
             {
                 isWhitelisted = false;
                 Debug.Log("User is not whitelisted");
                 whitelistUI.DisplayWhitelistWarning(true);
+                break;
             }
         }
 
@@ -148,25 +160,15 @@ public class BlendProtectionController : MonoBehaviour
                 }
             }
         }
+        RemoveWhitelistWarning();
+    }
 
-        // Print the protectedAssets list
-        foreach (var assetId in protectedAssets)
-        {
-            Debug.Log(assetId);
-            // or Debug.Log(assetId);
-        }
-
+    private void RemoveWhitelistWarning()
+    {
         if (isWhitelisted)
         {
-            isWhitelisted = true;
-            Debug.Log(isWhitelisted + "hmm");
-
-            Debug.Log("User is whitelisted");
             whitelistUI.DisplayWhitelistWarning(false);
         }
-        Debug.Log("ended");
-
-        // Use the filterList for further processing or logging
     }
 
     private void AdjustAmount(ref int amount, int comparisonOperator)
