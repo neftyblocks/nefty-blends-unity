@@ -9,21 +9,18 @@ using static NeftyBlend;
 
 public class BlendProtectionController : MonoBehaviour
 {
-    [SerializeField] PluginController pluginController;
-    [SerializeField] SendTransactionJS sendTransactionJS;
+    [SerializeField] public PluginController pluginController;
+    [SerializeField] public SendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
-    [SerializeField] OwnershipFetcher ownershipFetcher;
+    [SerializeField] public OwnershipFetcher ownershipFetcher;
     public bool isWhitelisted { get; set; }
     public bool isSecured { get; set; }
-    public List<string> protectedAssets { get; set; }
+    public List<string> protectedAssets { get; set; } = new List<string>();
 
     public void IsBlendWhitelisted(int securityId)
     {
-        ClearProtectedAssets();
-        Debug.Log("a");
-        isWhitelisted = false;
         isSecured = true;
-        whitelistUI.DisplayWhitelistWarning(true);
+        ResetProtectionState();
 
         if (pluginController.GetWalletName() != null)
         {
@@ -32,33 +29,25 @@ public class BlendProtectionController : MonoBehaviour
         }
     }
 
-    public void IsWhitelisted(string response)
+    public void ResetProtectionState()
     {
-        // boolean is not supported for SendMessage()
-        if (response == "true")
-        {
-            Debug.Log("b");
-
-            isWhitelisted = true;
-            whitelistUI.DisplayWhitelistWarning(false);
-            Debug.Log("user is whitelisted!! ");
-        }
-        else
-        {
-            Debug.Log("c");
-            isWhitelisted = false;
-            Debug.Log("user is not whitelisted?? ");
-            whitelistUI.DisplayWhitelistWarning(true);
-        }
+        protectedAssets.Clear();
+        UpdateWhitelistedState(false);
     }
 
-    public void ClearProtectedAssets() {
-        protectedAssets = new List<string>();
+    private void UpdateWhitelistedState(bool value)
+    {
+        isWhitelisted = value;
+        whitelistUI.DisplayWhitelistWarning(!isWhitelisted);
+    }
+
+    public void IsWhitelisted(string response)
+    {
+        UpdateWhitelistedState(response == "true");
     }
 
     public async Task IsWhitelistedProof(string jsonResponse)
     {
-        Debug.Log("started");
         var deserializedJsonResult = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
         isWhitelisted = true;
         bool filterResult = false;
