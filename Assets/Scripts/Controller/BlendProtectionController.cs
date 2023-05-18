@@ -9,124 +9,182 @@ using static NeftyBlend;
 
 public class BlendProtectionController : MonoBehaviour
 {
-    [SerializeField] public PluginController pluginController;
-    [SerializeField] public SendTransactionJS sendTransactionJS;
+    [SerializeField] PluginController pluginController;
+    [SerializeField] SendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
-    [SerializeField] public OwnershipFetcher ownershipFetcher;
-
-    public bool isWhitelisted { get; private set; }
-    public List<string> protectedAssets { get; private set; } = new List<string>();
+    [SerializeField] OwnershipFetcher ownershipFetcher;
+    public bool isWhitelisted { get; set; }
     public bool isSecured { get; set; }
+    public List<string> protectedAssets { get; set; }
 
     public void IsBlendWhitelisted(int securityId)
     {
-        ResetProtectionState();
+        ClearProtectedAssets();
+        Debug.Log("a");
+        isWhitelisted = false;
         isSecured = true;
+        whitelistUI.DisplayWhitelistWarning(true);
+
         if (pluginController.GetWalletName() != null)
         {
             sendTransactionJS.IsBlendProtectionEligible(securityId);
+
         }
     }
 
     public void IsWhitelisted(string response)
     {
-        UpdateWhitelistedState(response == "true");
+        // boolean is not supported for SendMessage()
+        if (response == "true")
+        {
+            Debug.Log("b");
+
+            isWhitelisted = true;
+            whitelistUI.DisplayWhitelistWarning(false);
+            Debug.Log("user is whitelisted!! ");
+        }
+        else
+        {
+            Debug.Log("c");
+            isWhitelisted = false;
+            Debug.Log("user is not whitelisted?? ");
+            whitelistUI.DisplayWhitelistWarning(true);
+        }
     }
 
-    public void ResetProtectionState()
-    {
-        protectedAssets.Clear();
-        UpdateWhitelistedState(false);
-    }
-
-    private void UpdateWhitelistedState(bool value)
-    {
-        isWhitelisted = value;
-        whitelistUI.DisplayWhitelistWarning(!isWhitelisted);
+    public void ClearProtectedAssets() {
+        protectedAssets = new List<string>();
     }
 
     public async Task IsWhitelistedProof(string jsonResponse)
     {
+        Debug.Log("started");
         var deserializedJsonResult = JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
-        List<(string, string, string, string, int)> filterList = await ProcessFilters(deserializedJsonResult);
-        await ProcessFilterList(filterList);
-        UpdateWhitelistedState(isWhitelisted);
-    }
+        isWhitelisted = true;
+        bool filterResult = false;
 
-    private async Task<List<(string, string, string, string, int)>> ProcessFilters(ProtectionFilter filters)
-    {
-        List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>();
-        foreach (List<object> filter in filters.filters)
+        List<(string, string, string, string,int)> filterList = new List<(string, string, string, string, int)>();
+        protectedAssets = new List<string>();
+        foreach (List<object> filter in deserializedJsonResult.filters)
         {
-            var filterParams = await ProcessFilter(filter);
-            filterList.Add(filterParams);
-        }
-        return filterList;
-    }
+            string filterType = filter[0].ToString();
+            string filterJson = filter[1].ToString();
+            string collectionName = string.Empty;
+            string templateId = string.Empty;
+            string schemaName = string.Empty;
+            string entityType = string.Empty;
+            int amount = 0;
+            switch (filterType)
+            {
+                case "COLLECTION_HOLDINGS":
+                    var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
+                    amount = collectionHoldings.amount;
+                    AdjustAmount(ref amount, collectionHoldings.comparison_operator);
+                    filterResult = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, amount);
+                    collectionName = collectionHoldings.collection_name;
+                    entityType = "Collection";
+                    break;
+                case "TEMPLATE_HOLDINGS":
+                    var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
+                     amount = templateHoldings.amount;
+                    AdjustAmount(ref amount, templateHoldings.comparison_operator);
+                    filterResult = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, amount);
+                    collectionName = templateHoldings.collection_name;
+                    templateId = templateHoldings.template_id.ToString();
+                    entityType = "Template";
+                    break;
+                case "SCHEMA_HOLDINGS":
+                    var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
+                     amount = schemaHoldings.amount;
+                    AdjustAmount(ref amount, schemaHoldings.comparison_operator);
+                    filterResult = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, amount);
+                    collectionName = schemaHoldings.collection_name;
+                    schemaName = schemaHoldings.schema_name;
+                    entityType = "Schema";
+                    break;
+                default:
+                    Debug.Log("Unknown filter type: " + filterType);
+                    break;
+            }
 
-    private async Task<(string, string, string, string, int)> ProcessFilter(List<object> filter)
-    {
-        string filterType = filter[0].ToString();
-        string filterJson = filter[1].ToString();
-        switch (filterType)
+            if (!string.IsNullOrEmpty(collectionName) || !string.IsNullOrEmpty(templateId) || !string.IsNullOrEmpty(schemaName))
+            {
+                filterList.Add((collectionName, templateId, schemaName, entityType, amount));
+            }
+            
+            if (!filterResult)
+            {
+                isWhitelisted = false;
+                Debug.Log("User is not whitelisted");
+                whitelistUI.DisplayWhitelistWarning(true);
+            }
+        }
+
+        foreach (var filterTuple in filterList)
         {
-            case "COLLECTION_HOLDINGS":
-                return await ProcessCollectionHoldings(filterJson);
-            case "TEMPLATE_HOLDINGS":
-                return await ProcessTemplateHoldings(filterJson);
-            case "SCHEMA_HOLDINGS":
-                return await ProcessSchemaHoldings(filterJson);
-            default:
-                throw new ArgumentException("Unknown filter type: " + filterType);
+            string filterTuple1 = filterTuple.Item1;
+            string filterTuple2 = filterTuple.Item2;
+            string filterTuple3 = filterTuple.Item3;
+            string filterTuple4 = filterTuple.Item4;
+            int filterTuple5 = filterTuple.Item5;
+
+            Debug.Log($"Filter: Collection Name: {filterTuple1}, Template ID: {filterTuple2}, Schema Name: {filterTuple3}, Entity Type: {filterTuple4}, Amount : {filterTuple5}");
         }
-    }
 
-    private async Task<(string, string, string, string, int)> ProcessCollectionHoldings(string filterJson)
-    {
-        var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
-        int amount = AdjustAmount(collectionHoldings.amount, collectionHoldings.comparison_operator);
-        return (collectionHoldings.collection_name, "", "", "Collection", amount);
-    }
+        List<string> order = new List<string>() { "template", "schema", "collection" };
 
-    private async Task<(string, string, string, string, int)> ProcessTemplateHoldings(string filterJson)
-    {
-        var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
-        int amount = AdjustAmount(templateHoldings.amount, templateHoldings.comparison_operator);
-        return (templateHoldings.collection_name, templateHoldings.template_id.ToString(), "", "Template", amount);
-    }
+        List<(string, string, string, string, int)> sortedList = filterList.OrderBy(obj =>
+        {
+            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
+            return index == -1 ? int.MaxValue : index;
+        }).ToList();
 
-    private async Task<(string, string, string, string, int)> ProcessSchemaHoldings(string filterJson)
-    {
-        var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
-        int amount = AdjustAmount(schemaHoldings.amount, schemaHoldings.comparison_operator);
-        return (schemaHoldings.collection_name, "", schemaHoldings.schema_name, "Schema", amount);
-    }
-
-    private async Task ProcessFilterList(List<(string, string, string, string, int)> filterList)
-    {
-        var sortedList = SortFilterList(filterList);
 
         foreach (var item in sortedList)
         {
             var response = await ownershipFetcher.RetrieveAsset($"&collection_name={item.Item1}&template_id={item.Item2}&schema_name={item.Item3}");
 
-            protectedAssets.AddRange(response.details.Select(detail => detail.assetId));
+            int retrievedCount = 0;
+            foreach (var detail in response.details)
+            {
+                if (!protectedAssets.Contains(detail.assetId))
+                {
+                    protectedAssets.Add(detail.assetId);
+                    retrievedCount++;
+
+                    if (retrievedCount >= item.Item5)
+                    {
+                        break; // Breaks the inner loop after retrieving the desired number of assets
+                    }
+                }
+            }
         }
-    }
 
-    private List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
-    {
-        List<string> order = new List<string>() { "template", "schema", "collection" };
-
-        return filterList.OrderBy(obj =>
+        // Print the protectedAssets list
+        foreach (var assetId in protectedAssets)
         {
-            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
-            return index == -1 ? int.MaxValue : index;
-        }).ToList();
+            Debug.Log(assetId);
+            // or Debug.Log(assetId);
+        }
+
+        if (isWhitelisted)
+        {
+            isWhitelisted = true;
+            Debug.Log(isWhitelisted + "hmm");
+
+            Debug.Log("User is whitelisted");
+            whitelistUI.DisplayWhitelistWarning(false);
+        }
+        Debug.Log("ended");
+
+        // Use the filterList for further processing or logging
     }
 
-    private int AdjustAmount(int amount, int comparisonOperator)
+    private void AdjustAmount(ref int amount, int comparisonOperator)
     {
-        return comparisonOperator == 2 ? amount + 1 : amount;
+        if (comparisonOperator == 2)
+        {
+            amount += 1;
+        }
     }
 }
