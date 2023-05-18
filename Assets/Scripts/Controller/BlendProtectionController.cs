@@ -19,6 +19,7 @@ public class BlendProtectionController : MonoBehaviour
 
     public void IsBlendWhitelisted(int securityId)
     {
+        ClearProtectedAssets();
         Debug.Log("a");
         isWhitelisted = false;
         isSecured = true;
@@ -49,6 +50,10 @@ public class BlendProtectionController : MonoBehaviour
             Debug.Log("user is not whitelisted?? ");
             whitelistUI.DisplayWhitelistWarning(true);
         }
+    }
+
+    public void ClearProtectedAssets() {
+        protectedAssets = new List<string>();
     }
 
     public async Task IsWhitelistedProof(string jsonResponse)

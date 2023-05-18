@@ -10170,6 +10170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requirementPanel: {fileID: 943324713}
   blendProtectionController: {fileID: 2019116609}
+  sendTransactionJS: {fileID: 281018658}
   craftAssetPopupController: {fileID: 1863190185}
 --- !u!224 &2087280232
 RectTransform:

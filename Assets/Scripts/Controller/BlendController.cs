@@ -3,120 +3,78 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
- 
+
 public class BlendController : MonoBehaviour
 {
     [SerializeField] public GameObject requirementPanel;
     [SerializeField] public BlendProtectionController blendProtectionController;
-    [SerializeField] public ISendTransactionJS sendTransactionJS;
+    [SerializeField] public SendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
 
-    void Start()
+    private TemplateUIElementController GetUIElementController(Transform child)
     {
-        sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
+        return child.GetComponent<TemplateUIElementController>();
+    }
+
+    private TemplateNFT GetTemplateNFT(Transform child)
+    {
+        return child.GetComponent<TemplateNFT>();
+    }
+
+    private bool IsChildValid(Transform child)
+    {
+        var uiController = GetUIElementController(child);
+        var templateNFT = GetTemplateNFT(child);
+
+        return !(uiController.selectedAssetId == null || uiController.selectedAssetId == "") || templateNFT.GetRequirementType() == "FT_INGREDIENT";
     }
 
     public bool CanBlend()
     {
         if (requirementPanel == null || requirementPanel.transform.childCount == 0)
-        {
-            return false; // return false if requirementPanel is not set or has no children
-        }
+            return false;
 
-
-        foreach (Transform child in requirementPanel.transform)
-        {
-
-            if (child.GetComponent<TemplateUIElementController>().selectedAssetId == null || child.GetComponent<TemplateUIElementController>().selectedAssetId == "")
-            {
-                if (child.GetComponent<TemplateNFT>().GetRequirementType() == "FT_INGREDIENT")
-                {
-                    break;
-                }
-                return false; // return false if any child is empty
-            }
-        }
-
-        return true;
+        return requirementPanel.transform.Cast<Transform>().All(IsChildValid);
     }
-
-
 
     public string[] GetSelectedAssetList()
     {
-        List<string> idsList = new List<string>();
-
-        if (requirementPanel == null)
-            return new string[0];
-
-        foreach (Transform child in requirementPanel.transform)
-        {
-            if (child.GetComponent<TemplateNFT>().GetRequirementType() == "FT_INGREDIENT")
-                continue;
-
-            idsList.Add(child.GetComponent<TemplateUIElementController>().selectedAssetId);
-        }
-
-        return idsList.Count > 0 ? idsList.ToArray() : new string[0];
+        return requirementPanel == null
+            ? new string[0]
+            : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() != "FT_INGREDIENT")
+                                                        .Select(t => GetUIElementController(t).selectedAssetId)
+                                                        .ToArray();
     }
 
     public string[] GetContractNameList()
     {
-        List<string> contractNameList = new List<string>();
-
-        if (requirementPanel == null)
-            return contractNameList.ToArray();
-
-        foreach (Transform child in requirementPanel.transform)
-        {
-            if (child.GetComponent<TemplateNFT>().GetRequirementType() == "FT_INGREDIENT")
-            {
-                var fungibleTokenObject = child.GetComponent<TemplateNFT>().GetFungibleToken();
-                contractNameList.Add(fungibleTokenObject.contractName);
-            }
-        }
-        return contractNameList.ToArray();
+        return requirementPanel == null
+            ? new string[0]
+            : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
+                                                        .Select(t => GetTemplateNFT(t).GetFungibleToken().contractName)
+                                                        .ToArray();
     }
 
     public string[] GetTokenQuantityList()
     {
-        List<string> tokenQuantityList = new List<string>();
-
-        if (requirementPanel == null)
-            return tokenQuantityList.ToArray();
-
-        foreach (Transform child in requirementPanel.transform)
-        {
-            if (child.GetComponent<TemplateNFT>().GetRequirementType() == "FT_INGREDIENT")
-            {
-                var fungibleTokenObject = child.GetComponent<TemplateNFT>().GetFungibleToken();
-                tokenQuantityList.Add((fungibleTokenObject.amount / Math.Pow(10, fungibleTokenObject.tokenPrecision)).ToString("0." + new string('0', fungibleTokenObject.tokenPrecision)) + " " + fungibleTokenObject.tokenSymbol);
-            }
-        }
-        return tokenQuantityList.ToArray();
+        return requirementPanel == null
+            ? new string[0]
+            : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
+                                                        .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedAmount())
+                                                        .ToArray();
     }
 
     public string[] GetTokenSymbolList()
     {
-        List<string> tokenSymbolList = new List<string>();
-
-        if (requirementPanel == null)
-            return tokenSymbolList.ToArray();
-
-        foreach (Transform child in requirementPanel.transform)
-        {
-            if (child.GetComponent<TemplateNFT>().GetRequirementType() == "FT_INGREDIENT")
-            {
-                var fungibleTokenObject = child.GetComponent<TemplateNFT>().GetFungibleToken();
-                tokenSymbolList.Add(fungibleTokenObject.tokenPrecision + "," + fungibleTokenObject.tokenSymbol);
-            }
-        }
-        return tokenSymbolList.ToArray();
+        return requirementPanel == null
+            ? new string[0]
+            : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
+                                                        .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedTokenSymbol())
+                                                        .ToArray();
     }
 
     public void SubmitBlend()
     {
-        Debug.Log(blendProtectionController.isWhitelisted+"hm");
         if (!CanBlend())
         {
             Debug.Log("Can't perform blend operation.");
@@ -125,31 +83,59 @@ public class BlendController : MonoBehaviour
 
         if (!blendProtectionController.isSecured)
         {
-            PerformBlend(false);
+            PerformBlend();
             return;
         }
-        
+
         if (!blendProtectionController.isWhitelisted)
         {
             Debug.Log("You need to be whitelisted to perform this action.");
             return;
         }
-        
-        PerformBlend(true);
+
+        Debug.Log("Performing secure blend.");
+        PerformSecuredBlend();
     }
 
-    private void PerformBlend(bool isSecured)
+    private void PerformBlend()
     {
-        var assetList = GetSelectedAssetList();
-        var contractNameArray = GetContractNameList();
-        var tokenQuantityArray = GetTokenQuantityList().ToArray();
-        var tokenSymbolArray = GetTokenSymbolList().ToArray();
-
-        if (assetList == null || contractNameArray == null || tokenQuantityArray == null || tokenSymbolArray == null)
+        try
         {
-            return;
+            sendTransactionJS.SendBlendTransaction(
+                craftAssetPopupController.currentBlendId,
+                GetSelectedAssetList(),
+                GetContractNameList(),
+                GetTokenSymbolList(),
+                GetTokenQuantityList(),
+                GetTokenQuantityList().Length,
+                GetSelectedAssetList().Length
+                );
         }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
+    }
 
-        sendTransactionJS.SendBlendTransaction(craftAssetPopupController.currentBlendId, assetList, contractNameArray, tokenSymbolArray, tokenQuantityArray, tokenQuantityArray.Length, assetList.Length,isSecured, blendProtectionController.protectedAssets.ToArray(), blendProtectionController.protectedAssets.Count);
+    private void PerformSecuredBlend()
+    {
+        try
+        {
+            sendTransactionJS.SendSecuredBlendTransaction(
+                craftAssetPopupController.currentBlendId,
+                GetSelectedAssetList(),
+                GetContractNameList(),
+                GetTokenSymbolList(),
+                GetTokenQuantityList(),
+                GetTokenQuantityList().Length,
+                GetSelectedAssetList().Length,
+                blendProtectionController.protectedAssets.ToArray(),
+                blendProtectionController.protectedAssets.Count
+                );
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.ToString());
+        }
     }
 }

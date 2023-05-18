@@ -1,5 +1,5 @@
 mergeInto(LibraryManager.library, {
-  SubmitBlend: async function (
+  SendSecuredBlend: async function (
     blend_id,
     asset_ids,
     contractName,
@@ -7,7 +7,6 @@ mergeInto(LibraryManager.library, {
     tokenQuantity,
     ftCount,
     assetCount,
-    isSecured,
     protectedAssets,
     protectedAssetsCount
   ) {
@@ -30,7 +29,7 @@ mergeInto(LibraryManager.library, {
         UTF8ToString(HEAP32[(protectedAssets + i * 4) >> 2])
       );
     }
-    console.log()
+    console.log();
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
     }
@@ -45,34 +44,79 @@ mergeInto(LibraryManager.library, {
       actions.push(TransferAsset(blend_id, asset_array, assetCount));
     }
 
-    // boolean isSecured returned as number 1 || 0
-    console.log(isSecured);
-    console.log(isSecured);
-
-    if (isSecured) {
-      if (protectedAssetList.length != 0) {
-        actions.push(
-          SecurityFuse(blend_id, asset_array, [
-            "OWNERSHIP_CHECK",
-            {
-              account_name: accountName,
-              asset_ids: protectedAssetList,
-            },
-          ])
-        );
-      } else {
-        actions.push(
-          SecurityFuse(blend_id, asset_array, [
-            "WHITELIST_CHECK",
-            {
-              account_name: accountName,
-            },
-          ])
-        );
-      }
+    if (protectedAssetList.length != 0) {
+      actions.push(
+        SecurityFuse(blend_id, asset_array, [
+          "OWNERSHIP_CHECK",
+          {
+            account_name: accountName,
+            asset_ids: protectedAssetList,
+          },
+        ])
+      );
     } else {
-      actions.push(NoSecurityFuse(blend_id, asset_array));
+      actions.push(
+        SecurityFuse(blend_id, asset_array, [
+          "WHITELIST_CHECK",
+          {
+            account_name: accountName,
+          },
+        ])
+      );
     }
+
+    try {
+      let tapos = {
+        blocksBehind: 3,
+        expireSeconds: 120,
+      };
+      const result = await user.signTransaction({ actions }, tapos);
+      myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
+    } catch (e) {
+      console.log(e);
+      myGameInstance.SendMessage(
+        "ConfirmationPanel",
+        "ShowError",
+        e.toString()
+      );
+    }
+  },
+  SubmitBlend: async function (
+    blend_id,
+    asset_ids,
+    contractName,
+    tokenSymbol,
+    tokenQuantity,
+    ftCount,
+    assetCount
+  ) {
+    let asset_array = [];
+    let contract_names = [];
+    let token_quantities = [];
+    let token_symbols = [];
+    let actions = [];
+
+    for (var i = 0; i < ftCount; i++) {
+      contract_names.push(UTF8ToString(HEAP32[(contractName + i * 4) >> 2]));
+      token_quantities.push(UTF8ToString(HEAP32[(tokenQuantity + i * 4) >> 2]));
+      token_symbols.push(UTF8ToString(HEAP32[(tokenSymbol + i * 4) >> 2]));
+    }
+
+    for (var i = 0; i < assetCount; i++) {
+      asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
+    }
+
+    for (let i = 0; i < contract_names.length; i++) {
+      actions.push(OpenBalance(token_symbols[i]));
+      actions.push(TransferToken(contract_names[i], token_quantities[i]));
+    }
+
+    if (assetCount != 0) {
+      actions.push(AnnounceDeposit(blend_id, asset_array, assetCount));
+      actions.push(TransferAsset(blend_id, asset_array, assetCount));
+    }
+
+    actions.push(NoSecurityFuse(blend_id, asset_array));
 
     try {
       let tapos = {
@@ -101,7 +145,6 @@ mergeInto(LibraryManager.library, {
 
     let data = await FetchBlendWhitelistProtection(security_id);
     let proofOfOwnership = await FetchBlendPoOProtection(
-     
       security_id,
       "auroratesttt"
     );
