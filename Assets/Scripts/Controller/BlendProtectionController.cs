@@ -62,50 +62,12 @@ public class BlendProtectionController : MonoBehaviour
     public async Task IsWhitelistedProof(string jsonResponse)
     {
         Initialize();
-        List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>();
         var deserializedJsonResult = DeserializeJson(jsonResponse);
+        List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>();
 
         foreach (List<object> filter in deserializedJsonResult.filters)
         {
-            string filterType = filter[0].ToString();
-            string filterJson = filter[1].ToString();
-            string collectionName = string.Empty;
-            string templateId = string.Empty;
-            string schemaName = string.Empty;
-            string entityType = string.Empty;
-            int amount = 0;
-            switch (filterType)
-            {
-                case "COLLECTION_HOLDINGS":
-                    var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
-                    amount = collectionHoldings.amount;
-                    AdjustAmount(ref amount, collectionHoldings.comparison_operator);
-                    ownsProof = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, amount);
-                    collectionName = collectionHoldings.collection_name;
-                    entityType = "Collection";
-                    break;
-                case "TEMPLATE_HOLDINGS":
-                    var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
-                     amount = templateHoldings.amount;
-                    AdjustAmount(ref amount, templateHoldings.comparison_operator);
-                    ownsProof = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, amount);
-                    collectionName = templateHoldings.collection_name;
-                    templateId = templateHoldings.template_id.ToString();
-                    entityType = "Template";
-                    break;
-                case "SCHEMA_HOLDINGS":
-                    var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
-                     amount = schemaHoldings.amount;
-                    AdjustAmount(ref amount, schemaHoldings.comparison_operator);
-                    ownsProof = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, amount);
-                    collectionName = schemaHoldings.collection_name;
-                    schemaName = schemaHoldings.schema_name;
-                    entityType = "Schema";
-                    break;
-                default:
-                    Debug.Log("Unknown filter type: " + filterType);
-                    break;
-            }
+            var (collectionName, templateId, schemaName, entityType, amount, ownsProof) = await ProcessFilter(filter);
 
             if (!string.IsNullOrEmpty(collectionName) || !string.IsNullOrEmpty(templateId) || !string.IsNullOrEmpty(schemaName))
             {
@@ -121,25 +83,7 @@ public class BlendProtectionController : MonoBehaviour
             }
         }
 
-        foreach (var filterTuple in filterList)
-        {
-            string filterTuple1 = filterTuple.Item1;
-            string filterTuple2 = filterTuple.Item2;
-            string filterTuple3 = filterTuple.Item3;
-            string filterTuple4 = filterTuple.Item4;
-            int filterTuple5 = filterTuple.Item5;
-
-            Debug.Log($"Filter: Collection Name: {filterTuple1}, Template ID: {filterTuple2}, Schema Name: {filterTuple3}, Entity Type: {filterTuple4}, Amount : {filterTuple5}");
-        }
-
-        List<string> order = new List<string>() { "template", "schema", "collection" };
-
-        List<(string, string, string, string, int)> sortedList = filterList.OrderBy(obj =>
-        {
-            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
-            return index == -1 ? int.MaxValue : index;
-        }).ToList();
-
+        var sortedList = SortFilterList(filterList);
 
         foreach (var item in sortedList)
         {
@@ -161,6 +105,61 @@ public class BlendProtectionController : MonoBehaviour
             }
         }
         RemoveWhitelistWarning();
+    }
+
+    private List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
+    {
+        List<string> order = new List<string>() { "template", "schema", "collection" };
+
+        return filterList.OrderBy(obj =>
+        {
+            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
+            return index == -1 ? int.MaxValue : index;
+        }).ToList();
+    }
+
+    private async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
+    {
+        string filterType = filter[0].ToString();
+        string filterJson = filter[1].ToString();
+        string collectionName = string.Empty;
+        string templateId = string.Empty;
+        string schemaName = string.Empty;
+        string entityType = string.Empty;
+        int amount = 0;
+        switch (filterType)
+        {
+            case "COLLECTION_HOLDINGS":
+                var collectionHoldings = JsonConvert.DeserializeObject<ProtectionFilter.CollectionHoldings>(filterJson);
+                amount = collectionHoldings.amount;
+                AdjustAmount(ref amount, collectionHoldings.comparison_operator);
+                ownsProof = await ownershipFetcher.OwnsCollection(collectionHoldings.collection_name, amount);
+                collectionName = collectionHoldings.collection_name;
+                entityType = "Collection";
+                break;
+            case "TEMPLATE_HOLDINGS":
+                var templateHoldings = JsonConvert.DeserializeObject<ProtectionFilter.TemplateHoldings>(filterJson);
+                amount = templateHoldings.amount;
+                AdjustAmount(ref amount, templateHoldings.comparison_operator);
+                ownsProof = await ownershipFetcher.OwnsTemplate(templateHoldings.collection_name, templateHoldings.template_id, amount);
+                collectionName = templateHoldings.collection_name;
+                templateId = templateHoldings.template_id.ToString();
+                entityType = "Template";
+                break;
+            case "SCHEMA_HOLDINGS":
+                var schemaHoldings = JsonConvert.DeserializeObject<ProtectionFilter.SchemaHoldings>(filterJson);
+                amount = schemaHoldings.amount;
+                AdjustAmount(ref amount, schemaHoldings.comparison_operator);
+                ownsProof = await ownershipFetcher.OwnsSchema(schemaHoldings.collection_name, schemaHoldings.schema_name, amount);
+                collectionName = schemaHoldings.collection_name;
+                schemaName = schemaHoldings.schema_name;
+                entityType = "Schema";
+                break;
+            default:
+                Debug.Log("Unknown filter type: " + filterType);
+                break;
+        }
+        return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
 
     private void RemoveWhitelistWarning()
