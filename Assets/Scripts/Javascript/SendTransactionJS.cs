@@ -27,7 +27,6 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
         SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount, assetCount);
     }
 
-
     public void LoginAnchor()
     {
         LoginAnchorJS();

@@ -4,7 +4,7 @@ using NSubstitute;
 using System.Linq;
 using System;
 using Object = UnityEngine.Object;
-
+using System.Collections.Generic;
 
 public class BlendControllerTest
 {
@@ -209,7 +209,7 @@ public class BlendControllerTest
         // Assert
         SendTransactionJS.DidNotReceive().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
     }
-/*
+
     [Test]
     public void SubmitBlend_WhenIsWhitelisted()
     {
@@ -227,10 +227,12 @@ public class BlendControllerTest
         blendController.requirementPanel = requirementPanel;
         var expectedBlendId = 123;
         blendController.blendProtectionController.isSecured = true;
-        blendController.blendProtectionController.isWhitelisted = false;
-
+        blendController.blendProtectionController.isWhitelisted = true;
+        blendController.blendProtectionController.protectedAssets = new List<string> { "id1", "id2" };
         craftAssetPopupController.currentBlendId = expectedBlendId;
         string[] selectedAssetIds = new[] { "id1", "id2" };
+        string[] protectedAssets = new[] { "id1", "id2" };
+
         foreach (var id in selectedAssetIds)
         {
             var child = new GameObject().AddComponent<TemplateUIElementController>();
@@ -242,9 +244,18 @@ public class BlendControllerTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.DidNotReceive().SendSecuredBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+        SendTransactionJS.Received().SendSecuredBlendTransaction(
+            123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)),
+            Arg.Any<string[]>(),
+            Arg.Any<string[]>(),
+            Arg.Any<string[]>(),
+            Arg.Any<int>(),
+            selectedAssetIds.Length,
+            Arg.Is<string[]>(original => protectedAssets.SequenceEqual(original)),
+            protectedAssets.Length
+            );
     }
-*/
+
     [Test]
     public void SubmitBlend_DoesNotCallSendTransactionBlend()
     {

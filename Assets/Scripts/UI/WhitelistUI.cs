@@ -9,6 +9,6 @@ public class WhitelistUI : MonoBehaviour
 
     public void DisplayWhitelistWarning(bool condition)
     {
-        whitelist.gameObject.SetActive(condition);
+        whitelist.SetActive(condition);
     }
 }

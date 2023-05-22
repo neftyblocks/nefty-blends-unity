@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class OwnershipFetcher : MonoBehaviour, IFetcher
 {
-    [SerializeField] private ImageLoader imageLoader;
-    [SerializeField] private PluginController pluginController;
+    [SerializeField] public ImageLoader imageLoader;
+    [SerializeField] public PluginController pluginController;
 
     public async Task<Ownership> GetDeserializedData<Ownership>(string url)
     {
@@ -24,10 +24,8 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
 
             if (deserializedJsonResult.data.collections.Count > 0 && amount <= deserializedJsonResult.data.collections[0].assets)
             {
-                Debug.Log("OwnsCollection: Passed");
                 return true;
             }
-            Debug.Log("OwnsCollection: Failed");
             return false;
         }
         catch (Exception ex)
@@ -48,12 +46,9 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
             {
                 if (schema.schemaName == schemaName && schema.assets >= amount)
                 {
-                    Debug.Log("OwnsSchema: Passed");
                     return true;
                 }
             }
-
-            Debug.Log("OwnsSchema: Failed");
             return false;
         }
         catch (Exception ex)
@@ -74,12 +69,9 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
             {
                 if (template.templateId == templateid && template.assets >= amount)
                 {
-                    Debug.Log("OwnsTemplate: Passed");
                     return true;
                 }
             }
-
-            Debug.Log("OwnsTemplate: Failed");
             return false;
         }
         catch (Exception ex)
@@ -94,7 +86,6 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher
         try
         {
             var url = $"{PluginController.apiUrl}/atomicassets/v1/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id" + filter;
-            Debug.Log(url);
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
 
             return deserializedJsonResult;

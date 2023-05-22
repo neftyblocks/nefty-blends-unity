@@ -10,7 +10,7 @@ using static NeftyBlend;
 public class BlendProtectionController : MonoBehaviour
 {
     [SerializeField] public PluginController pluginController;
-    [SerializeField] public SendTransactionJS sendTransactionJS;
+    [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
     [SerializeField] public OwnershipFetcher ownershipFetcher;
     public bool isWhitelisted { get; set; }
@@ -18,6 +18,11 @@ public class BlendProtectionController : MonoBehaviour
     public bool isSecured { get; set; }
 
     public List<string> protectedAssets { get; set; } = new List<string>();
+
+    void Start()
+    {
+        sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
+    }
 
     public void IsBlendWhitelisted(int securityId)
     {
@@ -36,7 +41,7 @@ public class BlendProtectionController : MonoBehaviour
         UpdateWhitelistedState(false);
     }
 
-    private void UpdateWhitelistedState(bool value)
+    public void UpdateWhitelistedState(bool value)
     {
         isWhitelisted = value;
         whitelistUI.DisplayWhitelistWarning(!isWhitelisted);
@@ -46,14 +51,14 @@ public class BlendProtectionController : MonoBehaviour
     {
         UpdateWhitelistedState(response == "true");
     }
-    private void Initialize()
+    public void Initialize()
     {
         isWhitelisted = true;
         ownsProof = true;
         protectedAssets = new List<string>();
     }
 
-    private ProtectionFilter DeserializeJson(string jsonResponse)
+    public ProtectionFilter DeserializeJson(string jsonResponse)
     {
         return JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
     }
@@ -76,7 +81,6 @@ public class BlendProtectionController : MonoBehaviour
             if (!ownsProof)
             {
                 isWhitelisted = false;
-                Debug.Log("User is not whitelisted");
                 whitelistUI.DisplayWhitelistWarning(true);
                 break;
             }
@@ -87,7 +91,7 @@ public class BlendProtectionController : MonoBehaviour
         RemoveWhitelistWarning();
     }
 
-    private async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
+    public async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
     {
         foreach (var item in sortedList)
         {
@@ -107,7 +111,7 @@ public class BlendProtectionController : MonoBehaviour
         }
     }
 
-    private List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
+    public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
     {
         List<string> order = new List<string>() { "template", "schema", "collection" };
 
@@ -118,7 +122,7 @@ public class BlendProtectionController : MonoBehaviour
         }).ToList();
     }
 
-    private async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
+    public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
     {
         string filterType = filter[0].ToString();
         string filterJson = filter[1].ToString();
@@ -156,13 +160,12 @@ public class BlendProtectionController : MonoBehaviour
                 entityType = "Schema";
                 break;
             default:
-                Debug.Log("Unknown filter type: " + filterType);
                 break;
         }
         return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
 
-    private void RemoveWhitelistWarning()
+    public void RemoveWhitelistWarning()
     {
         if (isWhitelisted)
         {
@@ -170,7 +173,7 @@ public class BlendProtectionController : MonoBehaviour
         }
     }
 
-    private void AdjustAmount(ref int amount, int comparisonOperator)
+    public void AdjustAmount(ref int amount, int comparisonOperator)
     {
         if (comparisonOperator == 2)
         {
