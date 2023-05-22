@@ -84,12 +84,17 @@ public class BlendProtectionController : MonoBehaviour
         }
 
         var sortedList = SortFilterList(filterList);
+        await AddAssetsToProtection(sortedList);
+        RemoveWhitelistWarning();
+    }
 
+    private async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
+    {
         foreach (var item in sortedList)
         {
             var response = await ownershipFetcher.RetrieveAsset($"&collection_name={item.Item1}&template_id={item.Item2}&schema_name={item.Item3}");
-
             int retrievedCount = 0;
+
             foreach (var detail in response.details)
             {
                 if (!protectedAssets.Contains(detail.assetId))
@@ -97,14 +102,10 @@ public class BlendProtectionController : MonoBehaviour
                     protectedAssets.Add(detail.assetId);
                     retrievedCount++;
 
-                    if (retrievedCount >= item.Item5)
-                    {
-                        break; // Breaks the inner loop after retrieving the desired number of assets
-                    }
+                    if (retrievedCount >= item.Item5) break;
                 }
             }
         }
-        RemoveWhitelistWarning();
     }
 
     private List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
