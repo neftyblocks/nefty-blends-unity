@@ -4,9 +4,9 @@ using NSubstitute;
 using System.Linq;
 using System;
 using Object = UnityEngine.Object;
-using System.Collections.Generic;
 
-public class BlendTest
+
+public class BlendControllerTest
 {
 
     private BlendController blendController;
@@ -116,7 +116,7 @@ public class BlendTest
     }
 
     [Test]
- /*   public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
+    public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
     {
         //Arrange 
         GameObject blendObject = new GameObject("BlendControllerObject");
@@ -141,11 +141,11 @@ public class BlendTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<String[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length,Arg.Any<bool>());
+        SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
     }
-*/
-/*    [Test]
-*/  /*  public void SubmitBlend_DoesNotCallSendTransactionBlend()
+
+    [Test]
+    public void SubmitBlend_DoesNotCallSendTransactionBlend()
     {
         // Arrange
         GameObject blendObject = new GameObject("BlendControllerObject");
@@ -162,11 +162,11 @@ public class BlendTest
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>(),Arg.Any<bool>());
+        SendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>());
     }
-*/
-/*    [Test]
-*/    public void CanBlend_WhenRequirementPanelIsNull_ReturnsFalse()
+
+    [Test]
+    public void CanBlend_WhenRequirementPanelIsNull_ReturnsFalse()
     {
         // Act
         bool result = blendController.CanBlend();

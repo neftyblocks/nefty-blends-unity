@@ -8,7 +8,7 @@ public class BlendController : MonoBehaviour
 {
     [SerializeField] public GameObject requirementPanel;
     [SerializeField] public BlendProtectionController blendProtectionController;
-    [SerializeField] public SendTransactionJS sendTransactionJS;
+    [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
 
     private TemplateUIElementController GetUIElementController(Transform child)
@@ -77,7 +77,6 @@ public class BlendController : MonoBehaviour
     {
         if (!CanBlend())
         {
-            Debug.Log("Can't perform blend operation.");
             return;
         }
 
@@ -89,11 +88,8 @@ public class BlendController : MonoBehaviour
 
         if (!blendProtectionController.isWhitelisted)
         {
-            Debug.Log("You need to be whitelisted to perform this action.");
             return;
         }
-
-        Debug.Log("Performing secure blend.");
         PerformSecuredBlend();
     }
 

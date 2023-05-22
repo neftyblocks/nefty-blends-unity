@@ -27,7 +27,6 @@ public class BlendProtectionController : MonoBehaviour
         if (pluginController.GetWalletName() != null)
         {
             sendTransactionJS.IsBlendProtectionEligible(securityId);
-
         }
     }
 
