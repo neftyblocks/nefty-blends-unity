@@ -119,15 +119,19 @@ public class BlendControllerTest
     public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
     {
         //Arrange 
-        GameObject blendObject = new GameObject("BlendControllerObject");
+        var blendObject = new GameObject("BlendControllerObject");
         var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        GameObject craftAsset = new GameObject("CraftAsset");
-        CraftAssetPopupController craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var craftAsset = new GameObject("CraftAsset");
+        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
+        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
         var requirementPanel = new GameObject();
+        blendController.blendProtectionController = blendProtectionController;
         blendController.craftAssetPopupController = craftAssetPopupController;
         blendController.sendTransactionJS = SendTransactionJS;
         blendController.requirementPanel = requirementPanel;
         var expectedBlendId = 123;
+        blendController.blendProtectionController.isSecured = false;
         craftAssetPopupController.currentBlendId = expectedBlendId;
         string[] selectedAssetIds = new[] { "id1", "id2" };
         foreach (var id in selectedAssetIds)
