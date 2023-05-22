@@ -116,7 +116,7 @@ public class BlendControllerTest
     }
 
     [Test]
-    public void SubmitBlend_WhenCanBlend_ReturnsExpectedResult()
+    public void SubmitBlend_WhenCanBlend_PerformBlend()
     {
         //Arrange 
         var blendObject = new GameObject("BlendControllerObject");
@@ -148,6 +148,103 @@ public class BlendControllerTest
         SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
     }
 
+    [Test]
+    public void SubmitBlend_WhenCannotBlend()
+    {
+        //Arrange 
+        var blendObject = new GameObject("BlendControllerObject");
+        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
+        var craftAsset = new GameObject("CraftAsset");
+        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
+        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
+        var requirementPanel = new GameObject();
+        blendController.blendProtectionController = blendProtectionController;
+        blendController.craftAssetPopupController = craftAssetPopupController;
+        blendController.sendTransactionJS = SendTransactionJS;
+        blendController.requirementPanel = requirementPanel;
+        var expectedBlendId = 123;
+        blendController.blendProtectionController.isSecured = false;
+        craftAssetPopupController.currentBlendId = expectedBlendId;
+        string[] selectedAssetIds = new[] { "id1", "id2" };
+    
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        SendTransactionJS.DidNotReceive().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+    }
+
+    [Test]
+    public void SubmitBlend_WhenIsNotWhitelisted()
+    {
+        //Arrange 
+        var blendObject = new GameObject("BlendControllerObject");
+        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
+        var craftAsset = new GameObject("CraftAsset");
+        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
+        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
+        var requirementPanel = new GameObject();
+        blendController.blendProtectionController = blendProtectionController;
+        blendController.craftAssetPopupController = craftAssetPopupController;
+        blendController.sendTransactionJS = SendTransactionJS;
+        blendController.requirementPanel = requirementPanel;
+        var expectedBlendId = 123;
+        blendController.blendProtectionController.isSecured = true;
+        blendController.blendProtectionController.isWhitelisted = false;
+
+        craftAssetPopupController.currentBlendId = expectedBlendId;
+        string[] selectedAssetIds = new[] { "id1", "id2" };
+        foreach (var id in selectedAssetIds)
+        {
+            var child = new GameObject().AddComponent<TemplateUIElementController>();
+            child.gameObject.AddComponent<TemplateNFT>();
+            child.selectedAssetId = id;
+            child.transform.SetParent(requirementPanel.transform);
+        }
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        SendTransactionJS.DidNotReceive().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+    }
+/*
+    [Test]
+    public void SubmitBlend_WhenIsWhitelisted()
+    {
+        //Arrange 
+        var blendObject = new GameObject("BlendControllerObject");
+        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
+        var craftAsset = new GameObject("CraftAsset");
+        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
+        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
+        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
+        var requirementPanel = new GameObject();
+        blendController.blendProtectionController = blendProtectionController;
+        blendController.craftAssetPopupController = craftAssetPopupController;
+        blendController.sendTransactionJS = SendTransactionJS;
+        blendController.requirementPanel = requirementPanel;
+        var expectedBlendId = 123;
+        blendController.blendProtectionController.isSecured = true;
+        blendController.blendProtectionController.isWhitelisted = false;
+
+        craftAssetPopupController.currentBlendId = expectedBlendId;
+        string[] selectedAssetIds = new[] { "id1", "id2" };
+        foreach (var id in selectedAssetIds)
+        {
+            var child = new GameObject().AddComponent<TemplateUIElementController>();
+            child.gameObject.AddComponent<TemplateNFT>();
+            child.selectedAssetId = id;
+            child.transform.SetParent(requirementPanel.transform);
+        }
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        SendTransactionJS.DidNotReceive().SendSecuredBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+    }
+*/
     [Test]
     public void SubmitBlend_DoesNotCallSendTransactionBlend()
     {
