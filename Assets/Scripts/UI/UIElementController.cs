@@ -11,25 +11,20 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        selectionBoardImage.SetActive(true);
+        DisplayBorder(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         if(!isClicked)
         {
-            selectionBoardImage.SetActive(false);
+            DisplayBorder(false);
         }
     }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         isClicked = isClicked ? false : true;
         GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
-    }
-
-    public bool IsClicked()
-    {
-        return isClicked;
     }
 
     public void SetAssetNameText(string text)
@@ -40,5 +35,15 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public void SetMintNumberText(string text)
     {
         mintNumberText.text = "#" + text;
+    }
+
+    public void SetIsClicked(bool condition)
+    {
+        isClicked = condition;
+    }
+
+    public void DisplayBorder(bool condition)
+    {
+        selectionBoardImage.SetActive(condition);
     }
 }

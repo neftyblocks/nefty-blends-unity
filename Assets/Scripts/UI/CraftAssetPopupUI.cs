@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class CraftAssetPopupUI : MonoBehaviour
 {
     [SerializeField] public RectTransform craftAssetPanel;
+    [SerializeField] public BlendController blendController;
     [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject[] ingredientSlots;
 
@@ -11,6 +12,22 @@ public class CraftAssetPopupUI : MonoBehaviour
     {
         ResetSlots(ingredientSlots);
         InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
+    }
+
+    public void DisplayBeingSelected()
+    {
+        var selectedIds = blendController.GetSelectedAssetList();
+        foreach (var selectedId in selectedIds)
+        {
+            foreach (var ingredientSlot in ingredientSlots)
+            {
+                if (selectedId == ingredientSlot.GetComponent<NFT>().GetAssetId())
+                {
+                    ingredientSlot.GetComponent<UIElementController>().SetIsClicked(true);
+                    ingredientSlot.GetComponent<UIElementController>().DisplayBorder(true);
+                }
+            }
+        }
     }
 
     public void ResetSlots(GameObject[] gameObjects)
@@ -57,6 +74,7 @@ public class CraftAssetPopupUI : MonoBehaviour
             }
             UpdateAssetText();
         }
+        DisplayBeingSelected();
     }
     public void UpdateAssetText()
     {

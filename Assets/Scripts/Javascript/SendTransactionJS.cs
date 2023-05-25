@@ -4,7 +4,10 @@ using UnityEngine;
 public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
 {
     [DllImport("__Internal")]
-    private static extern void SubmitBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount);
+    private static extern void SubmitBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount);
+
+    [DllImport("__Internal")]
+    private static extern void SendSecuredBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount, string[] protectedAssets, int protectedAssetsCount);
 
     [DllImport("__Internal")]
     private static extern void LoginAnchorJS();
@@ -12,9 +15,16 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     [DllImport("__Internal")]
     private static extern void LoginCloudWalletsJS();
 
-    public void SendBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount,int assetCount)
+    [DllImport("__Internal")]
+    private static extern void IsBlendProtectionEligibleJS(int securityId);
+
+    public void SendSecuredBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount, string[] protectedAssets, int protectedAssetsCount)
     {
-        SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount,assetCount);
+        SendSecuredBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount, assetCount, protectedAssets, protectedAssetsCount);
+    }
+    public void SendBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount)
+    {
+        SubmitBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount, assetCount);
     }
 
     public void LoginAnchor()
@@ -24,5 +34,10 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     public void LoginCloudWallet()
     {
         LoginCloudWalletsJS();
+    }
+
+    public void IsBlendProtectionEligible(int securityId)
+    {
+        IsBlendProtectionEligibleJS(securityId);
     }
 }
