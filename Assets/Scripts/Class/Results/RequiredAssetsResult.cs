@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,4 +22,15 @@ public class FT
     public int tokenPrecision { get; set; }
     public string contractName { get; set; }
     public string tokenSymbol { get; set; }
+
+    public string GetFormattedAmount()
+    {
+        return (amount / Math.Pow(10, tokenPrecision)).ToString("0." + new string('0', tokenPrecision)) + " " + tokenSymbol;
+    }
+
+    public string GetFormattedTokenSymbol()
+    {
+        return tokenPrecision + "," + tokenSymbol;
+    }
 }
+

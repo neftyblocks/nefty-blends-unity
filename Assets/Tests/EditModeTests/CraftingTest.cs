@@ -2,8 +2,9 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using Object = UnityEngine.Object;
 
-public class CraftingTest : MonoBehaviour
+public class CraftingTest 
 {
     private CraftingUI craftingUI;
     private GameObject[] requirementSlots;
@@ -32,10 +33,10 @@ public class CraftingTest : MonoBehaviour
     {
         foreach (var requirementSlot in requirementSlots)
         {
-            DestroyImmediate(requirementSlot);
+            Object.DestroyImmediate(requirementSlot);
         }
 
-       DestroyImmediate(craftingUI.gameObject);
+       Object.DestroyImmediate(craftingUI.gameObject);
     }
 
     [Test]

@@ -35,7 +35,6 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
             GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SelectedTemplateObject = gameObject;
         }
     }
-       
 
     public bool IsClicked()
     {
