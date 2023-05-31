@@ -9874,7 +9874,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pluginController: {fileID: 206229106}
-  sendTransactionJS: {fileID: 281018658}
   whitelistUI: {fileID: 2061892468}
   ownershipFetcher: {fileID: 33798283}
 --- !u!1 &2061892466
@@ -10170,7 +10169,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   requirementPanel: {fileID: 943324713}
   blendProtectionController: {fileID: 2019116609}
-  sendTransactionJS: {fileID: 281018658}
   craftAssetPopupController: {fileID: 1863190185}
 --- !u!224 &2087280232
 RectTransform:

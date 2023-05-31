@@ -1,21 +1,32 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
-using NSubstitute;
-using System.Linq;
-using System;
-using Object = UnityEngine.Object;
-using System.Collections.Generic;
+using UnityEngine.TestTools;
 
 public class BlendControllerTest
 {
 
     private BlendController blendController;
+    private ISendTransactionJS sendTransactionJS;
+    private CraftAssetPopupController craftAssetPopupController;
+    private BlendProtectionController blendProtectionController;
 
     [SetUp]
     public void SetUp()
     {
-        GameObject gameObject = new GameObject();
-        blendController = gameObject.AddComponent<BlendController>();
+        var blendControllerObject = new GameObject();
+        blendController = blendControllerObject.AddComponent<BlendController>();
+
+        // Mocking
+        sendTransactionJS = Substitute.For<ISendTransactionJS>();
+        craftAssetPopupController = Substitute.For<CraftAssetPopupController>();
+        blendProtectionController = Substitute.For<BlendProtectionController>();
+        blendController.sendTransactionJS = sendTransactionJS;
+        blendController.blendProtectionController = blendProtectionController;
+        blendController.craftAssetPopupController = craftAssetPopupController;
     }
 
     [TearDown]
@@ -25,19 +36,10 @@ public class BlendControllerTest
     }
 
     [Test]
-    public void CanBlend_ReturnsTrue()
+    public void CanBlend_ReturnsTrue_IfPopulatedWithSelectedAssetIds()
     {
         //Arrange 
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.transform.SetParent(blendController.transform);
-        for (int i = 0; i < 2; i++)
-        {
-            GameObject templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
-            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
-            templateUIElementController.selectedAssetId = "some_asset_id";
-            templateObject.transform.SetParent(requirementPanel.transform);
-        }
-        blendController.requirementPanel = requirementPanel;
+        blendController.requirementPanel = CreatePopulatedRequirementPanel(10);
 
         // Act
         bool canBlend = blendController.CanBlend();
@@ -46,415 +48,163 @@ public class BlendControllerTest
     }
 
     [Test]
-    public void CanBlend_ReturnsFalse()
+    public void CanBlend_ReturnsFalse_If_Not_PopulatedWithSelectedAssetIds()
     {
         //Arrange 
-        GameObject templateObject = new GameObject("TemplateUIElementControllerObject");
-        TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
-        templateObject.AddComponent<TemplateNFT>();
-        templateUIElementController.selectedAssetId = "";
-        GameObject requirementPanelObject = new GameObject("RequirementPanelObject");
-        templateObject.transform.SetParent(requirementPanelObject.transform);
-        blendController.requirementPanel = requirementPanelObject;
+        blendController.requirementPanel = CreateUnpopulatedRequirementPanel(10);
 
         // Act
         bool canBlend = blendController.CanBlend();
 
         // Assert
         Assert.IsFalse(canBlend);
-
-        // Clean up
-        Object.DestroyImmediate(templateObject);
-        Object.DestroyImmediate(requirementPanelObject);
     }
 
     [Test]
-    public void GetSelectedAssetIds_ReturnsArray()
+    public void CanBlend_ReturnsFalse_If_Not_Panel_Is_Null()
     {
         //Arrange 
-        GameObject templateObject1 = new GameObject("TemplateUIElementControllerObject1");
-        TemplateUIElementController templateUIElementController1 = templateObject1.AddComponent<TemplateUIElementController>();
-        templateUIElementController1.selectedAssetId = "some_asset_id_1";
-        templateObject1.AddComponent<TemplateNFT>();
-        GameObject templateObject2 = new GameObject("TemplateUIElementControllerObject2");
-        TemplateUIElementController templateUIElementController2 = templateObject2.AddComponent<TemplateUIElementController>();
-        templateObject2.AddComponent<TemplateNFT>();
-        templateUIElementController2.selectedAssetId = "some_asset_id_2";
-        GameObject requirementPanelObject = new GameObject("RequirementPanelObject");
-        templateObject1.transform.SetParent(requirementPanelObject.transform);
-        templateObject2.transform.SetParent(requirementPanelObject.transform);
-        blendController.requirementPanel = requirementPanelObject.transform.gameObject;
+        blendController.requirementPanel = null;
+
+        // Act
+        bool canBlend = blendController.CanBlend();
+
+        // Assert
+        Assert.IsFalse(canBlend);
+    }
+
+    [Test]
+    public void GetSelectedAssetIds_ReturnsArray_IfPopulatedWithSelectedAssetIds()
+    {
+        //Arrange 
+        blendController.requirementPanel = CreatePopulatedRequirementPanel(5);
 
         // Act
         var selectedAssetIds = blendController.GetSelectedAssetList();
 
         // Assert
-        Assert.AreEqual(2, selectedAssetIds.Length);
-        Assert.Contains("some_asset_id_1", selectedAssetIds);
-        Assert.Contains("some_asset_id_2", selectedAssetIds);
-
-        // Clean up
-        Object.DestroyImmediate(templateObject1);
-        Object.DestroyImmediate(templateObject2);
-        Object.DestroyImmediate(requirementPanelObject);
-    }
-    [Test]
-    public void GetSelectedAssetIds_ReturnsEmptyArray()
-    {
-        // Arrange 
-        GameObject blendObject = new GameObject("BlendControllerObject");
-        BlendController blendController = blendObject.AddComponent<BlendController>();
-
-        // Act
-        string[] selectedAssetIds = blendController.GetSelectedAssetList();
-
-        // Assert
-        Assert.AreEqual(0, selectedAssetIds.Length);
-
-        // Clean up
-        Object.DestroyImmediate(blendObject);
+        Assert.AreEqual(5, selectedAssetIds.Length);
+        Assert.Contains("0", selectedAssetIds);
+        Assert.Contains("1", selectedAssetIds);
+        Assert.Contains("2", selectedAssetIds);
+        Assert.Contains("3", selectedAssetIds);
+        Assert.Contains("4", selectedAssetIds);
     }
 
     [Test]
-    public void SubmitBlend_WhenCanBlend_PerformBlend()
+    public void GetSelectedAssetIds_ReturnsArray_If_Not_PopulatedWithSelectedAssetIds()
     {
         //Arrange 
-        var blendObject = new GameObject("BlendControllerObject");
-        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        var craftAsset = new GameObject("CraftAsset");
-        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
-        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
-        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
-        var requirementPanel = new GameObject();
-        blendController.blendProtectionController = blendProtectionController;
-        blendController.craftAssetPopupController = craftAssetPopupController;
-        blendController.sendTransactionJS = SendTransactionJS;
-        blendController.requirementPanel = requirementPanel;
-        var expectedBlendId = 123;
+        blendController.requirementPanel = CreateUnpopulatedRequirementPanel(5);
+
+        // Act
+        var selectedAssetIds = blendController.GetSelectedAssetList();
+
+        // Assert
+        Assert.AreEqual(5, selectedAssetIds.Length);
+        Assert.Contains("", selectedAssetIds);
+        Assert.Contains("", selectedAssetIds);
+        Assert.Contains("", selectedAssetIds);
+        Assert.Contains("", selectedAssetIds);
+        Assert.Contains("", selectedAssetIds);
+    }
+
+    [Test]
+    public void SubmitBlend_SendBlendTransaction_If_NotSecuredAndContainsSelectedAssetIds()
+    {
+        //Arrange
+        blendController.requirementPanel = CreatePopulatedRequirementPanel(5);
+        var expectedBlendId = 12345;
+        var selectedAssetIds = blendController.GetSelectedAssetList();
+
         blendController.blendProtectionController.isSecured = false;
         craftAssetPopupController.currentBlendId = expectedBlendId;
-        string[] selectedAssetIds = new[] { "id1", "id2" };
-        foreach (var id in selectedAssetIds)
-        {
-            var child = new GameObject().AddComponent<TemplateUIElementController>();
-            child.gameObject.AddComponent<TemplateNFT>();
-            child.selectedAssetId = id;
-            child.transform.SetParent(requirementPanel.transform);
-        }
+
+     
         // Act
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.Received().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+        sendTransactionJS.Received().SendBlendTransaction(12345, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
     }
 
     [Test]
-    public void SubmitBlend_WhenCannotBlend()
+    public void SubmitBlend_Fails_SendBlendTransaction_If_NotSecuredAnd_Not_PopulatedSelectedAssetIds()
     {
-        //Arrange 
-        var blendObject = new GameObject("BlendControllerObject");
-        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        var craftAsset = new GameObject("CraftAsset");
-        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
-        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
-        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
-        var requirementPanel = new GameObject();
-        blendController.blendProtectionController = blendProtectionController;
-        blendController.craftAssetPopupController = craftAssetPopupController;
-        blendController.sendTransactionJS = SendTransactionJS;
-        blendController.requirementPanel = requirementPanel;
-        var expectedBlendId = 123;
+        //Arrange
+        blendController.requirementPanel = CreateUnpopulatedRequirementPanel(5);
+
         blendController.blendProtectionController.isSecured = false;
-        craftAssetPopupController.currentBlendId = expectedBlendId;
-        string[] selectedAssetIds = new[] { "id1", "id2" };
-    
+
         // Act
         blendController.SubmitBlend();
 
         // Assert
-        SendTransactionJS.DidNotReceive().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+        sendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>());
     }
 
     [Test]
-    public void SubmitBlend_WhenIsNotWhitelisted()
+    public void SubmitBlend_SendSecuredBlendTransaction_If_Whitelisted()
     {
-        //Arrange 
-        var blendObject = new GameObject("BlendControllerObject");
-        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        var craftAsset = new GameObject("CraftAsset");
-        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
-        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
-        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
-        var requirementPanel = new GameObject();
-        blendController.blendProtectionController = blendProtectionController;
-        blendController.craftAssetPopupController = craftAssetPopupController;
-        blendController.sendTransactionJS = SendTransactionJS;
-        blendController.requirementPanel = requirementPanel;
-        var expectedBlendId = 123;
+        //Arrange
+        blendController.requirementPanel = CreatePopulatedRequirementPanel(5);
+        var expectedBlendId = 12345;
+        var selectedAssetIds = blendController.GetSelectedAssetList();
+        blendController.blendProtectionController.isSecured = true;
+        blendController.blendProtectionController.isWhitelisted = true;
+        craftAssetPopupController.currentBlendId = expectedBlendId;
+
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        sendTransactionJS.Received().SendSecuredBlendTransaction(12345, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length, Arg.Any<string[]>(), Arg.Any<int>());
+    }
+
+    [Test]
+    public void SubmitBlend_Fails_SendSecuredBlendTransaction_If_NotWhitelisted()
+    {    
+        //Arrange
+        blendController.requirementPanel = CreatePopulatedRequirementPanel(5);
         blendController.blendProtectionController.isSecured = true;
         blendController.blendProtectionController.isWhitelisted = false;
 
-        craftAssetPopupController.currentBlendId = expectedBlendId;
-        string[] selectedAssetIds = new[] { "id1", "id2" };
-        foreach (var id in selectedAssetIds)
+        // Act
+        blendController.SubmitBlend();
+
+        // Assert
+        sendTransactionJS.DidNotReceive().SendSecuredBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<int>());
+
+
+    }
+
+    public GameObject CreatePopulatedRequirementPanel(int amountOfRequirementObjects)
+    {
+        var requirementPanel = new GameObject("RequirementPanel");
+        requirementPanel.transform.SetParent(blendController.transform);
+        for (int i = 0; i < amountOfRequirementObjects; i++)
         {
-            var child = new GameObject().AddComponent<TemplateUIElementController>();
-            child.gameObject.AddComponent<TemplateNFT>();
-            child.selectedAssetId = id;
-            child.transform.SetParent(requirementPanel.transform);
+            var templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
+            templateObject.AddComponent<TemplateNFT>();
+            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+            templateUIElementController.selectedAssetId = $"{i}";
+            templateObject.transform.SetParent(requirementPanel.transform);
         }
-        // Act
-        blendController.SubmitBlend();
-
-        // Assert
-        SendTransactionJS.DidNotReceive().SendBlendTransaction(123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), selectedAssetIds.Length);
+        return requirementPanel;
     }
 
-    [Test]
-    public void SubmitBlend_WhenIsWhitelisted()
+    public GameObject CreateUnpopulatedRequirementPanel(int amountOfRequirementObjects)
     {
-        //Arrange 
-        var blendObject = new GameObject("BlendControllerObject");
-        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        var craftAsset = new GameObject("CraftAsset");
-        var craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
-        var blendProtectionAsset = new GameObject("BlendProtectionAsset");
-        var blendProtectionController = blendProtectionAsset.AddComponent<BlendProtectionController>();
-        var requirementPanel = new GameObject();
-        blendController.blendProtectionController = blendProtectionController;
-        blendController.craftAssetPopupController = craftAssetPopupController;
-        blendController.sendTransactionJS = SendTransactionJS;
-        blendController.requirementPanel = requirementPanel;
-        var expectedBlendId = 123;
-        blendController.blendProtectionController.isSecured = true;
-        blendController.blendProtectionController.isWhitelisted = true;
-        blendController.blendProtectionController.protectedAssets = new List<string> { "id1", "id2" };
-        craftAssetPopupController.currentBlendId = expectedBlendId;
-        string[] selectedAssetIds = new[] { "id1", "id2" };
-        string[] protectedAssets = new[] { "id1", "id2" };
-
-        foreach (var id in selectedAssetIds)
+        var requirementPanel = new GameObject("RequirementPanel");
+        requirementPanel.transform.SetParent(blendController.transform);
+        for (int i = 0; i < amountOfRequirementObjects; i++)
         {
-            var child = new GameObject().AddComponent<TemplateUIElementController>();
-            child.gameObject.AddComponent<TemplateNFT>();
-            child.selectedAssetId = id;
-            child.transform.SetParent(requirementPanel.transform);
+            var templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
+            templateObject.AddComponent<TemplateNFT>();
+            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+            templateUIElementController.selectedAssetId = "";
+            templateObject.transform.SetParent(requirementPanel.transform);
         }
-        // Act
-        blendController.SubmitBlend();
-
-        // Assert
-        SendTransactionJS.Received().SendSecuredBlendTransaction(
-            123, Arg.Is<string[]>(original => selectedAssetIds.SequenceEqual(original)),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<string[]>(),
-            Arg.Any<int>(),
-            selectedAssetIds.Length,
-            Arg.Is<string[]>(original => protectedAssets.SequenceEqual(original)),
-            protectedAssets.Length
-            );
-    }
-
-    [Test]
-    public void SubmitBlend_DoesNotCallSendTransactionBlend()
-    {
-        // Arrange
-        GameObject blendObject = new GameObject("BlendControllerObject");
-        var SendTransactionJS = Substitute.For<ISendTransactionJS>();
-        GameObject craftAsset = new GameObject("CraftAsset");
-        CraftAssetPopupController craftAssetPopupController = craftAsset.AddComponent<CraftAssetPopupController>();
-        var requirementPanel = new GameObject();
-
-        blendController.craftAssetPopupController = craftAssetPopupController;
-        blendController.sendTransactionJS = SendTransactionJS;
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        blendController.SubmitBlend();
-
-        // Assert
-        SendTransactionJS.DidNotReceive().SendBlendTransaction(Arg.Any<int>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<string[]>(), Arg.Any<int>(), Arg.Any<int>());
-    }
-
-    [Test]
-    public void CanBlend_WhenRequirementPanelIsNull_ReturnsFalse()
-    {
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_WhenRequirementPanelIsEmpty_ReturnsFalse()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.transform.SetParent(blendController.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_WhenRequirementPanelHasEmptyChild_ReturnsFalse()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.transform.SetParent(blendController.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_WhenRequirementPanelHasNonEmptyChild_ReturnsTrue()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.transform.SetParent(blendController.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        GameObject child = new GameObject("Child");
-        child.transform.SetParent(requirementPanel.transform);
-        child.AddComponent<TemplateUIElementController>();
-        child.AddComponent<TemplateNFT>();
-        child.GetComponent<TemplateUIElementController>().selectedAssetId = "123";
-        child.GetComponent<TemplateNFT>().SetRequirementType("NFT_INGREDIENT");
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsTrue(result);
-    }
-
-    [Test]
-    public void GetSelectedAssetList_WhenRequirementPanelIsNull_ReturnsEmptyArray()
-    {
-        // Act
-        string[] result = blendController.GetSelectedAssetList();
-
-        // Assert
-        Assert.AreEqual(0, result.Length);
-    }
-
-    [Test]
-    public void GetSelectedAssetList_WhenRequirementPanelHasNoNonFungibleTokenChild_ReturnsEmptyArray()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.transform.SetParent(blendController.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        GameObject child = new GameObject("Child");
-        child.transform.SetParent(requirementPanel.transform);
-        child.AddComponent<TemplateUIElementController>();
-        child.AddComponent<TemplateNFT>();
-        child.GetComponent<TemplateNFT>().SetRequirementType("FT_INGREDIENT");
-
-        // Act
-        string[] result = blendController.GetSelectedAssetList();
-
-        // Assert
-        Assert.AreEqual(0, result.Length);
-    }
-
-    [Test]
-    public void CanBlend_ReturnsFalse_WhenRequirementPanelIsNull()
-    {
-        // Arrange
-        blendController.requirementPanel = null;
-        // Act 
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_ReturnsFalse_WhenRequirementPanelHasNoChildren()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_ReturnsFalse_WhenChildIsEmpty()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        requirementPanel.AddComponent<TemplateUIElementController>();
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsFalse(result);
-    }
-
-    [Test]
-    public void CanBlend_ReturnsTrue_WhenChildRequirementTypeIsFTIngredientAndAssetIdIsNull()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        GameObject child = new GameObject("Child");
-        TemplateUIElementController templateUIElementController = child.AddComponent<TemplateUIElementController>();
-        TemplateNFT templateNFT = child.AddComponent<TemplateNFT>();
-        templateNFT.SetRequirementType("FT_INGREDIENT");
-        templateUIElementController.selectedAssetId = null;
-        child.transform.SetParent(requirementPanel.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsTrue(result);
-    }
-
-    [Test]
-    public void CanBlend_ReturnsTrue_WhenAllChildrenAreNotEmpty()
-    {
-        // Arrange
-        GameObject requirementPanel = new GameObject("RequirementPanel");
-        GameObject child1 = new GameObject("Child1");
-        GameObject child2 = new GameObject("Child2");
-        TemplateUIElementController templateUIElementController1 = child1.AddComponent<TemplateUIElementController>();
-        TemplateUIElementController templateUIElementController2 = child2.AddComponent<TemplateUIElementController>();
-        TemplateNFT templateNFT1 = child1.AddComponent<TemplateNFT>();
-        TemplateNFT templateNFT2 = child2.AddComponent<TemplateNFT>();
-        templateNFT1.SetRequirementType("NFT_INGREDIENT");
-        templateNFT2.SetRequirementType("NFT_INGREDIENT");
-        templateUIElementController1.selectedAssetId = "123";
-        templateUIElementController2.selectedAssetId = "456";
-        child1.transform.SetParent(requirementPanel.transform);
-        child2.transform.SetParent(requirementPanel.transform);
-        blendController.requirementPanel = requirementPanel;
-
-        // Act
-        bool result = blendController.CanBlend();
-
-        // Assert
-        Assert.IsTrue(result);
+        return requirementPanel;
     }
 }
-

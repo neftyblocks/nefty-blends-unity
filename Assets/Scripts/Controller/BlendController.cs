@@ -16,17 +16,17 @@ public class BlendController : MonoBehaviour
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
     }
 
-    private TemplateUIElementController GetUIElementController(Transform child)
+    public TemplateUIElementController GetUIElementController(Transform child)
     {
         return child.GetComponent<TemplateUIElementController>();
     }
 
-    private TemplateNFT GetTemplateNFT(Transform child)
+    public TemplateNFT GetTemplateNFT(Transform child)
     {
         return child.GetComponent<TemplateNFT>();
     }
 
-    private bool IsChildValid(Transform child)
+    public bool IsChildValid(Transform child)
     {
         var uiController = GetUIElementController(child);
         var templateNFT = GetTemplateNFT(child);
@@ -98,7 +98,7 @@ public class BlendController : MonoBehaviour
         PerformSecuredBlend();
     }
 
-    private void PerformBlend()
+    public void PerformBlend()
     {
         try
         {
@@ -118,7 +118,7 @@ public class BlendController : MonoBehaviour
         }
     }
 
-    private void PerformSecuredBlend()
+    public void PerformSecuredBlend()
     {
         try
         {
