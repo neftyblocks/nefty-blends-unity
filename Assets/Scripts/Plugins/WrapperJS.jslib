@@ -29,7 +29,7 @@ mergeInto(LibraryManager.library, {
         UTF8ToString(HEAP32[(protectedAssets + i * 4) >> 2])
       );
     }
-    console.log();
+    
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
     }

@@ -53,31 +53,6 @@ function NoSecurityFuse(blend_id, asset_array) {
   };
 }
 
-// function SecurityFuse(blend_id, asset_array, security_check) {
-//   return {
-//     account: "blend.nefty",
-//     name: "fuse",
-//     authorization: [
-//       {
-//         actor: accountName,
-//         permission: permission,
-//       },
-//     ],
-//     data: {
-//       transferred_assets: asset_array,
-//       own_assets: [],
-//       security_check: [
-//         "WHITELIST_CHECK",
-//         {
-//           account_name: accountName,
-//         },
-//       ],
-//       claimer: accountName,
-//       blend_id: blend_id,
-//     },
-//   };
-// }
-
 function SecurityFuse(blend_id, asset_array, security_check) {
   return {
     account: "blend.nefty",
@@ -148,7 +123,6 @@ async function FetchBlendWhitelistProtection(security_id) {
   return data;
 }
 async function FetchBlendPoOProtection(security_id, collection_name) {
-  console.log(rpcEndpoint);
   let data = await rpcEndpoint.get_table_rows({
     json: true, // Get the response as json
     code: "secure.nefty", // Contract that we target

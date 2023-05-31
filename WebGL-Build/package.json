@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@nefty/ual-anchor": "^0.2.5",
+    "@nefty/ual-renderer": "^0.1.1",
+    "@nefty/ual-wax": "^0.2.7",
+    "@waxio/waxjs": "^1.3.0"
+  }
+}
