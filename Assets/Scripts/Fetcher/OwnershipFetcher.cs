@@ -4,7 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class OwnershipFetcher : MonoBehaviour, IFetcher
+public interface IOwnershipFetcher
+{
+    Task<bool> OwnsCollection(string collectionName, int amount);
+    Task<bool> OwnsSchema(string collectionName, string schemaName, int amount);
+    Task<bool> OwnsTemplate(string collectionName, int templateId, int amount);
+    Task<Asset> RetrieveAsset(string filter);
+    Task<int> GetInventoryAssetsCount();
+}
+
+public class OwnershipFetcher : MonoBehaviour, IFetcher, IOwnershipFetcher
 {
     [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public PluginController pluginController;

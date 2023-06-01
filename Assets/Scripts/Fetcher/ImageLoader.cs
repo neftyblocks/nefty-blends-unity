@@ -1,9 +1,6 @@
-using NSubstitute;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.Networking;
 
 public interface IImageLoader

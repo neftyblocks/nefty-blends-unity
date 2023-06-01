@@ -181,4 +181,24 @@ public class BlendProtectionTest
         Assert.NotNull(request);
         Assert.AreEqual(webRequest.url, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
     }
+
+/*    public async void TestUnityWebRequest()
+    {
+        iimageLoader = Substitute.For<IImageLoader>();
+        iownershipFetcher = Substitute.For<IOwnershipFetcher>();
+        var expectedUrl = "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt";
+        var expectedResponse = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
+
+        iimageLoader.GetTextAsync(expectedUrl).Returns(Task.FromResult(expectedResponse));
+        blendProtectionController.ownershipFetcher = (OwnershipFetcher)iownershipFetcher;
+
+        var request = await iimageLoader.GetTextAsync(expectedUrl);
+
+        Debug.Log("Test: " + request);
+
+        // Assert the expected results
+        Assert.NotNull(request);
+        Assert.AreEqual(expectedUrl, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
+        Assert.AreEqual(expectedResponse, request);
+    }*/
 }

@@ -12,7 +12,7 @@ public class BlendProtectionController : MonoBehaviour
     [SerializeField] public PluginController pluginController;
     [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
-    [SerializeField] public OwnershipFetcher ownershipFetcher;
+    [SerializeField] public IOwnershipFetcher ownershipFetcher;
     public bool isWhitelisted { get; set; }
     public bool ownsProof { get; set; }
     public bool isSecured { get; set; }
@@ -22,6 +22,7 @@ public class BlendProtectionController : MonoBehaviour
     void Start()
     {
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
+        ownershipFetcher = GameObject.Find("OwnershipFetcherController").GetComponent<OwnershipFetcher>();
     }
 
     public void IsBlendWhitelisted(int securityId)
@@ -63,7 +64,7 @@ public class BlendProtectionController : MonoBehaviour
         return JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
     }
 
-    public async Task IsWhitelistedProof(string jsonResponse)
+    public async Task IsUserWhitelistedForProofOfOwnership(string jsonResponse)
     {
         Initialize();
         var deserializedJsonResult = DeserializeJson(jsonResponse);

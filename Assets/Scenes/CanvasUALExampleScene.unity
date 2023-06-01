@@ -9875,7 +9875,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pluginController: {fileID: 206229106}
   whitelistUI: {fileID: 2061892468}
-  ownershipFetcher: {fileID: 33798283}
 --- !u!1 &2061892466
 GameObject:
   m_ObjectHideFlags: 0

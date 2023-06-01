@@ -172,7 +172,7 @@ mergeInto(LibraryManager.library, {
       }
       myGameInstance.SendMessage(
         "BlendProtectionController",
-        "IsWhitelistedProof",
+        "IsUserWhitelistedForProofOfOwnership",
         JSON.stringify(json)
       );
     }
