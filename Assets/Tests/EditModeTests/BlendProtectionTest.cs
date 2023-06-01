@@ -161,51 +161,8 @@ public class BlendProtectionTest
         Assert.AreEqual("collection", sortedList[2].Item4);
     }
 
-    /*   [Test]
-       public async void IsWhitelistedProof_WithValidJsonResponse_ShouldUpdatePropertiesCorrectly()
-       {
-           pluginController.SetWalletName("2qq4a.c.wam");
-           string json = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
-           await blendProtectionController.IsWhitelistedProof(json);
-
-           // Assert
-           Assert.IsTrue(blendProtectionController.isWhitelisted);
-           Assert.IsTrue(blendProtectionController.ownsProof);
-
-       }*/
-
     [Test]
-    public async void TestUnityWebRequest()
-    {
-        var webRequest = Substitute.For<UnityWebRequest>();
-        webRequest.downloadHandler = new DownloadHandlerBuffer();
-        var request = await imageLoader.GetTextAsync("https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
-        // Assert the expected results
-        Assert.NotNull(request);
-        Assert.AreEqual(webRequest.url, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
-    }
-
-    /*    public async void TestUnityWebRequest()
-        {
-            iimageLoader = Substitute.For<IImageLoader>();
-            iownershipFetcher = Substitute.For<IOwnershipFetcher>();
-            var expectedUrl = "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt";
-
-            iimageLoader.GetTextAsync(expectedUrl).Returns(Task.FromResult(expectedResponse));
-            blendProtectionController.ownershipFetcher = (OwnershipFetcher)iownershipFetcher;
-
-            var request = await iimageLoader.GetTextAsync(expectedUrl);
-
-            Debug.Log("Test: " + request);
-
-            // Assert the expected results
-            Assert.NotNull(request);
-            Assert.AreEqual(expectedUrl, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
-            Assert.AreEqual(expectedResponse, request);
-        }*/
-
-    [Test]
-    public async void TestInterfaceApproach()
+    public void IsUserWhitelistedForProofOfOwnership_If_OwnProtectedAssets()
     {
         _IownershipFetcher = Substitute.For<IOwnershipFetcher>();
         blendProtectionController.ownershipFetcher = _IownershipFetcher;
@@ -229,11 +186,14 @@ public class BlendProtectionTest
         }
         };
         _IownershipFetcher.RetrieveAsset(Arg.Any<string>()).Returns(Task.FromResult(asset));
-        await blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
+        blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
+
+        Assert.IsTrue(blendProtectionController.isWhitelisted);
+        Assert.IsTrue(blendProtectionController.ownsProof);
 
     }
     [Test]
-    public async void TestInterfaceApproach1()
+    public void IsUserWhitelistedForProofOfOwnership_If_DoesntOwnProtectedAseets()
     {
         _IownershipFetcher = Substitute.For<IOwnershipFetcher>();
         blendProtectionController.ownershipFetcher = _IownershipFetcher;
@@ -257,7 +217,9 @@ public class BlendProtectionTest
         }
         };
         _IownershipFetcher.RetrieveAsset(Arg.Any<string>()).Returns(Task.FromResult(asset));
-        await blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
+        blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
 
+        Assert.IsFalse(blendProtectionController.isWhitelisted);
+        Assert.IsFalse(blendProtectionController.ownsProof);
     }
 }

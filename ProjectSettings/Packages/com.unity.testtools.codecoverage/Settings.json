@@ -21,7 +21,7 @@
             {
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "PathsToExclude",
-                "value": "{\"m_Value\":\"{ProjectPath}/Assets/Scripts/Class/**,{ProjectPath}/Assets/Scripts/Fetcher/**,{ProjectPath}/Assets/Scripts/UI/**\"}"
+                "value": "{\"m_Value\":\"{ProjectPath}/Assets/Scripts/Class/**,{ProjectPath}/Assets/Scripts/Fetcher/**,{ProjectPath}/Assets/Scripts/UI/**,{ProjectPath}/Assets/Scripts/Controller/BlendInputter.cs,{ProjectPath}/Assets/Scripts/Controller/LoginController.cs,{ProjectPath}/Assets/Scripts/Controller/PluginController.cs,{ProjectPath}/Assets/Scripts/Javascript/SendTransactionJS.cs\"}"
             },
             {
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",

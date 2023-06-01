@@ -1,10 +1,10 @@
-/*using NUnit.Framework;
+using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using Object = UnityEngine.Object;
 
-public class CraftingTest 
+public class CraftingTest
 {
     private CraftingUI craftingUI;
     private GameObject[] requirementSlots;
@@ -36,7 +36,7 @@ public class CraftingTest
             Object.DestroyImmediate(requirementSlot);
         }
 
-       Object.DestroyImmediate(craftingUI.gameObject);
+        Object.DestroyImmediate(craftingUI.gameObject);
     }
 
     [Test]
@@ -124,7 +124,7 @@ public class CraftingTest
 
         // Assert
         Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset3", requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);  
+        Assert.AreEqual("Asset3", requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
         Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
         Assert.AreEqual("Asset2", requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
         Assert.AreEqual("Asset1", requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
@@ -182,7 +182,7 @@ public class CraftingTest
         var indexIngredientAssetsResult = new IndexIngredientAssetsResult()
         {
             assetIds = new List<string>() { "Asset1", "Asset1" },
-            indexId = new List<int>() { 0,1 }
+            indexId = new List<int>() { 0, 1 }
         };
 
         requirementSlots[0].GetComponent<TemplateNFT>().SetRequirementType("ATTRIBUTE_INGREDIENT");
@@ -248,4 +248,3 @@ public class CraftingTest
     }
 
 }
-*/

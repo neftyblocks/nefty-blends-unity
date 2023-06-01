@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class BlendController : MonoBehaviour
     [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
 
+    [ExcludeFromCodeCoverage]
     void Start()
     {
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
@@ -42,6 +44,7 @@ public class BlendController : MonoBehaviour
         return requirementPanel.transform.Cast<Transform>().All(IsChildValid);
     }
 
+    [ExcludeFromCodeCoverage]
     public string[] GetSelectedAssetList()
     {
         return requirementPanel == null
@@ -51,6 +54,7 @@ public class BlendController : MonoBehaviour
                                                         .ToArray();
     }
 
+    [ExcludeFromCodeCoverage]
     public string[] GetContractNameList()
     {
         return requirementPanel == null
@@ -60,6 +64,7 @@ public class BlendController : MonoBehaviour
                                                         .ToArray();
     }
 
+    [ExcludeFromCodeCoverage]
     public string[] GetTokenQuantityList()
     {
         return requirementPanel == null
@@ -69,6 +74,7 @@ public class BlendController : MonoBehaviour
                                                         .ToArray();
     }
 
+    [ExcludeFromCodeCoverage]
     public string[] GetTokenSymbolList()
     {
         return requirementPanel == null
@@ -100,8 +106,6 @@ public class BlendController : MonoBehaviour
 
     public void PerformBlend()
     {
-        try
-        {
             sendTransactionJS.SendBlendTransaction(
                 craftAssetPopupController.currentBlendId,
                 GetSelectedAssetList(),
@@ -111,32 +115,20 @@ public class BlendController : MonoBehaviour
                 GetTokenQuantityList().Length,
                 GetSelectedAssetList().Length
                 );
-        }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.ToString());
-        }
     }
 
     public void PerformSecuredBlend()
     {
-        try
-        {
-            sendTransactionJS.SendSecuredBlendTransaction(
-                craftAssetPopupController.currentBlendId,
-                GetSelectedAssetList(),
-                GetContractNameList(),
-                GetTokenSymbolList(),
-                GetTokenQuantityList(),
-                GetTokenQuantityList().Length,
-                GetSelectedAssetList().Length,
-                blendProtectionController.protectedAssets.ToArray(),
-                blendProtectionController.protectedAssets.Count
-                );
-        }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.ToString());
-        }
+        sendTransactionJS.SendSecuredBlendTransaction(
+            craftAssetPopupController.currentBlendId,
+            GetSelectedAssetList(),
+            GetContractNameList(),
+            GetTokenSymbolList(),
+            GetTokenQuantityList(),
+            GetTokenQuantityList().Length,
+            GetSelectedAssetList().Length,
+            blendProtectionController.protectedAssets.ToArray(),
+            blendProtectionController.protectedAssets.Count
+            );
     }
 }

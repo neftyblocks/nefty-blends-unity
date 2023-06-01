@@ -96,7 +96,6 @@ public class BlendProtectionController : MonoBehaviour
 
     public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
     {
-        Debug.Log("im here");
         string filterType = filter[0].ToString();
         string filterJson = filter[1].ToString();
         string collectionName = string.Empty;
