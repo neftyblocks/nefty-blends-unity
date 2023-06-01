@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Policy;
+using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class BlendProtectionTest
     private OwnershipFetcher ownershipFetcher;
     private ImageLoader imageLoader;
 
+    private IOwnershipFetcher _IownershipFetcher;
+
     [SetUp]
     public void SetUp()
     {
@@ -27,7 +30,7 @@ public class BlendProtectionTest
         sendTransactionJS = Substitute.For<ISendTransactionJS>();
         pluginController = Substitute.For<PluginController>();
         whitelistUI = Substitute.For<WhitelistUI>();
-        ownershipFetcher= Substitute.For<OwnershipFetcher>();
+        ownershipFetcher = Substitute.For<OwnershipFetcher>();
         imageLoader = Substitute.For<ImageLoader>();
 
         // SetUp BlendProtection
@@ -36,8 +39,8 @@ public class BlendProtectionTest
         blendProtectionController.whitelistUI = whitelistUI;
         blendProtectionController.ownershipFetcher = ownershipFetcher;
         // SetUp OwnershipFetcher
-        ownershipFetcher.pluginController= pluginController;
-        ownershipFetcher.imageLoader= imageLoader;
+        ownershipFetcher.pluginController = pluginController;
+        ownershipFetcher.imageLoader = imageLoader;
         // SetUP Fake UI
         fakeUI = new GameObject();
         whitelistUI.whitelist = fakeUI;
@@ -182,23 +185,79 @@ public class BlendProtectionTest
         Assert.AreEqual(webRequest.url, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
     }
 
-/*    public async void TestUnityWebRequest()
+    /*    public async void TestUnityWebRequest()
+        {
+            iimageLoader = Substitute.For<IImageLoader>();
+            iownershipFetcher = Substitute.For<IOwnershipFetcher>();
+            var expectedUrl = "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt";
+
+            iimageLoader.GetTextAsync(expectedUrl).Returns(Task.FromResult(expectedResponse));
+            blendProtectionController.ownershipFetcher = (OwnershipFetcher)iownershipFetcher;
+
+            var request = await iimageLoader.GetTextAsync(expectedUrl);
+
+            Debug.Log("Test: " + request);
+
+            // Assert the expected results
+            Assert.NotNull(request);
+            Assert.AreEqual(expectedUrl, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
+            Assert.AreEqual(expectedResponse, request);
+        }*/
+
+    [Test]
+    public async void TestInterfaceApproach()
     {
-        iimageLoader = Substitute.For<IImageLoader>();
-        iownershipFetcher = Substitute.For<IOwnershipFetcher>();
-        var expectedUrl = "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt";
+        _IownershipFetcher = Substitute.For<IOwnershipFetcher>();
+        blendProtectionController.ownershipFetcher = _IownershipFetcher;
+        _IownershipFetcher.OwnsTemplate(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(true));
+        _IownershipFetcher.OwnsCollection(Arg.Any<string>(), Arg.Any<int>()).Returns(Task.FromResult(true));
+        _IownershipFetcher.OwnsSchema(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>()).Returns(Task.FromResult(true));
         var expectedResponse = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
 
-        iimageLoader.GetTextAsync(expectedUrl).Returns(Task.FromResult(expectedResponse));
-        blendProtectionController.ownershipFetcher = (OwnershipFetcher)iownershipFetcher;
 
-        var request = await iimageLoader.GetTextAsync(expectedUrl);
+        var asset = new Asset
+        {
+            success = true,
+            queryTime = 12345, // Mocked queryTime
+            details = new List<Asset.Details>
+        {
+        new Asset.Details { assetId = "1" },
+        new Asset.Details { assetId = "2" },
+        new Asset.Details { assetId = "3" },
+        new Asset.Details { assetId = "4" },
+        new Asset.Details { assetId = "5" }
+        }
+        };
+        _IownershipFetcher.RetrieveAsset(Arg.Any<string>()).Returns(Task.FromResult(asset));
+        await blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
 
-        Debug.Log("Test: " + request);
+    }
+    [Test]
+    public async void TestInterfaceApproach1()
+    {
+        _IownershipFetcher = Substitute.For<IOwnershipFetcher>();
+        blendProtectionController.ownershipFetcher = _IownershipFetcher;
+        _IownershipFetcher.OwnsTemplate(Arg.Any<string>(), Arg.Any<int>(), Arg.Any<int>()).Returns(Task.FromResult(false));
+        _IownershipFetcher.OwnsCollection(Arg.Any<string>(), Arg.Any<int>()).Returns(Task.FromResult(false));
+        _IownershipFetcher.OwnsSchema(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<int>()).Returns(Task.FromResult(false));
+        var expectedResponse = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
 
-        // Assert the expected results
-        Assert.NotNull(request);
-        Assert.AreEqual(expectedUrl, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
-        Assert.AreEqual(expectedResponse, request);
-    }*/
+
+        var asset = new Asset
+        {
+            success = true,
+            queryTime = 12345, // Mocked queryTime
+            details = new List<Asset.Details>
+        {
+        new Asset.Details { assetId = "1" },
+        new Asset.Details { assetId = "2" },
+        new Asset.Details { assetId = "3" },
+        new Asset.Details { assetId = "4" },
+        new Asset.Details { assetId = "5" }
+        }
+        };
+        _IownershipFetcher.RetrieveAsset(Arg.Any<string>()).Returns(Task.FromResult(asset));
+        await blendProtectionController.IsUserWhitelistedForProofOfOwnership(expectedResponse);
+
+    }
 }

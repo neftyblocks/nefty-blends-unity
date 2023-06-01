@@ -11,4 +11,12 @@ public class WhitelistUI : MonoBehaviour
     {
         whitelist.SetActive(condition);
     }
+
+    public void RemoveWhitelistWarning(bool isWhitelisted)
+    {
+        if (isWhitelisted)
+        {
+            DisplayWhitelistWarning(false);
+        }
+    }
 }

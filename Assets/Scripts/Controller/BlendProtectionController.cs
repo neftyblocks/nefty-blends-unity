@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -19,6 +20,7 @@ public class BlendProtectionController : MonoBehaviour
 
     public List<string> protectedAssets { get; set; } = new List<string>();
 
+    [ExcludeFromCodeCoverage]
     void Start()
     {
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
@@ -88,8 +90,8 @@ public class BlendProtectionController : MonoBehaviour
         }
 
         var sortedList = SortFilterList(filterList);
-        await AddAssetsToProtection(sortedList);
-        RemoveWhitelistWarning();
+        protectedAssets = await AddAssetsToProtection(sortedList);
+        whitelistUI.RemoveWhitelistWarning(isWhitelisted);
     }
 
     public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
@@ -136,7 +138,7 @@ public class BlendProtectionController : MonoBehaviour
         return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
 
-    public async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
+    public async Task<List<string>> AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
     {
         foreach (var item in sortedList)
         {
@@ -154,6 +156,7 @@ public class BlendProtectionController : MonoBehaviour
                 }
             }
         }
+        return protectedAssets;
     }
 
     public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
@@ -165,16 +168,6 @@ public class BlendProtectionController : MonoBehaviour
             int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
             return index == -1 ? int.MaxValue : index;
         }).ToList();
-    }
-
-    
-
-    public void RemoveWhitelistWarning()
-    {
-        if (isWhitelisted)
-        {
-            whitelistUI.DisplayWhitelistWarning(false);
-        }
     }
 
     public void AdjustAmount(ref int amount, int comparisonOperator)
