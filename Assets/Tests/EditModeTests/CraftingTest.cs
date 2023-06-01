@@ -22,11 +22,15 @@ public class CraftingTest
             requirementSlots[i].AddComponent<TemplateNFT>();
             requirementSlots[i].AddComponent<TemplateUIElementController>();
 
+            var selectedIngredientBackground = new GameObject("Selected_Ingredient_Background");
             var selectedIngredient = new GameObject("SelectedIngredient");
-            selectedIngredient.transform.SetParent(requirementSlots[i].transform);
+            selectedIngredientBackground.transform.SetParent(requirementSlots[i].transform);
+            selectedIngredient.transform.SetParent(selectedIngredientBackground.transform);
+
             selectedIngredient.AddComponent<TextMeshProUGUI>();
         }
     }
+
 
     [TearDown]
     public void TearDown()
@@ -59,11 +63,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.AreEqual("Asset1", requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset2", requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset3", requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset4", requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset5", requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset1", requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset2", requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset3", requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset4", requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset5", requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
 
     }
 
@@ -87,11 +91,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
 
     [Test]
@@ -123,11 +127,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset3", requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset2", requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset1", requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset3", requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset2", requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset1", requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
     [Test]
     public void TestSortAndSelectAssetsInRequirementSlots_FT_INGREDIENT_ShouldBeEmpty()
@@ -146,7 +150,7 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
 
     [Test]
@@ -169,11 +173,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
     [Test]
     public void TestSortAndSelectAssetsInRequirementSlots_WithLessIngredientsThanRequirementsAndShouldPrioritizTemplate()
@@ -204,11 +208,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset1", requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset1", requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
 
     [Test]
@@ -240,11 +244,11 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
 
         // Assert
-        Assert.IsNull(requirementSlots[0].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[1].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[2].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.AreEqual("Asset1", requirementSlots[3].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
-        Assert.IsNull(requirementSlots[4].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[0].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[1].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[2].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.AreEqual("Asset1", requirementSlots[3].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
+        Assert.IsNull(requirementSlots[4].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text);
     }
 
 }
