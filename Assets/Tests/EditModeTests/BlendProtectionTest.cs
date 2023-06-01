@@ -1,40 +1,46 @@
-/*using NSubstitute;
-using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Security.Policy;
+using NSubstitute;
+using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.TestTools;
 
 public class BlendProtectionTest
 {
     private BlendProtectionController blendProtectionController;
     private WhitelistUI whitelistUI;
-    private GameObject gameObjectUI;
+    private GameObject fakeUI;
     private PluginController pluginController;
     private ISendTransactionJS sendTransactionJS;
     private OwnershipFetcher ownershipFetcher;
     private ImageLoader imageLoader;
 
-
     [SetUp]
     public void SetUp()
     {
-        blendProtectionController = new GameObject().AddComponent<BlendProtectionController>();
-        imageLoader = new GameObject().AddComponent<ImageLoader>();
-        ownershipFetcher = new GameObject().AddComponent<OwnershipFetcher>();
-        pluginController = new GameObject().AddComponent<PluginController>();
-        whitelistUI = new GameObject().AddComponent<WhitelistUI>();
+        var blendProtectionControllerObject = new GameObject();
+        blendProtectionController = blendProtectionControllerObject.AddComponent<BlendProtectionController>();
+
+        // Mocking
         sendTransactionJS = Substitute.For<ISendTransactionJS>();
-        gameObjectUI = new GameObject();
-        whitelistUI.whitelist = gameObjectUI;
+        pluginController = Substitute.For<PluginController>();
+        whitelistUI = Substitute.For<WhitelistUI>();
+        ownershipFetcher= Substitute.For<OwnershipFetcher>();
+        imageLoader = Substitute.For<ImageLoader>();
+
+        // SetUp BlendProtection
         blendProtectionController.pluginController = pluginController;
         blendProtectionController.sendTransactionJS = sendTransactionJS;
         blendProtectionController.whitelistUI = whitelistUI;
         blendProtectionController.ownershipFetcher = ownershipFetcher;
-        ownershipFetcher.pluginController = pluginController;
-        ownershipFetcher.imageLoader = imageLoader;
-
+        // SetUp OwnershipFetcher
+        ownershipFetcher.pluginController= pluginController;
+        ownershipFetcher.imageLoader= imageLoader;
+        // SetUP Fake UI
+        fakeUI = new GameObject();
+        whitelistUI.whitelist = fakeUI;
     }
 
     [TearDown]
@@ -47,22 +53,22 @@ public class BlendProtectionTest
     public void IsBlendWhitelisted_ShouldCallIsBlendProtectionEligible_WhenWalletNameIsNotNull()
     {
         // Arrange
-        var securityId = 123;
-        pluginController.SetWalletName("test");
+        var securityId = 12345;
+        pluginController.SetWalletName("usersWallet");
         blendProtectionController.isWhitelisted = false;
 
         // Act
         blendProtectionController.IsBlendWhitelisted(securityId);
 
         // Assert
-        sendTransactionJS.Received().IsBlendProtectionEligible(123);
+        sendTransactionJS.Received().IsBlendProtectionEligible(12345);
     }
 
     [Test]
-    public void IsBlendWhitelisted_ShouldNotCallIsBlendProtectionEligible_WhenWalletNameIsNull()
+    public void IsBlendWhitelisted_Should_Not_CallIsBlendProtectionEligible_WhenWalletNameIsNull()
     {
         // Arrange
-        var securityId = 123;
+        var securityId = 12345;
         pluginController.SetWalletName(null);
         blendProtectionController.isWhitelisted = false;
 
@@ -70,7 +76,7 @@ public class BlendProtectionTest
         blendProtectionController.IsBlendWhitelisted(securityId);
 
         // Assert
-        sendTransactionJS.DidNotReceive().IsBlendProtectionEligible(123);
+        sendTransactionJS.DidNotReceive().IsBlendProtectionEligible(12345);
     }
 
     [Test]
@@ -120,15 +126,28 @@ public class BlendProtectionTest
     }
 
     [Test]
+    public void AdjustAmount_Should_Not_IncreaseAmountByOne_WhenComparisonOperatorIsThree()
+    {
+        // Arrange
+        int amount = 10;
+
+        // Act
+        blendProtectionController.AdjustAmount(ref amount, 3);
+
+        // Assert
+        Assert.AreEqual(10, amount);
+    }
+
+    [Test]
     public void SortFilterList_ShouldSortFilterListBasedOnOrderList()
     {
         // Arrange
         List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>()
-    {
-        ("collection", "template", "schema", "schema", 100),
-        ("template", "schema", "collection", "template", 200),
-        ("schema", "collection", "template", "collection", 300)
-    };
+        {
+            ("collection", "template", "schema", "schema", 100),
+            ("template", "schema", "collection", "template", 200),
+            ("schema", "collection", "template", "collection", 300)
+        };
 
         // Act
         List<(string, string, string, string, int)> sortedList = blendProtectionController.SortFilterList(filterList);
@@ -139,16 +158,27 @@ public class BlendProtectionTest
         Assert.AreEqual("collection", sortedList[2].Item4);
     }
 
+    /*   [Test]
+       public async void IsWhitelistedProof_WithValidJsonResponse_ShouldUpdatePropertiesCorrectly()
+       {
+           pluginController.SetWalletName("2qq4a.c.wam");
+           string json = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
+           await blendProtectionController.IsWhitelistedProof(json);
+
+           // Assert
+           Assert.IsTrue(blendProtectionController.isWhitelisted);
+           Assert.IsTrue(blendProtectionController.ownsProof);
+
+       }*/
+
     [Test]
-    public async void IsWhitelistedProof_WithValidJsonResponse_ShouldUpdatePropertiesCorrectly()
+    public async void TestUnityWebRequest()
     {
-        pluginController.SetWalletName("2qq4a.c.wam");
-        string json = "{\"logical_operator\":0,\"filters\":[[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"comparison_operator\":3,\"amount\":1}],[\"TEMPLATE_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"template_id\":681367,\"comparison_operator\":2,\"amount\":1}],[\"SCHEMA_HOLDINGS\",{\"collection_name\":\"auroratesttt\",\"schema_name\":\"rarities\",\"comparison_operator\":3,\"amount\":1}],[\"TOKEN_HOLDING\",{\"token_contract\":\"eosio.token\",\"token_symbol\":\"8,WAX\",\"comparison_operator\":3,\"amount\":\"1.00000000 WAX\"}],[\"COLLECTION_HOLDINGS\",{\"collection_name\":\"farmersworld\",\"comparison_operator\":3,\"amount\":1}]]}";
-        await blendProtectionController.IsWhitelistedProof(json);
-
-        // Assert
-        Assert.IsTrue(blendProtectionController.isWhitelisted);
-        Assert.IsTrue(blendProtectionController.ownsProof);
-
+        var webRequest = Substitute.For<UnityWebRequest>();
+        webRequest.downloadHandler = new DownloadHandlerBuffer();
+        var request = await imageLoader.GetTextAsync("https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
+        // Assert the expected results
+        Assert.NotNull(request);
+        Assert.AreEqual(webRequest.url, "https://aa.neftyblocks.com/atomicassets/v1/collections/auroratesttt");
     }
-}*/
+}

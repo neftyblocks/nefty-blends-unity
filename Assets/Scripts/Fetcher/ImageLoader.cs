@@ -1,10 +1,18 @@
+using NSubstitute;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Networking;
 
-public class ImageLoader : MonoBehaviour
+public interface IImageLoader
+{
+    Task<string> GetTextAsync(string url);
+    Task<Sprite> GetSpriteAsync(string imageUri);
+}
+
+public class ImageLoader : MonoBehaviour, IImageLoader
 {
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
 

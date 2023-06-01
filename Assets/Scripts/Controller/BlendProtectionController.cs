@@ -91,39 +91,9 @@ public class BlendProtectionController : MonoBehaviour
         RemoveWhitelistWarning();
     }
 
-    public async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
-    {
-        foreach (var item in sortedList)
-        {
-            var response = await ownershipFetcher.RetrieveAsset($"&collection_name={item.Item1}&template_id={item.Item2}&schema_name={item.Item3}");
-            int retrievedCount = 0;
-
-            foreach (var detail in response.details)
-            {
-                if (!protectedAssets.Contains(detail.assetId))
-                {
-                    protectedAssets.Add(detail.assetId);
-                    retrievedCount++;
-
-                    if (retrievedCount >= item.Item5) break;
-                }
-            }
-        }
-    }
-
-    public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
-    {
-        List<string> order = new List<string>() { "template", "schema", "collection" };
-
-        return filterList.OrderBy(obj =>
-        {
-            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
-            return index == -1 ? int.MaxValue : index;
-        }).ToList();
-    }
-
     public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
     {
+        Debug.Log("im here");
         string filterType = filter[0].ToString();
         string filterJson = filter[1].ToString();
         string collectionName = string.Empty;
@@ -164,6 +134,39 @@ public class BlendProtectionController : MonoBehaviour
         }
         return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
+
+    public async Task AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
+    {
+        foreach (var item in sortedList)
+        {
+            var response = await ownershipFetcher.RetrieveAsset($"&collection_name={item.Item1}&template_id={item.Item2}&schema_name={item.Item3}");
+            int retrievedCount = 0;
+
+            foreach (var detail in response.details)
+            {
+                if (!protectedAssets.Contains(detail.assetId))
+                {
+                    protectedAssets.Add(detail.assetId);
+                    retrievedCount++;
+
+                    if (retrievedCount >= item.Item5) break;
+                }
+            }
+        }
+    }
+
+    public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
+    {
+        List<string> order = new List<string>() { "template", "schema", "collection" };
+
+        return filterList.OrderBy(obj =>
+        {
+            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
+            return index == -1 ? int.MaxValue : index;
+        }).ToList();
+    }
+
+    
 
     public void RemoveWhitelistWarning()
     {
