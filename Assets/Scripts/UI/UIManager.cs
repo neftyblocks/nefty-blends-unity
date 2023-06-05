@@ -89,6 +89,22 @@ public class UIManager : MonoBehaviour
         inventoryUI.GetComponentInChildren<InventoryUI>().RefreshInventorySlots();
     }
 
+    public void LoadMainMenu()
+    {
+        GameObject inventoryMenu = UIs[UIType.InventoryMenu];
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.InventoryMenu && kvp.Value.activeSelf)
+            {
+                kvp.Value.SetActive(false);
+            }
+        }
+
+        inventoryMenu.SetActive(true);
+        inventoryUI.GetComponentInChildren<InventoryUI>().RefreshInventorySlots();
+    }
+
     public void EnableCraftingUI()
     {
         foreach (KeyValuePair<UIType, GameObject> ui in UIs)

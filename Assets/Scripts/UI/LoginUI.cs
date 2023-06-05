@@ -14,13 +14,13 @@ public class LoginUI : MonoBehaviour
     {
         loginPanelUI.SetActive(false);
         pluginController.SetWalletName(walletName);
-        uIManager.EnableInventoryMainMenuUI();
+        uIManager.LoadMainMenu();
         walletText.text = walletName; 
     }
 
     public void TemporaryHideButton()
     {
-        uIManager.EnableInventoryMainMenuUI();
+        uIManager.LoadMainMenu();
     }
 }
 

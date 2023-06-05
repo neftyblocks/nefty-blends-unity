@@ -7,6 +7,8 @@ TagManager:
   - Blend
   - Craft
   - Asset
+  - PrimaryText
+  - SecondaryText
   layers:
   - Default
   - TransparentFX
