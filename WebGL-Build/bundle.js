@@ -2026,8 +2026,7 @@ const { Wax } = require("@nefty/ual-wax");
 const { Anchor } = require("@nefty/ual-anchor");
 const { JsonRpc } = require("eosjs");
 
-const myCallback = async (arrayOfUsers) => {
-  console.log(arrayOfUsers[0]);
+let myCallback = async (arrayOfUsers) => {
   window.user = arrayOfUsers[0];
   window.accountName = await user.getAccountName();
   window.permission = (await user.requestPermission) || "active";
@@ -2038,7 +2037,8 @@ const myCallback = async (arrayOfUsers) => {
   );
 };
 
-const myChain = {
+let myAppName = "My UAL App";
+let myChain = {
   chainId: "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4",
   rpcEndpoints: [
     {
@@ -2049,26 +2049,36 @@ const myChain = {
   ],
 };
 
-const myAppName = "My UAL App";
-
-const wax = new Wax([myChain], { appName: myAppName });
-const anchor = new Anchor([myChain], { appName: myAppName });
-const rpcEndpoint = new JsonRpc("https://wax.greymass.com");
-console.log(rpcEndpoint);
-
-const myAppRoot = {
+let wax = new Wax([myChain], { appName: myAppName });
+let anchor = new Anchor([myChain], { appName: myAppName });
+let rpcEndpoint = new JsonRpc("https://wax.greymass.com");
+let myAppRoot = {
   containerElement: document.getElementById("ual-div"),
 };
-
-const ual = new UALJs(
-  myCallback,
-  [myChain],
-  myAppName,
-  [wax, anchor],
-  myAppRoot
-);
+let ual = new UALJs(myCallback, [myChain], myAppName, [wax, anchor], myAppRoot);
 
 ual.init();
+
+window.updateGlobals = function (newRpcHost) {
+  // Update myChain
+  console.log("triggered");
+  newRpcHost = "https://" + newRpcHost;
+  myChain.rpcEndpoints[0].host = newRpcHost;
+
+  // Recreate instances with updated configurations
+  wax = new Wax([myChain], { appName: myAppName });
+  anchor = new Anchor([myChain], { appName: myAppName });
+  rpcEndpoint = new JsonRpc(newRpcHost);
+  ual = new UALJs(myCallback, [myChain], myAppName, [wax, anchor], myAppRoot);
+  console.log(ual);
+  ual.init();
+
+  // Update global variables
+  window.wax = wax;
+  window.anchor = anchor;
+  window.rpcEndpoint = rpcEndpoint;
+  window.ual = ual;
+};
 
 window.wax = wax;
 window.anchor = anchor;

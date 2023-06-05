@@ -18,6 +18,10 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     [DllImport("__Internal")]
     private static extern void IsBlendProtectionEligibleJS(int securityId);
 
+
+    [DllImport("__Internal")]
+    private static extern void ChangeRPCEndpointJS(string rpcLink);
+
     public void SendSecuredBlendTransaction(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount, string[] protectedAssets, int protectedAssetsCount)
     {
         SendSecuredBlend(blendId, assetIds, contractNames, tokenSymbol, tokenQuantity, ftCount, assetCount, protectedAssets, protectedAssetsCount);
@@ -36,6 +40,10 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
         LoginCloudWalletsJS();
     }
 
+    public void ChangeRPCEndpoint(string rpcLink)
+    {
+        ChangeRPCEndpointJS(rpcLink);
+    }
     public void IsBlendProtectionEligible(int securityId)
     {
         IsBlendProtectionEligibleJS(securityId);

@@ -29,7 +29,7 @@ mergeInto(LibraryManager.library, {
         UTF8ToString(HEAP32[(protectedAssets + i * 4) >> 2])
       );
     }
-    
+
     for (var i = 0; i < assetCount; i++) {
       asset_array.push(UTF8ToString(HEAP32[(asset_ids + i * 4) >> 2]));
     }
@@ -139,6 +139,9 @@ mergeInto(LibraryManager.library, {
   },
   LoginCloudWalletsJS: async function () {
     ual.loginUser(wax);
+  },
+  ChangeRPCEndpointJS: function (rpc) {
+    updateGlobals(UTF8ToString(rpc));
   },
   IsBlendProtectionEligibleJS: async function (security_id) {
     let isUserFound = false; // Variable to track if the user is found
