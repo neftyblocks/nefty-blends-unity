@@ -2061,7 +2061,6 @@ ual.init();
 
 window.updateGlobals = function (newRpcHost) {
   // Update myChain
-  console.log("triggered");
   newRpcHost = "https://" + newRpcHost;
   myChain.rpcEndpoints[0].host = newRpcHost;
 
@@ -2070,7 +2069,6 @@ window.updateGlobals = function (newRpcHost) {
   anchor = new Anchor([myChain], { appName: myAppName });
   rpcEndpoint = new JsonRpc(newRpcHost);
   ual = new UALJs(myCallback, [myChain], myAppName, [wax, anchor], myAppRoot);
-  console.log(ual);
   ual.init();
 
   // Update global variables

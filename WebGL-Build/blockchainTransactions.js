@@ -119,7 +119,6 @@ async function FetchBlendWhitelistProtection(security_id) {
     reverse: false, // Optional: Get reversed data
     show_payer: false, // Optional: Show ram payer
   });
-  console.log(data);
   return data;
 }
 async function FetchBlendPoOProtection(security_id, collection_name) {
@@ -132,6 +131,5 @@ async function FetchBlendPoOProtection(security_id, collection_name) {
     reverse: false, // Optional: Get reversed data
     show_payer: false, // Optional: Show ram payer
   });
-  console.log(data);
   return data;
 }
