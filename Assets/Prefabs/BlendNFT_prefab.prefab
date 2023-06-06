@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5619879796272238668}
   m_Layer: 0
   m_Name: Blend_Name_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 3160577004493635639}
   m_Layer: 0
   m_Name: Asset_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

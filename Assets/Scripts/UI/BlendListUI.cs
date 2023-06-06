@@ -11,6 +11,7 @@ public class BlendListUI : MonoBehaviour
     [SerializeField] private GameObject[] blendSlots;
     [SerializeField] private GameObject blendSlotPrefab;
     [SerializeField] private RectTransform blendPrefabContainer;
+    [SerializeField] private UIController uIController;
     [SerializeField] private int apiCurrentPage { get; set; } = 1;
 
     void Start()
@@ -33,6 +34,7 @@ public class BlendListUI : MonoBehaviour
                 blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
             }
         }
+        uIController.ChangePrefabColor();
     }
     public async void InstantiateBlendSlots()
     {

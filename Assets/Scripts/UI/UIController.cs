@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,19 +5,39 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour
 {
     private string textPrimary = "PrimaryText";
-    [SerializeField] private TextMeshProUGUI[] textPrimaryArray;
-    [SerializeField] private Color primaryColor;
+    private string primaryImage = "PrimaryImage";
+    private string secondaryImage = "SecondaryImage";
+
+    private string primaryBackground = "PrimaryBackground";
+    private string secondaryBackground = "SecondaryBackground";
+    private string tertiaryBackground = "TertiaryBackground";
+
+    [SerializeField] private Sprite primaryButtonSprite;
+    [SerializeField] private Sprite secondaryButtonSprite;
+    [SerializeField] private Sprite primaryBackgroundSprite;
+    [SerializeField] private Sprite secondaryBackgroundSprite;
+    [SerializeField] private Sprite tertiaryBackgroundSprite;
+    [SerializeField] private Color prefabColor;
+
+
+    [SerializeField] private Color primaryTextColor;
+    [SerializeField] private Color primaryButtonColor;
+    [SerializeField] private Color secondaryButtonColor;
+    [SerializeField] private bool setToDefault;
+
+
+
     private void Awake()
     {
-        TextMeshProUGUI[] foundObjects = GameObject.FindObjectsOfType<TextMeshProUGUI>();
-
-        foreach (TextMeshProUGUI textObject in foundObjects)
+        if (!setToDefault)
         {
-            if (textObject.CompareTag(textPrimary))
-            {
-                textObject.color = primaryColor;
-/*                textObject.font = font;
-*/            }
+            //Default colors primary color = FFFFFF primary button 063567
+            ChangeColor(textPrimary, primaryTextColor);
+            ChangeSprites(primaryImage, primaryButtonSprite, primaryButtonColor);
+            ChangeSprites(primaryBackground, primaryBackgroundSprite, Color.white);
+            ChangeSprites(secondaryBackground, secondaryBackgroundSprite, Color.white);
+            ChangeSprites(tertiaryBackground, tertiaryBackgroundSprite, Color.white);
+            ChangeSprites(secondaryImage, secondaryButtonSprite, secondaryButtonColor);
         }
     }
 
@@ -31,11 +49,42 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void ChangeColor(TextMeshProUGUI[] array, Color color)
+    public void ChangeColor(string tag, Color color)
     {
-        foreach (var arrayObject in array)
+        var foundObjects = GameObject.FindGameObjectsWithTag(tag);
+
+        foreach (var foundObject in foundObjects)
         {
-            arrayObject.color = color;
+            foundObject.GetComponent<TextMeshProUGUI>().color = color;
+        }
+    }
+    public void ChangeSprites(string tag, Sprite newSprite,Color color)
+    {
+        var foundObjects = GameObject.FindGameObjectsWithTag(tag);
+
+        foreach (var foundObject in foundObjects)
+        {
+            Image image = foundObject.GetComponent<Image>();
+            if (image != null)
+            {
+                image.sprite = newSprite;
+                image.color = color;
+            }
+        }
+    }
+
+    public void ChangePrefabColor()
+    {
+        var prefabTag = "Prefab";
+        var foundObjects = GameObject.FindGameObjectsWithTag(prefabTag);
+
+        foreach (var foundObject in foundObjects)
+        {
+            Image image = foundObject.GetComponent<Image>();
+            if (image != null)
+            {
+                image.color = prefabColor;
+            }
         }
     }
 }

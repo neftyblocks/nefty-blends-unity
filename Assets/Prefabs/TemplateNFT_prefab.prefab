@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 1373728232838729579}
   m_Layer: 0
   m_Name: Asset_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -608,7 +608,7 @@ GameObject:
   - component: {fileID: 6953235927230752983}
   m_Layer: 0
   m_Name: Selected_Ingredient_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

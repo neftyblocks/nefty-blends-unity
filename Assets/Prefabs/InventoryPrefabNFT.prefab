@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3034948329008395099}
   m_Layer: 0
   m_Name: Asset_Name_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 4797416338227698763}
   m_Layer: 0
   m_Name: Asset_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 942448499416002256}
   m_Layer: 0
   m_Name: Mint_Background
-  m_TagString: Untagged
+  m_TagString: Prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

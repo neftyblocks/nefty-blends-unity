@@ -7,6 +7,7 @@ public class CraftAssetPopupUI : MonoBehaviour
     [SerializeField] public BlendController blendController;
     [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject[] ingredientSlots;
+    [SerializeField] private UIController uIController;
 
     public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
@@ -74,6 +75,7 @@ public class CraftAssetPopupUI : MonoBehaviour
             }
             UpdateAssetText();
         }
+        uIController.ChangePrefabColor();
         DisplayBeingSelected();
     }
     public void UpdateAssetText()

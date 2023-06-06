@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class CraftingUI : MonoBehaviour
 {
     [SerializeField] public BlendProtectionController blendProtectionController;
+
     [SerializeField] private CraftingFetcher craftingFetcher;
     [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] public GameObject[] requirementSlots;
@@ -23,6 +24,7 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public RectTransform rollContainer;
     [SerializeField] private TextMeshProUGUI rollNameText;
     [SerializeField] private TextMeshProUGUI rollPercentageText;
+    [SerializeField] private UIController uIController;
     [SerializeField] public RollResult rollResults { get; set; }
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 100;
@@ -145,6 +147,8 @@ public class CraftingUI : MonoBehaviour
             }
         }
         SortAndSelectAssetsInRequirementSlots(requirementSlots,indexIngredientAssetsResult);
+        uIController.ChangePrefabColor();
+
     }
 
     public void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)

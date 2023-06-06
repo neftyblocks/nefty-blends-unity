@@ -15,6 +15,7 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject[] inventorySlots;
     [SerializeField] private GameObject inventoryAssetPrefab;
     [SerializeField] private RectTransform inventoryContainer;
+    [SerializeField] private UIController uIController;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
 
     public void DisplayAssetImages(InventoryAsset inventoryAsset)
@@ -33,6 +34,7 @@ public class InventoryUI : MonoBehaviour
             nftMint.GetComponent<TextMeshProUGUI>().text = "#" + inventorySlots[i].GetComponent<NFT>().GetMintNumber().ToString();
             nftImage.GetComponent<Image>().sprite = inventoryAsset.inventoryAssetSprites[i];
         }
+        uIController.ChangePrefabColor();
     }
 
     public async void RefreshInventorySlots()

@@ -9,6 +9,12 @@ TagManager:
   - Asset
   - PrimaryText
   - SecondaryText
+  - PrimaryImage
+  - PrimaryBackground
+  - SecondaryImage
+  - SecondaryBackground
+  - TertiaryBackground
+  - Prefab
   layers:
   - Default
   - TransparentFX
