@@ -75,15 +75,18 @@ public class UIController : MonoBehaviour
 
     public void ChangePrefabColor()
     {
-        var prefabTag = "Prefab";
-        var foundObjects = GameObject.FindGameObjectsWithTag(prefabTag);
-
-        foreach (var foundObject in foundObjects)
+        if (!setToDefault)
         {
-            Image image = foundObject.GetComponent<Image>();
-            if (image != null)
+            var prefabTag = "Prefab";
+            var foundObjects = GameObject.FindGameObjectsWithTag(prefabTag);
+
+            foreach (var foundObject in foundObjects)
             {
-                image.color = prefabColor;
+                Image image = foundObject.GetComponent<Image>();
+                if (image != null)
+                {
+                    image.color = prefabColor;
+                }
             }
         }
     }
