@@ -376,7 +376,7 @@ GameObject:
   - component: {fileID: 8561048104755841190}
   - component: {fileID: 7578494509707753282}
   m_Layer: 0
-  m_Name: AssetIngredientPopup_Prefab 1
+  m_Name: IngredientPopupPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -164,7 +164,7 @@ GameObject:
   - component: {fileID: 8658164907581310233}
   - component: {fileID: -3850480463670798019}
   m_Layer: 0
-  m_Name: Roll_TemplateNFT_prefab
+  m_Name: Roll_Reward_Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
