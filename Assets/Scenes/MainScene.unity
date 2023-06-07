@@ -5983,7 +5983,7 @@ GameObject:
   - component: {fileID: 1172047447}
   - component: {fileID: 1172047448}
   m_Layer: 0
-  m_Name: BlendInputter
+  m_Name: IngredientSelector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

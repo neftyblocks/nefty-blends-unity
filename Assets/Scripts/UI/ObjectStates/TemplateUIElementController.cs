@@ -32,7 +32,7 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
             int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
             UserSelectedIngredient(ingredientIndex);
             UserSelectedGameobject(gameObject);
-            GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SelectedTemplateObject = gameObject;
+            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().selectedRequirementObject = gameObject;
         }
     }
 

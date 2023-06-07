@@ -24,7 +24,7 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         isClicked = isClicked ? false : true;
-        GameObject.Find("BlendInputter").GetComponent<BlendInputter>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
+        GameObject.Find("BlendInputter").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
     }
 
     public void SetAssetNameText(string text)
