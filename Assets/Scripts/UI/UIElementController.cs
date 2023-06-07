@@ -2,6 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// The UIElementController class manages the UI element's interactions and state changes, 
+/// including click and hover events, and updating the display text.
+/// </summary>
 public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private GameObject selectionBoardImage;
@@ -21,10 +25,12 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
             DisplayBorder(false);
         }
     }
+
+    /// On mouse click, the UI element clicked status is toggled and the IngredientSelector's selected asset is updated.
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         isClicked = isClicked ? false : true;
-        GameObject.Find("BlendInputter").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
+        GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
     }
 
     public void SetAssetNameText(string text)
