@@ -75,7 +75,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
-            
+
             if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");

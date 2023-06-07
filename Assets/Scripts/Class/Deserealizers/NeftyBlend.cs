@@ -4,55 +4,103 @@ using System.Collections.Generic;
 
 public class NeftyBlend
 {
+    [JsonProperty("success")]
     public bool success { get; set; }
+
     [JsonProperty("data")]
     public Data details { get; set; }
+
+    [JsonProperty("query_time")]
     public long queryTime { get; set; }
+
 
     public partial class Data
     {
-        public long blendId { get; set; }
-        public string contract { get; set; }
-        public string collectionName { get; set; }
-        public string startTime { get; set; }
-        public long endTime { get; set; }
-        public long max { get; set; }
-        public long useCount { get; set; }
-        public DisplayData displayData { get; set; }
-        public long SecurityId { get; set; }
+        [JsonProperty("blend_id")]
+        public string blendId { get; set; }
 
+        [JsonProperty("contract")]
+        public string contract { get; set; }
+
+        [JsonProperty("collection_name")]
+        public string collectionName { get; set; }
+
+        [JsonProperty("start_time")]
+        public string startTime { get; set; }
+
+        [JsonProperty("end_time")]
+        public string endTime { get; set; }
+
+        [JsonProperty("max")]
+        public string max { get; set; }
+
+        [JsonProperty("use_count")]
+        public string useCount { get; set; }
+
+        [JsonProperty("display_data")]
+        public DisplayData displayData { get; set; }
+
+        [JsonProperty("created_at_time")]
         public string createdAtTime { get; set; }
-        public long ingredientsCount { get; set; }
+
+        [JsonProperty("ingredients_count")]
+        public int ingredientsCount { get; set; }
+
         [JsonProperty("security_id")]
         public int securityId { get; set; }
+
+        [JsonProperty("is_hidden")]
         public bool isHidden { get; set; }
-        public long accountLimit { get; set; }
-        public long accountLimitCooldown { get; set; }
+
+        [JsonProperty("account_limit")]
+        public string accountLimit { get; set; }
+
+        [JsonProperty("account_limit_cooldown")]
+        public string accountLimitCooldown { get; set; }
+
+        [JsonProperty("ingredients")]
         public List<Ingredient> ingredients { get; set; }
+
+        [JsonProperty("rolls")]
         public List<Roll> rolls { get; set; }
+
+        [JsonProperty("upgrade_specs")]
         public object upgradeSpecs { get; set; }
+
+        [JsonProperty("category")]
         public string category { get; set; }
     }
 
     public partial class DisplayData
     {
+        [JsonProperty("name")]
         public string name { get; set; }
+
+        [JsonProperty("image")]
         public string image { get; set; }
+
+        [JsonProperty("description")]
         public string description { get; set; }
     }
 
     public partial class Ingredient
     {
+        [JsonProperty("type")]
         public string type { get; set; }
+        [JsonProperty("index")]
         public int index { get; set; }
+        [JsonProperty("amount")]
         public int amount { get; set; }
+        [JsonProperty("effect")]
         public Effect effect { get; set; }
         [JsonProperty("ft_amount")]
         public FtAmount ftAmount { get; set; }
         public Attributes attributes { get; set; }
         public Collection collection { get; set; }
+        [JsonProperty("display_data")]
         public string displayData { get; set; }
         public IngredientSchema schema { get; set; }
+        [JsonProperty("template")]
         public IngredientTemplate template { get; set; }
     }
 
@@ -86,13 +134,17 @@ public class NeftyBlend
 
     public partial class Effect
     {
+        [JsonProperty("type")]
         public string type { get; set; }
+
+        [JsonProperty("payload")]
         public Payload payload { get; set; }
     }
 
     public partial class Payload
     {
-        public long type { get; set; }
+        [JsonProperty("type")]
+        public int type { get; set; }
     }
 
     public partial class IngredientSchema
