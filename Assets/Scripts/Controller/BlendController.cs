@@ -5,6 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// The BlendController class manages the functionality for blending assets and submitting the transaction through JS Wrapper.
+/// </summary>
 public class BlendController : MonoBehaviour
 {
     [SerializeField] public GameObject requirementPanel;
@@ -28,7 +31,9 @@ public class BlendController : MonoBehaviour
         return child.GetComponent<TemplateNFT>();
     }
 
-    public bool IsChildValid(Transform child)
+    // Checks if a child is valid for the blending operation.
+    // A child is valid if it has a selected asset or if its requirement type is FT_INGREDIENT.
+    public bool IsRequirementPanelChildValid(Transform child)
     {
         var uiController = GetUIElementController(child);
         var templateNFT = GetTemplateNFT(child);
@@ -36,12 +41,13 @@ public class BlendController : MonoBehaviour
         return !(uiController.selectedAssetId == null || uiController.selectedAssetId == "") || templateNFT.GetRequirementType() == "FT_INGREDIENT";
     }
 
+    // Determines if a blend operation is possible as long as there aren't any empty selectedAssetId's in inside the requirementPanel
     public bool CanBlend()
     {
         if (requirementPanel == null || requirementPanel.transform.childCount == 0)
             return false;
 
-        return requirementPanel.transform.Cast<Transform>().All(IsChildValid);
+        return requirementPanel.transform.Cast<Transform>().All(IsRequirementPanelChildValid);
     }
 
     [ExcludeFromCodeCoverage]
@@ -83,7 +89,8 @@ public class BlendController : MonoBehaviour
                                                         .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedTokenSymbol())
                                                         .ToArray();
     }
-
+    
+    // Attempts to submit the blending operation. If blending isn't possible or the blend isn't secured or whitelisted, the operation is cancelled.
     public void SubmitBlend()
     {
         if (!CanBlend())
@@ -104,6 +111,7 @@ public class BlendController : MonoBehaviour
         PerformSecuredBlend();
     }
 
+    // Performs the blending operation by sending the blending transaction that ends up calling JS under folder Plugins/WrapperJS.jslib SubmitBlend()
     public void PerformBlend()
     {
             sendTransactionJS.SendBlendTransaction(
@@ -117,6 +125,7 @@ public class BlendController : MonoBehaviour
                 );
     }
 
+    // Performs a secured blending operation by sending the secured blending transaction that ends up calling JS under folder Plugins/WrapperJS.jslib SendSecuredBlend()
     public void PerformSecuredBlend()
     {
         sendTransactionJS.SendSecuredBlendTransaction(
