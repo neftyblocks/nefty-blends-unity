@@ -1907,7 +1907,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 84cb9e9b9393bd24ebac97851ed0d746, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58172fca6aec2e84d8672310dbd7eb29, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3776,7 +3776,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 237cc1a2226ff2340ab75b66562a64f3, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58172fca6aec2e84d8672310dbd7eb29, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5742,7 +5742,7 @@ MonoBehaviour:
   primaryTextColor: {r: 0.6742405, g: 1, b: 0.2028302, a: 1}
   primaryButtonColor: {r: 1, g: 0.7185303, b: 0, a: 1}
   secondaryButtonColor: {r: 0.8962264, g: 0.19023676, b: 0.71203905, a: 1}
-  setToDefault: 0
+  setToDefault: 1
 --- !u!1 &1110650590
 GameObject:
   m_ObjectHideFlags: 0
@@ -7805,7 +7805,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 84cb9e9b9393bd24ebac97851ed0d746, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58172fca6aec2e84d8672310dbd7eb29, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7883,7 +7883,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 84cb9e9b9393bd24ebac97851ed0d746, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 58172fca6aec2e84d8672310dbd7eb29, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
