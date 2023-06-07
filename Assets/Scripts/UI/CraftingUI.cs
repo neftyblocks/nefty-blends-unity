@@ -10,17 +10,13 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public BlendProtectionController blendProtectionController;
 
     [SerializeField] private CraftingFetcher craftingFetcher;
-    [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] public GameObject[] requirementSlots;
     [SerializeField] public GameObject[] rollSlots;
     [SerializeField] public GameObject recipeUI;
-    [SerializeField] public GameObject ingredientUI;
     [SerializeField] public GameObject requirementPrefab;
-    [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject rollPrefab;
     [SerializeField] public GameObject rollPaginationArrow;
     [SerializeField] public RectTransform requirementContainer;
-    [SerializeField] public RectTransform ingredientContainer;
     [SerializeField] public RectTransform rollContainer;
     [SerializeField] private TextMeshProUGUI rollNameText;
     [SerializeField] private TextMeshProUGUI rollPercentageText;
@@ -55,12 +51,6 @@ public class CraftingUI : MonoBehaviour
     {
         ResetSlots(requirementSlots);
         InstantiateSlots(slotCount, requirementPrefab, requirementContainer, ref requirementSlots);
-    }
-
-    public void InstantiateIngredientSlots(int slotCount)
-    {
-        ResetSlots(ingredientSlots);
-        InstantiateSlots(slotCount, ingredientPrefab, ingredientContainer, ref ingredientSlots);
     }
 
     public void DisplayRollPaginationArrows(Sprite[] rollSprite)
@@ -211,27 +201,10 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayIngredientImage(IndexIngredientAssetsResult indexIngredientAssetsResult)
-    {
-        var resultCount = indexIngredientAssetsResult.ingredientSprites.Count;
-        if (indexIngredientAssetsResult.ingredientSprites != null)
-        {
-            InstantiateIngredientSlots(resultCount);
-            for (int i = 0; i < resultCount; i++)
-            {
-                Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = indexIngredientAssetsResult.ingredientSprites[i];
-                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(indexIngredientAssetsResult.assetIds[i]);
-            }
-        }
-    }
-
-
     public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult,int securityId)
     {
         DisplayRollData(rollResult);
         DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
-        DisplayIngredientImage(indexIngredientAssetsResult);
         DisplayRollPaginationArrows(rollResult.rollSprites);
         DisplayBlendProtection(securityId);
     }
@@ -262,13 +235,5 @@ public class CraftingUI : MonoBehaviour
 
             gameObjects[i] = null;
         }
-    }
-
-    public void SwitchRecipeIngredientWindow()
-    {
-        recipeUI.SetActive(!recipeUI.activeSelf);
-        ingredientUI.SetActive(!ingredientUI.activeSelf);
-        TextMeshProUGUI tabSwitcherText = gameObject.transform.Find("Utility/TabSwitcherButton/TabSwitcherText").GetComponent<TextMeshProUGUI>();
-        tabSwitcherText.text = recipeUI.activeSelf ? "Requirements" : "Inventory";
     }
 }
