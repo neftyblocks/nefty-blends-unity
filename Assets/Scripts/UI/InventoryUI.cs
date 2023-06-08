@@ -10,7 +10,6 @@ public class InventoryUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI walletNameText;
     [SerializeField] private TextMeshProUGUI totalAssetText;
-    [SerializeField] private DashboardController dashboardController;
     [SerializeField] private InventoryFetcherController inventoryFetcherController;
     [SerializeField] private GameObject[] inventorySlots;
     [SerializeField] private GameObject inventoryAssetPrefab;
