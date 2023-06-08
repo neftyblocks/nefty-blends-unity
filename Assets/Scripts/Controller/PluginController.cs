@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// PluginController is a class that handles the collection and wallet information.
+/// </summary>
 public class PluginController : MonoBehaviour
 {
     [SerializeField] string collectionName;
