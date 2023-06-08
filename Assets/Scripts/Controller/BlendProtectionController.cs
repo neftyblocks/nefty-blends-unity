@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static NeftyBlend;
 
+
+/// <summary>
+/// The BlendProtectionController class manages the blend protection feature which 
+/// includes functionality for validating blend eligibility, and managing whitelist status and protected assets of logged in user.
+/// </summary>
+
 public class BlendProtectionController : MonoBehaviour
 {
     [SerializeField] public PluginController pluginController;
@@ -27,6 +33,7 @@ public class BlendProtectionController : MonoBehaviour
         ownershipFetcher = GameObject.Find("OwnershipFetcherController").GetComponent<OwnershipFetcher>();
     }
 
+    // Validates if user is whitelisted and resets protection state.
     public void IsBlendWhitelisted(int securityId)
     {
         isSecured = true;
@@ -37,19 +44,20 @@ public class BlendProtectionController : MonoBehaviour
             sendTransactionJS.IsBlendProtectionEligible(securityId);
         }
     }
-
+    // Resets the protection state by clearing the protected assets and updating the whitelisted state.
     public void ResetProtectionState()
     {
         protectedAssets.Clear();
         UpdateWhitelistedState(false);
     }
 
+    // Updates the whitelisted state and displays a whitelist warning if the value is not whitelisted.
     public void UpdateWhitelistedState(bool value)
     {
         isWhitelisted = value;
         whitelistUI.DisplayWhitelistWarning(!isWhitelisted);
     }
-
+    // Getting called in WrapperJS.jslib and checks if user from response is valid for the Proof of Whitelist protection.
     public void IsWhitelisted(string response)
     {
         UpdateWhitelistedState(response == "true");
@@ -66,6 +74,7 @@ public class BlendProtectionController : MonoBehaviour
         return JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
     }
 
+    // Getting called in WrapperJS.jslib and checks if user from jsonResponse is valid for the Proof of Ownership protection.
     public async Task IsUserWhitelistedForProofOfOwnership(string jsonResponse)
     {
         Initialize();
@@ -94,6 +103,7 @@ public class BlendProtectionController : MonoBehaviour
         whitelistUI.RemoveWhitelistWarning(isWhitelisted);
     }
 
+    // Processes a protection filter and returns details about the filter from received JSON in secure.nefty contract (that is called in WrapperJS.jslib).
     public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
     {
         string filterType = filter[0].ToString();
@@ -136,7 +146,7 @@ public class BlendProtectionController : MonoBehaviour
         }
         return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
-
+    // Adds assets to protection list and returns the updated protected assets that will be spent to JS with the list of proof of ownership NFT's
     public async Task<List<string>> AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
     {
         foreach (var item in sortedList)
@@ -157,6 +167,7 @@ public class BlendProtectionController : MonoBehaviour
         }
         return protectedAssets;
     }
+    // Sorts the filter list based on a specified order.
 
     public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
     {
@@ -169,6 +180,7 @@ public class BlendProtectionController : MonoBehaviour
         }).ToList();
     }
 
+    // Adjusts the amount based on the comparison operator which is always amount+1 if comparisonOperator is 2
     public void AdjustAmount(ref int amount, int comparisonOperator)
     {
         if (comparisonOperator == 2)
