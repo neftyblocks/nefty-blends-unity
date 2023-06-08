@@ -10,7 +10,7 @@ Included within the GitHub repository is a demonstration of NeftyBlocks' blendin
 -  Git
 -  Npm 
 -  Node.js 
--  	Unity Hub
+-  Unity Hub
 
 ## 🔧 Installing
 
