@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// InventoryElementState controls the behaviour of inventory elements with respect to mouse pointer events by displaying borders.
+/// </summary>
 public class InventoryElementState : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private GameObject selectionBoardImage;

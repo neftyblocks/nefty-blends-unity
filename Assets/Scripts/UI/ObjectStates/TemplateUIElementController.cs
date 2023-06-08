@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// TemplateUIElementController controls the behaviour of inventory elements inside the popup with respect to mouse pointer events.
+/// It manages selection borders and user interactions with inventory items.
+/// </summary>
 public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private GameObject selectionBoardImage;
@@ -25,6 +29,9 @@ public class TemplateUIElementController : MonoBehaviour, IPointerEnterHandler, 
             selectionBoardImage.SetActive(false);
         }
     }
+
+    /// OnPointerClick is triggered when the user clicks on the GameObject.
+    /// This method handles user selection of ingredients.
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         if (gameObject.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
