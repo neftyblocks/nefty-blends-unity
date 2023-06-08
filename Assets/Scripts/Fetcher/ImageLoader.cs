@@ -9,6 +9,9 @@ public interface IImageLoader
     Task<Sprite> GetSpriteAsync(string imageUri);
 }
 
+/// <summary>
+/// ImageLoader is a class for loading image and text from URLs basd on IPFS hash including caching.
+/// </summary>
 public class ImageLoader : MonoBehaviour, IImageLoader
 {
     [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
