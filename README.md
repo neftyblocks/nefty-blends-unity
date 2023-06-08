@@ -65,7 +65,9 @@ Once the plugin is built and running in the local environment, you can access th
 After the user successfully logs in, they can view their owned NFTs. These NFTs are organized by collection, based on the **Collection Name** set inside the PluginController. To locate the **PluginController**, you can search for it in the **Project Hierarchy**.
 
 ![](https://i.ibb.co/fQY4Kcf/Screenshot-13.png)
+
 For customization, navigate to the UIController game object within the hierarchy. Inside the inspector, you will find a menu that allows you to define various elements such as colors, button sprites, and wallpapers for the project. Additionally, you have the option to choose the default settings if desired.
+
 ![enter image description here](https://i.ibb.co/whgDcRC/Screenshot-2.png)
 
 Please note that before proceeding with customization, it is important to select the desired colors and wallpapers. Once you have made your selections, remember to press Ctrl + S to save the changes. Afterward, you can run the plugin either in the browser or within Unity itself to apply the customized settings.
