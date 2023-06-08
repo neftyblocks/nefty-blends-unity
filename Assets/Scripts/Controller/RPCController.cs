@@ -1,9 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
+
+/// <summary>
+/// RPCController is responsible for handling the rpc change functionality.
+/// </summary>
 public class RPCController : MonoBehaviour
 {
     [SerializeField] public TMP_Dropdown dropdown;
@@ -19,9 +20,6 @@ public class RPCController : MonoBehaviour
     {
         // Get the current value of the Dropdown
         string selectedOption = dropdown.options[value].text;
-
-        // Log the selected option to the console
-        Debug.Log("Selected option: " + selectedOption);
         sendTransactionJS.ChangeRPCEndpoint(selectedOption);
     }
 }
