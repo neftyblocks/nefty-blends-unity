@@ -4,6 +4,9 @@ using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// CollectionFetcherController is responsible for fetching and handling collection data.
+/// </summary>
 public class CollectionFetcherController : MonoBehaviour
 {
     [SerializeField] private ImageLoader imageLoader;

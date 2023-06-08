@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static RequiredAssetsResult;
 
+/// <summary>
+/// CraftingFetcher is responsible for fetching and handling crafting data.
+/// </summary>
 public class CraftingFetcher : MonoBehaviour,IFetcher
 {
     [SerializeField] private PluginController pluginController;

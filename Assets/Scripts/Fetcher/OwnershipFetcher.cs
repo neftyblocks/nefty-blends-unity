@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+
 public interface IOwnershipFetcher
 {
     Task<bool> OwnsCollection(string collectionName, int amount);
@@ -12,7 +13,9 @@ public interface IOwnershipFetcher
     Task<Asset> RetrieveAsset(string filter);
     Task<int> GetInventoryAssetsCount();
 }
-
+/// <summary>
+/// OwnershipFetcher is responsible for fetching and handling ownership data.
+/// </summary>
 public class OwnershipFetcher : MonoBehaviour, IFetcher, IOwnershipFetcher
 {
     [SerializeField] public ImageLoader imageLoader;

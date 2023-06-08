@@ -8365,7 +8365,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walletNameText: {fileID: 1952469126}
   totalAssetText: {fileID: 436063405}
-  dashboardController: {fileID: 0}
   inventoryFetcherController: {fileID: 799937291}
   inventorySlots: []
   inventoryAssetPrefab: {fileID: 8658164907581310236, guid: 9d9d51aa2f0ded047ad073e7f3aa9ae5, type: 3}
@@ -10926,7 +10925,6 @@ GameObject:
   - component: {fileID: 2092993614}
   - component: {fileID: 2092993613}
   - component: {fileID: 2092993612}
-  - component: {fileID: 2092993615}
   m_Layer: 0
   m_Name: Scroll View
   m_TagString: Untagged
@@ -11024,18 +11022,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092993610}
   m_CullTransparentMesh: 1
---- !u!114 &2092993615
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2092993610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbb3c116b7db98a4e943898be7f990db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2097156880
 GameObject:
   m_ObjectHideFlags: 0

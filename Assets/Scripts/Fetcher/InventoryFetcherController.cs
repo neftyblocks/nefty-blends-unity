@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// InventoryFetcherController is responsible for fetching and handling Asset data.
+/// </summary>
 public class InventoryFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] private ImageLoader imageLoader;

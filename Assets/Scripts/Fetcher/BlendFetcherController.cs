@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// BlendFetcherController is responsible for fetching and handling blend data.
+/// </summary>
 public class BlendFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] private PluginController pluginController;
