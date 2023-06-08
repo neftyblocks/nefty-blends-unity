@@ -5,6 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using static BlendFetcherController;
 
+
+/// <summary>
+/// This class manages the UI display of a list of Blend assets, including fetching, instantiating, and refreshing these Blend assets.
+/// </summary>
 public class BlendListUI : MonoBehaviour
 {
     [SerializeField] private BlendFetcherController blendFetcherController;

@@ -2,6 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// The UIController class manages various UI elements and provides methods to change colors, fonts, and sprites.
+/// Inside Hierachy under UIController you can change elements inside the Inspector
+/// </summary>
 public class UIController : MonoBehaviour
 {
     private string textPrimary = "PrimaryText";
@@ -31,7 +35,6 @@ public class UIController : MonoBehaviour
     {
         if (!setToDefault)
         {
-            //Default colors primary color = FFFFFF primary button 063567
             ChangeColor(textPrimary, primaryTextColor);
             ChangeSprites(primaryImage, primaryButtonSprite, primaryButtonColor);
             ChangeSprites(primaryBackground, primaryBackgroundSprite, Color.white);

@@ -6,6 +6,10 @@ using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
+/// <summary>
+/// The InventoryUI class is responsible for managing the UI elements related to the player's inventory.
+/// It handles displaying asset images, refreshing inventory slots, and updating wallet and asset count texts.
+/// </summary>
 public class InventoryUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI walletNameText;

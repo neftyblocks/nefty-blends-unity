@@ -5,6 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This script manages the Crafting UI, handling the display and interaction of crafting-related elements such as requirement and roll slots,
+/// roll data, and blend protection. It includes methods for setting UI text, displaying roll sprites and percentages, displaying requirement images,
+/// sorting and selecting assets in slots, displaying blend protection, and resetting slots. Serialized fields reference other components and prefabs used in the UI.
+/// </summary>
 public class CraftingUI : MonoBehaviour
 {
     [SerializeField] public BlendProtectionController blendProtectionController;
@@ -141,6 +146,7 @@ public class CraftingUI : MonoBehaviour
 
     }
 
+    // Sort and select the assets in the requirement slots based on priority.
     public void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         string[] priorityOrder = { "TEMPLATE_INGREDIENT", "ATTRIBUTE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT" };

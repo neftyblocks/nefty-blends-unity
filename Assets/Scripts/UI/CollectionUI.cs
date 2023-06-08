@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This class is responsible for handling the display of collection images in the user interface.
+/// </summary>
 public class CollectionUI : MonoBehaviour
 {
     [SerializeField] private Sprite colletionImage;

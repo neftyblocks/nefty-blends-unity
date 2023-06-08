@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The UIManager class manages different UI screens and provides methods to enable and load specific UI screens.
+/// It utilizes a dictionary to store references to the UI screens.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private GameObject loginUI;
@@ -11,6 +15,7 @@ public class UIManager : MonoBehaviour
 
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
+    // The types of UI screens available
     public enum UIType
     {
         LoginMenu,

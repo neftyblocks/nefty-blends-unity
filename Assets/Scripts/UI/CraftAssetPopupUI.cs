@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// CraftAssetPopupUI is responsible for creating, managing and displaying the crafting assets in the user interface.
+/// </summary>
 public class CraftAssetPopupUI : MonoBehaviour
 {
     [SerializeField] public RectTransform craftAssetPanel;
@@ -15,6 +18,7 @@ public class CraftAssetPopupUI : MonoBehaviour
         InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
     }
 
+    // Display automatically selected items in the popup as selected.
     public void DisplayBeingSelected()
     {
         var selectedIds = blendController.GetSelectedAssetList();

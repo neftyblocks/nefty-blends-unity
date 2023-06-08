@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// This class manages the behavior of the blend UI elements inside the popup with respect to mouse pointer events.
+/// </summary>
 public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private GameObject selectionBoardImage;
