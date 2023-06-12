@@ -101,7 +101,7 @@ public class CraftingTest
         {
             slots[i] = new GameObject($"RequirementSlot {i + 1}");
             slots[i].AddComponent<TemplateNFT>();
-            slots[i].AddComponent<TemplateUIElementController>();
+            slots[i].AddComponent<RequirementUIElementController>();
 
             var selectedIngredientBackground = new GameObject("Selected_Ingredient_Background");
             var selectedIngredient = new GameObject("SelectedIngredient");

@@ -23,8 +23,8 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         // Triggers an Event on Blend Image being clicked
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
-        TemplateUIElementController.UserSelectedIngredient += ReceiveIngredients;
-        TemplateUIElementController.UserSelectedGameobject += selectedObject;
+        RequirementUIElementController.UserSelectedIngredient += ReceiveIngredients;
+        RequirementUIElementController.UserSelectedGameobject += selectedObject;
     }
 
     private async void ReceiveBlendId(int blendId)

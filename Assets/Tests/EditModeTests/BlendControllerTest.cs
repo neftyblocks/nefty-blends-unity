@@ -186,7 +186,7 @@ public class BlendControllerTest
         {
             var templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
             templateObject.AddComponent<TemplateNFT>();
-            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+            RequirementUIElementController templateUIElementController = templateObject.AddComponent<RequirementUIElementController>();
             templateUIElementController.selectedAssetId = $"{i}";
             templateObject.transform.SetParent(requirementPanel.transform);
         }
@@ -201,7 +201,7 @@ public class BlendControllerTest
         {
             var templateObject = new GameObject($"TemplateUIElementControllerObject{i}");
             templateObject.AddComponent<TemplateNFT>();
-            TemplateUIElementController templateUIElementController = templateObject.AddComponent<TemplateUIElementController>();
+            RequirementUIElementController templateUIElementController = templateObject.AddComponent<RequirementUIElementController>();
             templateUIElementController.selectedAssetId = "";
             templateObject.transform.SetParent(requirementPanel.transform);
         }

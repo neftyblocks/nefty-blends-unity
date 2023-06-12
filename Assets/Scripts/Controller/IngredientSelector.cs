@@ -14,7 +14,7 @@ public class IngredientSelector : MonoBehaviour
     // asset ID and the visible asset ID in the corresponding UI text element.
     public void SetSelectedAsset(string assetId)
     {
-        selectedRequirementObject.GetComponent<TemplateUIElementController>().selectedAssetId = assetId;
+        selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId = assetId;
         selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = assetId;
     }
 }

@@ -29,7 +29,7 @@ public class CraftAssetPopupUI : MonoBehaviour
                 if (selectedId == ingredientSlot.GetComponent<NFT>().GetAssetId())
                 {
                     ingredientSlot.GetComponent<UIElementController>().SetIsClicked(true);
-                    ingredientSlot.GetComponent<UIElementController>().DisplayBorder(true);
+                    ingredientSlot.GetComponent<UIElementController>().GreyOutAsset(true);
                 }
             }
         }

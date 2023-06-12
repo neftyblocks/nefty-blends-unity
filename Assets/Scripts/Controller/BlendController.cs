@@ -21,9 +21,9 @@ public class BlendController : MonoBehaviour
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
     }
 
-    public TemplateUIElementController GetUIElementController(Transform child)
+    public RequirementUIElementController GetUIElementController(Transform child)
     {
-        return child.GetComponent<TemplateUIElementController>();
+        return child.GetComponent<RequirementUIElementController>();
     }
 
     public TemplateNFT GetTemplateNFT(Transform child)

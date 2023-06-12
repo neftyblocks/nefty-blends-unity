@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject blendMenuUI;
     [SerializeField] private GameObject craftingUI;
     [SerializeField] private GameObject assetPopup;
+    [SerializeField] private GameObject confirmationPopup;
 
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
@@ -22,7 +23,8 @@ public class UIManager : MonoBehaviour
         InventoryMenu,
         BlendMenu,
         CraftingMenu,
-        AssetPopupMenu
+        AssetPopupMenu,
+        ConfirmationPopupMenu,
     }
 
     private void Start()
@@ -32,6 +34,8 @@ public class UIManager : MonoBehaviour
         UIs.Add(UIType.CraftingMenu, craftingUI);
         UIs.Add(UIType.AssetPopupMenu, assetPopup);
         UIs.Add(UIType.LoginMenu, loginUI);
+        UIs.Add(UIType.ConfirmationPopupMenu, confirmationPopup);
+
 
         if (!UIs[UIType.LoginMenu].activeInHierarchy)
         {

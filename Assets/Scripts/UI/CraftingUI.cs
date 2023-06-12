@@ -164,7 +164,7 @@ public class CraftingUI : MonoBehaviour
                         if (!selectedAssetIds.Contains(indexIngredientAssetsResult.assetIds[i]))
                         {
                             selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
-                            requirementSlot.GetComponent<TemplateUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
+                            requirementSlot.GetComponent<RequirementUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
                             requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexIngredientAssetsResult.assetIds[i];
                             break;
                         }
