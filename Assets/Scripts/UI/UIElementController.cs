@@ -53,15 +53,53 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     /// On mouse click, the UI element clicked status is toggled and the IngredientSelector's selected asset is updated.
     public void OnPointerClick(PointerEventData pointerEventData)
     {
+        var ingredientSelector = GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>();
         isClicked = !isClicked;
-
         if (isClicked)
         {
-            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
+            CheckForMatchingAssetIdsInOtherRequirements();
+            ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
+            UpdateGreyedOutWindows();
         }
         else
         {
-            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(string.Empty,-1);
+
+            CheckForMatchingAssetIdsInOtherRequirements();
+            ingredientSelector.SetSelectedAsset(string.Empty, -1);
+            UpdateGreyedOutWindows();
+            // if selectedassetId that was clicked does not equal the one that is inside this gameobject then update this gameobject with the asset id that was previously selected in another requirement field.
+            if (ingredientSelector.selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId != gameObject.GetComponent<NFT>().GetAssetId())
+            {
+                GetComponent<UIElementController>().SetIsClicked(false);
+                GetComponent<UIElementController>().GreyOutAsset(false);
+                ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
+            }
+
+        }
+    }
+
+    // If assetId from another requirement field is taken it will remove greyed out field
+    public void UpdateGreyedOutWindows()
+    {
+        var craftAsset = GameObject.Find("IngredientPopup-UI").GetComponent<CraftAssetPopupUI>();
+        craftAsset.DisplayBeingSelected();
+    }
+
+    // if there are other matching assetids set them as empty
+    private void CheckForMatchingAssetIdsInOtherRequirements()
+    {
+        var currentAssetId = gameObject.GetComponent<NFT>().GetAssetId();
+        var blendController = GameObject.Find("BlendController").GetComponent<BlendController>();
+        var requirementPanel = blendController.requirementPanel;
+        foreach (Transform child in requirementPanel.transform)
+        {
+            var requirementController = child.GetComponent<RequirementUIElementController>();
+            if (requirementController != null && requirementController.selectedAssetId == currentAssetId)
+            {
+                requirementController.selectedAssetId = string.Empty;
+                var textMeshPro = child.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
+                textMeshPro.text = string.Empty;
+            }
         }
     }
 

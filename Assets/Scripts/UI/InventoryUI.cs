@@ -19,7 +19,23 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private GameObject inventoryAssetPrefab;
     [SerializeField] private RectTransform inventoryContainer;
     [SerializeField] private UIController uIController;
+    [SerializeField] private TMP_InputField searchInput;
+
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
+
+    private void Start()
+    {
+        searchInput.onValueChanged.AddListener(FilterAssets);
+    }
+
+    private void FilterAssets(string search)
+    {
+        foreach (GameObject obj in inventorySlots)
+        {
+            // Set the object's active state based on whether the name contains the search text
+            obj.SetActive(obj.GetComponent<NFT>().GetAssetName().ToLower().Contains(search.ToLower()));
+        }
+    }
 
     public void DisplayAssetImages(InventoryAsset inventoryAsset)
     {

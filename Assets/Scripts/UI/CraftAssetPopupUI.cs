@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -22,15 +23,18 @@ public class CraftAssetPopupUI : MonoBehaviour
     public void DisplayBeingSelected()
     {
         var selectedIds = blendController.GetSelectedAssetList();
-        foreach (var selectedId in selectedIds)
+        foreach (var ingredientSlot in ingredientSlots)
         {
-            foreach (var ingredientSlot in ingredientSlots)
+            var ingredientId = ingredientSlot.GetComponent<NFT>().GetAssetId();
+            if (selectedIds.Contains(ingredientId))
             {
-                if (selectedId == ingredientSlot.GetComponent<NFT>().GetAssetId())
-                {
-                    ingredientSlot.GetComponent<UIElementController>().SetIsClicked(true);
-                    ingredientSlot.GetComponent<UIElementController>().GreyOutAsset(true);
-                }
+                ingredientSlot.GetComponent<UIElementController>().SetIsClicked(true);
+                ingredientSlot.GetComponent<UIElementController>().GreyOutAsset(true);
+            }
+            else
+            {
+                ingredientSlot.GetComponent<UIElementController>().SetIsClicked(false);
+                ingredientSlot.GetComponent<UIElementController>().GreyOutAsset(false);
             }
         }
     }

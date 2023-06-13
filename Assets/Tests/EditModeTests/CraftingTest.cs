@@ -61,7 +61,8 @@ public class CraftingTest
         var indexIngredientAssetsResult = new IndexIngredientAssetsResult()
         {
             assetIds = new List<string>() { "Asset1" },
-            indexId = new List<int>() { 0 }
+            indexId = new List<int>() { 0 },
+            mintNumbers = new List<int>() { 0}
         };
 
         requirementSlots[0].GetComponent<TemplateNFT>().SetRequirementType("FT_INGREDIENT");
