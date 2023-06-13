@@ -12,9 +12,18 @@ public class IngredientSelector : MonoBehaviour
 
     // SetSelectedAsset updates the chosen asset for the selectedRequirementObject by updating both the internal 
     // asset ID and the visible asset ID in the corresponding UI text element.
-    public void SetSelectedAsset(string assetId)
+    public void SetSelectedAsset(string assetId,int mintNumber)
     {
         selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId = assetId;
-        selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = assetId;
+        TextMeshProUGUI textMeshPro = selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
+
+        if (mintNumber == -1)
+        {
+            textMeshPro.text = string.Empty;
+        }
+        else
+        {
+            textMeshPro.text = "# " + mintNumber;
+        }
     }
 }

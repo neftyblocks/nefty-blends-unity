@@ -189,6 +189,8 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                         ingredientAssetsResult.ingredientSprites.Add(await imageLoader.GetSpriteAsync(ingredientOutcome));
                         ingredientAssetsResult.assetIds.Add(ingredient.assetId);
                         ingredientAssetsResult.indexId.Add(index);
+                        ingredientAssetsResult.mintNumbers.Add(ingredient.templateMint);
+
                     }
                 }
             }

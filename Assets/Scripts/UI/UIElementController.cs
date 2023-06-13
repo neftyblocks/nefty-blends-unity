@@ -57,11 +57,11 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 
         if (isClicked)
         {
-            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId());
+            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
         }
         else
         {
-            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(string.Empty);
+            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().SetSelectedAsset(string.Empty,-1);
         }
     }
 
