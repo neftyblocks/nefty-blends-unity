@@ -20,12 +20,29 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private RectTransform inventoryContainer;
     [SerializeField] private UIController uIController;
     [SerializeField] private TMP_InputField searchInput;
-
+    [SerializeField] private TMP_Dropdown filterDropdown;
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
 
     private void Start()
     {
+        filterDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
         searchInput.onValueChanged.AddListener(FilterAssets);
+
+    }
+
+    // Listen to filterDropdown if value changed
+    private void OnDropdownValueChanged(int selectedIndex)
+    {
+        string selectedAssetName = filterDropdown.options[selectedIndex].text;
+        RefreshInventorySlots(GetCurrentFilterSelected());
+
+    }
+
+    public string GetCurrentFilterSelected()
+    {
+        // Retrieve the current value
+        int currentValue = filterDropdown.value;
+        return filterDropdown.options[currentValue].text;
     }
 
     private void FilterAssets(string search)
@@ -56,7 +73,7 @@ public class InventoryUI : MonoBehaviour
         uIController.ChangePrefabColor();
     }
 
-    public async void RefreshInventorySlots()
+    public async void RefreshInventorySlots(string filter)
     {
         foreach (GameObject slot in inventorySlots)
         {
@@ -64,7 +81,7 @@ public class InventoryUI : MonoBehaviour
         }
 
         apiCurrentPage = 1; 
-        var result = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
+        var result = await inventoryFetcherController.GetInventoryAssets(filter);
 
         inventorySlots = new GameObject[result.inventoryAssetName.Count];
         DisplayAssetImages(result);
@@ -73,7 +90,7 @@ public class InventoryUI : MonoBehaviour
 
     public async void InstantiateInventorySlots()
     {
-        var result = await inventoryFetcherController.GetInventoryAssets(apiCurrentPage);
+        var result = await inventoryFetcherController.GetInventoryAssets(GetCurrentFilterSelected());
         inventorySlots = new GameObject[result.inventoryAssetName.Count];
         DisplayAssetImages(result);
     }

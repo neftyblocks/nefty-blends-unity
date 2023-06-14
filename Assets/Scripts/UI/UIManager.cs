@@ -95,7 +95,8 @@ public class UIManager : MonoBehaviour
         }
 
         inventoryMenu.SetActive(true);
-        inventoryUI.GetComponentInChildren<InventoryUI>().RefreshInventorySlots();
+        var inventory = inventoryUI.GetComponentInChildren<InventoryUI>();
+        inventory.RefreshInventorySlots(inventory.GetCurrentFilterSelected());
     }
 
     public void LoadMainMenu()
@@ -111,7 +112,8 @@ public class UIManager : MonoBehaviour
         }
 
         inventoryMenu.SetActive(true);
-        inventoryUI.GetComponentInChildren<InventoryUI>().RefreshInventorySlots();
+        var inventory = inventoryUI.GetComponentInChildren<InventoryUI>();
+        inventory.RefreshInventorySlots(inventory.GetCurrentFilterSelected());
     }
 
     public void EnableCraftingUI()
