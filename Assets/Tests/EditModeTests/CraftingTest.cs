@@ -62,7 +62,7 @@ public class CraftingTest
         {
             assetIds = new List<string>() { "Asset1" },
             indexId = new List<int>() { 0 },
-            mintNumbers = new List<int>() { 0}
+            mintNumbers = new List<int>() { 0 }
         };
 
         requirementSlots[0].GetComponent<TemplateNFT>().SetRequirementType("FT_INGREDIENT");
@@ -143,13 +143,15 @@ public class CraftingTest
         IndexIngredientAssetsResult result = new IndexIngredientAssetsResult()
         {
             assetIds = new List<string>(),
-            indexId = new List<int>()
+            indexId = new List<int>(),
+            mintNumbers = new List<int>()
         };
 
         for (int i = 0; i < number; i++)
         {
             result.assetIds.Add($"{baseAssetName}{i + 1}");
             result.indexId.Add(i + 1);
+            result.mintNumbers.Add(i);
         }
 
         return result;

@@ -165,7 +165,7 @@ public class CraftingUI : MonoBehaviour
                         {
                             selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
                             requirementSlot.GetComponent<RequirementUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
-                            requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "# " + indexIngredientAssetsResult.mintNumbers[i];
+                            requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexIngredientAssetsResult.assetIds[i];
                             break;
                         }
                     }
