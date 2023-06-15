@@ -7,9 +7,11 @@ using UnityEngine;
 /// </summary>
 public class TextTruncation
 {
-
     public static string TruncateText(string originalText, int maxLength)
     {
+        if (string.IsNullOrEmpty(originalText) || maxLength <= 0)
+            return string.Empty;
+
         if (originalText.Length > maxLength)
             return originalText.Substring(0, maxLength);
 

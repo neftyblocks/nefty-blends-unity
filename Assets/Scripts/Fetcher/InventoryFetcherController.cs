@@ -23,15 +23,26 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public async Task<InventoryAsset> GetInventoryAssets(string filter)
     {
         var result = new InventoryAsset();
+        Sprite sprite = null;
         try
         {
             string sortOption = GetSortOption(filter);
             var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?{ sortOption }&owner={ pluginController.GetWalletName() }&page={ inventoryUI.apiCurrentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
-
+            Debug.Log(url);
             foreach (var detail in deserializedJsonResult.details)
             {
-                var sprite = await imageLoader.GetSpriteAsync(detail.data.img);
+                if (detail.data.img != null)
+                {
+                     sprite = await imageLoader.GetSpriteAsync(detail.data.img);
+                    Debug.Log("a");
+                }
+                else
+                {
+                     sprite = await imageLoader.GetSpriteAsyncVideo(detail.data.video);
+                    Debug.Log("answer" + detail.data.video);
+                }
+
                 result.inventoryAssetSprites.Add(sprite);
                 result.invenoryAssetIds.Add(detail.assetId);
                 result.inventoryAssetMintNumber.Add(detail.templateMint);

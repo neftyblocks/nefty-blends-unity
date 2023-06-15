@@ -72,6 +72,8 @@ public class Asset
         public string img { get; set; }
         public string info { get; set; }
         public string name { get; set; }
+        [JsonProperty("video")]
+        public string video { get; set; }
         public string product { get; set; }
         [JsonProperty("quantity")]
         public long? quantity { get; set; }
