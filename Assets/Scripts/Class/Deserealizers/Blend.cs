@@ -44,6 +44,7 @@ public class Blend
         [JsonProperty("ingredients_count")]
         public long ingredientsCount { get; set; }
 
+
         [JsonProperty("security_id")]
         public long securityId { get; set; }
 
@@ -94,8 +95,8 @@ public class Blend
 
         [JsonProperty("template")]
         public Template template { get; set; }
-
-        public DisplayData displayData { get; set; }
+        [JsonProperty("display_data")]
+        public string displayData { get; set; }
     }
 
     public partial class Effect
@@ -111,6 +112,15 @@ public class Blend
     {
         [JsonProperty("type")]
         public long type { get; set; }
+    }
+
+    public partial class Pool
+    {
+        [JsonProperty("pool_name")]
+        public string poolName { get; set; }
+
+        [JsonProperty("display_data")]
+        public string displayData { get; set; }
     }
 
     public partial class Template
@@ -239,12 +249,25 @@ public class Blend
         public List<Result> results { get; set; }
     }
 
+   
     public partial class Result
     {
         [JsonProperty("type")]
         public string type { get; set; }
 
+        [JsonProperty("pool")]
+        public Pool pool { get; set; }
+
         [JsonProperty("template")]
         public Template template { get; set; }
     }
 }
+
+public class PoolData
+{
+    [JsonProperty("name")]
+    public string name;
+    [JsonProperty("image")]
+    public string image;
+}
+

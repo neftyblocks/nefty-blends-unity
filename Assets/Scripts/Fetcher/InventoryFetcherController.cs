@@ -34,13 +34,11 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             {
                 if (detail.data.img != null)
                 {
-                     sprite = await imageLoader.GetSpriteAsync(detail.data.img);
-                    Debug.Log("a");
+                    sprite = await imageLoader.GetSpriteAsync(detail.data.img);
                 }
                 else
                 {
-                     sprite = await imageLoader.GetSpriteAsyncVideo(detail.data.video);
-                    Debug.Log("answer" + detail.data.video);
+                    sprite = await imageLoader.GetSpriteAsyncVideo(detail.data.video);
                 }
 
                 result.inventoryAssetSprites.Add(sprite);

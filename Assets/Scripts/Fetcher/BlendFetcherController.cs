@@ -31,6 +31,7 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
         try
         {
             var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&page={currentPage}&limit=100&render_markdown=true&order=desc&sort=created_at_time";
+            Debug.Log(blendUrl);
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
             if (deserializedJsonResult.data.Count == 0)
             {
@@ -48,7 +49,21 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
                     .Select(result => result.template?.immutableData?.img)
                     .FirstOrDefault();
                 }
+                if (string.IsNullOrEmpty(displayImage))
+                {
+                    displayImage = blend.rolls.SelectMany(roll => roll.outcomes)
+                    .SelectMany(outcome => outcome.results)
+                    .Select(pool => pool.pool.displayData)
+                    .FirstOrDefault();
 
+                    if(displayImage != null)
+                    {
+                        string jsonString = displayImage;
+                        var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                        displayImage = jsonObject.image;
+                    }
+                   
+                }
                 return (displayImage, blend.blendId, blend.contract, blend.displayData.name);
             }).ToList();
 
