@@ -47,10 +47,10 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
                 if (string.IsNullOrEmpty(displayImage))
                 {
                     var firstImage = blend.rolls?
-         .SelectMany(roll => roll.outcomes)
-         .SelectMany(outcome => outcome.results)
-         .Select(result => result.template?.immutableData?.img)
-         .FirstOrDefault();
+                        .SelectMany(roll => roll.outcomes)
+                        .SelectMany(outcome => outcome.results)
+                        .Select(result => result.template?.immutableData?.img)
+                        .FirstOrDefault();
 
                     displayImage = string.IsNullOrEmpty(firstImage) ? blend.rolls?
                         .SelectMany(roll => roll.outcomes)
@@ -94,5 +94,4 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
             return null;
         }
     }
-
 }

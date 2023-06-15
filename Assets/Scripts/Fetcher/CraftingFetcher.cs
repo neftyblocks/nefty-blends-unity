@@ -145,14 +145,45 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 }
                 requiredAssetsResult.ingredientIndex.Add(ingredient.index);
             }
+
+            //
            requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
                 .Select(i => i.amount)
                 .ToList();
 
             rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
-                .SelectMany(i => i.outcomes)
-                .Select(r => r.results.FirstOrDefault()?.template?.immutableData.img)
-                .Select(imageLoader.GetSpriteAsync));
+         .SelectMany(i => i.outcomes)
+         .Select(async r =>
+         {
+             if (r.results.FirstOrDefault()?.template?.immutableData.img != null)
+             {
+                 // Handle img case without deserialization
+                 var imageUrl = r.results.FirstOrDefault()?.template?.immutableData.img;
+                 return await imageLoader.GetSpriteAsync(imageUrl);
+             }
+             else if (r.results.FirstOrDefault()?.template?.immutableData.video != null)
+             {
+                 // Handle video case without deserialization
+                 var videoUrl = r.results.FirstOrDefault()?.template?.immutableData.video;
+                 return await imageLoader.GetSpriteAsync(videoUrl);
+             }
+             else if (r.results.FirstOrDefault()?.pool?.displayData != null)
+             {
+                 // Handle pool.displayData case with deserialization
+                 var displayData = r.results.FirstOrDefault()?.pool.displayData;
+                 var jsonString = displayData.ToString();
+                 var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                 var displayImage = jsonObject?.image;
+
+                 // Use the 'displayImage' as needed
+
+                 return await imageLoader.GetSpriteAsync(displayImage);
+             }
+
+             return await imageLoader.GetSpriteAsync(null);
+         }));
+
+
 
             rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
