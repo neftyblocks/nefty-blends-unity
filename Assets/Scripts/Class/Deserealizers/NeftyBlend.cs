@@ -224,6 +224,18 @@ public class NeftyBlend
     {
         public string type { get; set; }
         public ResultTemplate template { get; set; }
+
+        [JsonProperty("pool")]
+        public Pool pool { get; set; }
+    }
+
+    public partial class Pool
+    {
+        [JsonProperty("pool_name")]
+        public string poolName { get; set; }
+
+        [JsonProperty("display_data")]
+        public string displayData { get; set; }
     }
 
     public partial class ResultTemplate

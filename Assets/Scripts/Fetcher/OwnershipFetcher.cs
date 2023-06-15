@@ -11,7 +11,6 @@ public interface IOwnershipFetcher
     Task<bool> OwnsSchema(string collectionName, string schemaName, int amount);
     Task<bool> OwnsTemplate(string collectionName, int templateId, int amount);
     Task<Asset> RetrieveAsset(string filter);
-    Task<int> GetInventoryAssetsCount();
 }
 /// <summary>
 /// OwnershipFetcher is responsible for fetching and handling ownership data.
@@ -108,12 +107,5 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher, IOwnershipFetcher
             Debug.LogError($"Error: {ex}");
             return null;
         }
-    }
-
-    public async Task<int> GetInventoryAssetsCount()
-    {
-        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={pluginController.GetWalletName()}&only_whitelisted=false&collection_name={pluginController.GetCollectionName()}";
-        var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
-        return deserializedJsonResult.data;
     }
 }

@@ -19,6 +19,8 @@ public class ImageLoader : MonoBehaviour, IImageLoader
 
     public async Task<string> GetTextAsync(string url)
     {
+        Debug.Log(url);
+
         var request = UnityWebRequest.Get(url);
         var operation = request.SendWebRequest();
 
@@ -29,11 +31,13 @@ public class ImageLoader : MonoBehaviour, IImageLoader
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            throw new UnityException(request.error);
+            Debug.LogError(request.error); 
+            return string.Empty; 
         }
 
         return request.downloadHandler.text;
     }
+
 
     public async Task<Sprite> GetSpriteAsync(string imageUri)
     {
@@ -65,6 +69,8 @@ public class ImageLoader : MonoBehaviour, IImageLoader
 
             if (request.result != UnityWebRequest.Result.Success)
             {
+                var defaultImage = Resources.Load<Sprite>("UI/Burn_Image");
+                return defaultImage;
                 throw new UnityException(request.error);
             }
 
@@ -87,6 +93,5 @@ public class ImageLoader : MonoBehaviour, IImageLoader
             }
             return defaultImage;
         }
-        
     }
 }

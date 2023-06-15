@@ -37,7 +37,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 result.inventoryAssetMintNumber.Add(detail.templateMint);
                 result.inventoryAssetName.Add(detail.name);
             }
-
             return result;
         }
         catch (Exception ex)
@@ -70,8 +69,12 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
 
     public async Task<int> GetInventoryAssetsCount()
     {
-        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={ pluginController.GetWalletName() }&only_whitelisted=false&collection_name={pluginController.GetCollectionName()}";
-        var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
-        return deserializedJsonResult.data;
+        if (!string.IsNullOrEmpty(PluginController.walletName))
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={pluginController.GetWalletName()}&only_whitelisted=false&collection_name={pluginController.GetCollectionName()}";
+            var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
+            return deserializedJsonResult.data;
+        }
+        return 0;
     }
 }
