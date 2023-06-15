@@ -107,7 +107,7 @@ public class NeftyBlend
     public partial class FtAmount
     {
         [JsonProperty("amount")]
-        public int amount { get; set; }
+        public long amount { get; set; }
         [JsonProperty("token_symbol")]
         public string tokenSymbol { get; set; }
         [JsonProperty("token_contract")]
@@ -162,7 +162,7 @@ public class NeftyBlend
     public partial class Format
     {
         public string name { get; set; }
-        public TypeEnum type { get; set; }
+        public string type { get; set; }
     }
 
     public partial class IngredientTemplate

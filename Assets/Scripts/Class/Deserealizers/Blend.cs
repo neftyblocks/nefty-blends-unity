@@ -72,7 +72,7 @@ public class Blend
         public string name { get; set; }
 
         [JsonProperty("image")]
-        public Uri image { get; set; }
+        public string image { get; set; }
 
         [JsonProperty("description")]
         public string description { get; set; }

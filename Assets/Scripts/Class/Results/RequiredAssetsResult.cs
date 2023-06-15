@@ -16,7 +16,7 @@ public class RequiredAssetsResult
 }
 public class FT
 {
-    public int amount { get; set; }
+    public long amount { get; set; }
     public int tokenPrecision { get; set; }
     public string contractName { get; set; }
     public string tokenSymbol { get; set; }

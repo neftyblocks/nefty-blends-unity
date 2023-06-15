@@ -77,6 +77,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
+            Debug.Log(url);
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
 
             if (!deserializedJsonResult.success)
@@ -176,6 +177,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                 if (!requiredAssetsResult.requirementType[i].Equals("FT_INGREDIENT"))
                 {
                     var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{index}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
+                    Debug.Log(url);
                     var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
                     if (!deserializedJsonResult.success)
                     {

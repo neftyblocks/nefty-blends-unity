@@ -31,7 +31,6 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
         try
         {
             var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&page={currentPage}&limit=100&render_markdown=true&order=desc&sort=created_at_time";
-
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
             if (deserializedJsonResult.data.Count == 0)
             {
@@ -41,13 +40,18 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
 
             var blendAssets = deserializedJsonResult.data.Select(blend =>
             {
-                var image = blend.rolls.SelectMany(roll => roll.outcomes)
+                var displayImage = blend.displayData.image;
+                if (string.IsNullOrEmpty(displayImage))
+                {
+                    displayImage = blend.rolls.SelectMany(roll => roll.outcomes)
                     .SelectMany(outcome => outcome.results)
                     .Select(result => result.template?.immutableData?.img)
                     .FirstOrDefault();
+                }
 
-                return (image, blend.blendId, blend.contract, blend.displayData.name);
+                return (displayImage, blend.blendId, blend.contract, blend.displayData.name);
             }).ToList();
+
             var spriteResults = await Task.WhenAll(blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)));
 
             return new BlendAssets
