@@ -33,7 +33,8 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
             var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&page={currentPage}&limit=100&render_markdown=true&order=desc&sort=created_at_time";
             Debug.Log(blendUrl);
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
-            if (deserializedJsonResult.data.Count == 0)
+
+            if (deserializedJsonResult == null || deserializedJsonResult.data == null || deserializedJsonResult.data.Count == 0)
             {
                 Debug.LogError("No data found for the given blend.");
                 return null;
@@ -41,30 +42,36 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
 
             var blendAssets = deserializedJsonResult.data.Select(blend =>
             {
-                var displayImage = blend.displayData.image;
-                if (string.IsNullOrEmpty(displayImage))
-                {
-                    displayImage = blend.rolls.SelectMany(roll => roll.outcomes)
-                    .SelectMany(outcome => outcome.results)
-                    .Select(result => result.template?.immutableData?.img)
-                    .FirstOrDefault();
-                }
-                if (string.IsNullOrEmpty(displayImage))
-                {
-                    displayImage = blend.rolls.SelectMany(roll => roll.outcomes)
-                    .SelectMany(outcome => outcome.results)
-                    .Select(pool => pool.pool.displayData)
-                    .FirstOrDefault();
+                var displayImage = blend.displayData?.image;
 
-                    if(displayImage != null)
-                    {
-                        string jsonString = displayImage;
-                        var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
-                        displayImage = jsonObject.image;
-                    }
-                   
+                if (string.IsNullOrEmpty(displayImage))
+                {
+                    var firstImage = blend.rolls?
+                        .SelectMany(roll => roll.outcomes)
+                        .SelectMany(outcome => outcome.results)
+                        .Select(result => result.template?.immutableData?.img)
+                        .FirstOrDefault();
+
+                    displayImage = firstImage;
                 }
-                return (displayImage, blend.blendId, blend.contract, blend.displayData.name);
+
+                if (string.IsNullOrEmpty(displayImage))
+                {
+                    var displayData = blend.rolls?
+                        .SelectMany(roll => roll.outcomes)
+                        .SelectMany(outcome => outcome.results)
+                        .Select(pool => pool.pool?.displayData)
+                        .FirstOrDefault();
+
+                    if (displayData != null)
+                    {
+                        var jsonString = displayData.ToString();
+                        var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                        displayImage = jsonObject?.image;
+                    }
+                }
+
+                return (displayImage, blend.blendId, blend.contract, blend.displayData?.name);
             }).ToList();
 
             var spriteResults = await Task.WhenAll(blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)));
@@ -83,4 +90,5 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
             return null;
         }
     }
+
 }
