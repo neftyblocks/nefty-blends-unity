@@ -40,7 +40,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
                 {
                     sprite = await imageLoader.GetSpriteAsync(detail.data.video);
                 }
-
                 result.inventoryAssetSprites.Add(sprite);
                 result.invenoryAssetIds.Add(detail.assetId);
                 result.inventoryAssetMintNumber.Add(detail.templateMint);

@@ -94,7 +94,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                     case "TEMPLATE_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.templateId.Add(ingredient.template.templateId);
-                        requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.img));
+                        if (ingredient.template.immutableData.img != null)
+                        {
+                            requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.img));
+                        }
+                        else
+                        {
+                            requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.video));
+
+                        }
+
                         requiredAssetsResult.fungibleToken.Add(null);
                         break;
                     case "SCHEMA_INGREDIENT":

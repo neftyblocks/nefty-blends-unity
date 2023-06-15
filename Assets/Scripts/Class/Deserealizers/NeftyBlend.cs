@@ -258,6 +258,7 @@ public class NeftyBlend
     public partial class ImmutableData
     {
         public string img { get; set; }
+        public string video { get; set; }
         public string name { get; set; }
         public string rarity { get; set; }
     }
