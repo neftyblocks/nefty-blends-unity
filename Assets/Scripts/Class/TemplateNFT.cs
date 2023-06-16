@@ -6,6 +6,7 @@ public class TemplateNFT : MonoBehaviour
 {
     [SerializeField] private int blendIngredientIndex;
     [SerializeField] private string requirementType;
+    [SerializeField] private string requirementHash;
     [SerializeField] private FT fungibleToken;
     public void SetBlendIngredientIndex(int id)
     {
@@ -14,6 +15,14 @@ public class TemplateNFT : MonoBehaviour
     public int GetBlendIngredientIndex()
     {
         return blendIngredientIndex;
+    }
+    public string GetRequirementHash()
+    {
+        return requirementHash;
+    }
+    public void SetRequirementHash(string hash)
+    {
+        requirementHash = hash;
     }
     public void SetRequirementType(string type)
     {

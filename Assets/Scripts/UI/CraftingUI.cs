@@ -125,7 +125,7 @@ public class CraftingUI : MonoBehaviour
             nftImage.GetComponent<Image>().sprite = rollResult.rollSprites[0];
         }
     }
-    public async void DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    public void DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
         InstantiateRequirementSlots(totalRequiredAssets);
@@ -150,35 +150,6 @@ public class CraftingUI : MonoBehaviour
             }
         }
         SortAndSelectAssetsInRequirementSlots(requirementSlots,indexIngredientAssetsResult);
-        uIController.ChangePrefabColor();
-
-    }
-
-    public async void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
-    {
-        int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
-        InstantiateRequirementSlots(totalRequiredAssets);
-        int currentRequirementSlotIndex = 0;
-        var listSize = requiredAssetResult.requiredAssetAmount.Count;
-
-        for (int i = 0; i < listSize; i++)
-        {
-            if (requiredAssetResult.requirementType[i] == "FT_INGREDIENT")
-            {
-                for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
-                {
-                    DisplayFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
-                    currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
-                }
-            }
-            else
-            {
-                DisplayNFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
-                currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
-
-            }
-        }
-        SortAndSelectAssetsInRequirementSlots(requirementSlots, indexIngredientAssetsResult);
         uIController.ChangePrefabColor();
 
     }
@@ -231,31 +202,8 @@ public class CraftingUI : MonoBehaviour
             Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "NFT_Text");
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
-
-            if (requiredAssetResult.requirementSpriteHashes[i] != null)
-            {
-/*                nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSpriteHashes[i];
-*/            }
-            else
-            {
-                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
-            }
-            currentRequirementSlotIndex++;
-        }
-    }
-
-    private async void DisplayNFTIngredientImages(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
-    {
-        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
-        {
-            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "NFT_Text");
-
-            if (requiredAssetResult.requirementSpriteHashes[i] != null)
-            {
-                nftImage.GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(requiredAssetResult.requirementSpriteHashes[i]);
-
-            }
-            else
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[i]);
+            if (requiredAssetResult.requirementSpriteHashes[i] == null)
             {
                 nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
             }
@@ -272,9 +220,19 @@ public class CraftingUI : MonoBehaviour
         DisplayBlendProtection(securityId);
         LoadRollImages(rollResult);
         DisplayRollImage(rollResult);
-        DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
+        LoadRequirementsImages(requirementSlots);
+    }
 
-
+    public async void LoadRequirementsImages(GameObject[] requirementSlots)
+    {
+        foreach (var requirementSlot in requirementSlots)
+        {
+            if (!string.IsNullOrEmpty(requirementSlot.GetComponent<TemplateNFT>().GetRequirementHash()))
+            {
+                Transform nftImage = requirementSlot.transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(requirementSlot.GetComponent<TemplateNFT>().GetRequirementHash());
+            }
+        }
     }
 
     public async void LoadRollImages(RollResult rollResult)
