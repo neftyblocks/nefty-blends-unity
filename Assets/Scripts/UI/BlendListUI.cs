@@ -23,20 +23,26 @@ public class BlendListUI : MonoBehaviour
         InstantiateBlendSlots();
     }
 
-    public void DisplayAssetImages(BlendAssets blendAssets)
+    public async void DisplayAssetImages(BlendAssets blendAssets)
     {
-        for (int i = 0; i < blendAssets.sprites.Length; i++)
+        for (int i = 0; i < blendAssets.spritesHash.Length; i++)
         {
-            if (blendAssets.sprites[i] != null)
+            if (blendAssets.spritesHash[i] != null)
             {
-                Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
                 Transform blendName = blendSlots[i].transform.Find("Blend_Name_Background/Blend_Name_Text");
 
                 blendName.GetComponent<TextMeshProUGUI>().text = blendAssets.blendNames[i];
-                blendImage.GetComponent<Image>().sprite = blendAssets.sprites[i];
                 blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
                 blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
             }
+        }
+
+        for (int i = 0; i < blendAssets.spritesHash.Length; i++)
+        {
+            Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
+            var imageLoadTask = blendFetcherController.GetImageLoaderSpriteAsync(blendAssets.spritesHash[i]);
+            await imageLoadTask;
+            blendImage.GetComponent<Image>().sprite = imageLoadTask.Result;
         }
         uIController.ChangePrefabColor();
     }
@@ -45,7 +51,7 @@ public class BlendListUI : MonoBehaviour
         var blendAsset = await blendFetcherController.FetchBlendAssets(apiCurrentPage);
         if (blendAsset != null)
         {
-            var objectCount = blendAsset.sprites.Length;
+            var objectCount = blendAsset.spritesHash.Length;
             blendSlots = new GameObject[objectCount];
 
             for (int i = 0; i < objectCount; i++)
@@ -74,7 +80,7 @@ public class BlendListUI : MonoBehaviour
 
             apiCurrentPage = 1;
             var blendAsset = await blendFetcherController.FetchBlendAssets(apiCurrentPage);
-            var objectCount = blendAsset.sprites.Length;
+            var objectCount = blendAsset.spritesHash.Length;
 
             blendSlots = new GameObject[objectCount];
             for (int i = 0; i < objectCount; i++)

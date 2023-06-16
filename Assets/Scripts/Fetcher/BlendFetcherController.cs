@@ -14,7 +14,7 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
 
     public class BlendAssets
     {
-        public Sprite[] sprites { get; set; }
+        public string[] spritesHash { get; set; }
         public int[] assetIds { get; set; }
         public string[] contractNames { get; set; }
         public string[] blendNames { get; set; }
@@ -24,6 +24,11 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
         return JsonConvert.DeserializeObject<Blend>(jsonResponse);
+    }
+
+    public async Task<Sprite> GetImageLoaderSpriteAsync(string url)
+    {
+        return await imageLoader.GetSpriteAsync(url);
     }
 
     public async Task<BlendAssets> FetchBlendAssets(int currentPage)
@@ -78,11 +83,10 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
                 return (displayImage, blend.blendId, blend.contract, blend.displayData?.name);
             }).ToList();
 
-            var spriteResults = await Task.WhenAll(blendAssets.Select(asset => imageLoader.GetSpriteAsync(asset.Item1)));
 
             return new BlendAssets
             {
-                sprites = spriteResults,
+                spritesHash = blendAssets.Select(asset => asset.Item1).ToArray(),
                 assetIds = blendAssets.Select(asset => asset.Item2).ToArray(),
                 contractNames = blendAssets.Select(asset => asset.Item3).ToArray(),
                 blendNames = blendAssets.Select(asset => asset.Item4).ToArray()

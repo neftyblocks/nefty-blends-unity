@@ -73,7 +73,6 @@ public class InventoryUI : MonoBehaviour
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
-            // Start loading the image asynchronously
             var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
             await imageLoadTask;
             nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
