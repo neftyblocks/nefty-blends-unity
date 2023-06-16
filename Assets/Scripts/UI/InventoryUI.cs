@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
@@ -53,8 +54,7 @@ public class InventoryUI : MonoBehaviour
             obj.SetActive(obj.GetComponent<NFT>().GetAssetName().ToLower().Contains(search.ToLower()));
         }
     }
-
-    public void DisplayAssetImages(InventoryAsset inventoryAsset)
+    public async void DisplayAssetImages(InventoryAsset inventoryAsset)
     {
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
@@ -65,13 +65,23 @@ public class InventoryUI : MonoBehaviour
             inventorySlots[i].GetComponent<NFT>().SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
             Transform nftName = inventorySlots[i].transform.Find("Asset_Name_Background/Asset_Name_Text");
-            nftName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(inventorySlots[i].GetComponent<NFT>().GetAssetName(),14);
+            nftName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(inventorySlots[i].GetComponent<NFT>().GetAssetName(), 14);
             Transform nftMint = inventorySlots[i].transform.Find("Mint_Background/Mint_Number_Text");
             nftMint.GetComponent<TextMeshProUGUI>().text = "#" + inventorySlots[i].GetComponent<NFT>().GetMintNumber().ToString();
-            nftImage.GetComponent<Image>().sprite = inventoryAsset.inventoryAssetSprites[i];
         }
+
+        for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
+        {
+            Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
+            // Start loading the image asynchronously
+            var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
+            await imageLoadTask;
+            nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
+        }
+
         uIController.ChangePrefabColor();
     }
+
 
     public async void RefreshInventorySlots(string filter)
     {

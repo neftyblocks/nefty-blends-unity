@@ -23,7 +23,7 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public async Task<InventoryAsset> GetInventoryAssets(string filter)
     {
         var result = new InventoryAsset();
-        Sprite sprite = null;
+        string spriteHash;
         try
         {
             string sortOption = GetSortOption(filter);
@@ -32,15 +32,8 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             Debug.Log(url);
             foreach (var detail in deserializedJsonResult.details)
             {
-                if (detail.data.img != null)
-                {
-                    sprite = await imageLoader.GetSpriteAsync(detail.data.img);
-                }
-                else
-                {
-                    sprite = await imageLoader.GetSpriteAsync(detail.data.video);
-                }
-                result.inventoryAssetSprites.Add(sprite);
+                spriteHash = detail.data.img ?? detail.data.video;
+                result.inventoryAssetSprites.Add(spriteHash);
                 result.invenoryAssetIds.Add(detail.assetId);
                 result.inventoryAssetMintNumber.Add(detail.templateMint);
                 result.inventoryAssetName.Add(detail.name);
@@ -52,6 +45,11 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             Debug.LogError($"Error: {ex}");
             return result;
         }
+    }
+
+    public async Task<Sprite> GetImageLoaderSpriteAsync(string url)
+    {
+        return await imageLoader.GetSpriteAsync(url);
     }
 
     private string GetSortOption(string filter)
