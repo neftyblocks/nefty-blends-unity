@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RequiredAssetsResult
 {
-    public List<Sprite> requirementSprites { get; set; } = new List<Sprite>();
+    public List<string> requirementSpriteHashes { get; set; } = new List<string>();
     public List<string> requirementText { get; set; } = new List<string>();
     public List<string> requirementType { get; set; } = new List<string>();
     public List<FT> fungibleToken { get; set; } = new List<FT>();

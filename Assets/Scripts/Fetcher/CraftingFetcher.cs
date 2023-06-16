@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static RequiredAssetsResult;
 
-/// <summary>
-/// CraftingFetcher is responsible for fetching and handling crafting data.
-/// </summary>
-public class CraftingFetcher : MonoBehaviour,IFetcher
+public class CraftingFetcher : MonoBehaviour, IFetcher
 {
     [SerializeField] private PluginController pluginController;
     [SerializeField] private ImageLoader imageLoader;
@@ -21,7 +18,6 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
     private void OnEnable()
     {
-        // Triggers an Event on Blend Image being clicked
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
         RequirementUIElementController.UserSelectedIngredient += ReceiveIngredients;
         RequirementUIElementController.UserSelectedGameobject += selectedObject;
@@ -31,15 +27,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     {
         try
         {
-            var (requiredAssetsResult, rollResult,securityId) = await GetRequiredAssets(blendId);
+            var (requiredAssetsResult, rollResult, securityId) = await GetRequiredAssets(blendId);
             var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult);
+
             craftAssetPopupController.currentBlendId = blendId;
             uIManager.EnableCraftingUI();
-            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult,rollResult,securityId);
+            craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult, rollResult, securityId);
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error receiving blend ID: { ex }");
+            Debug.LogError($"Error receiving blend ID: {ex}");
         }
     }
 
@@ -55,7 +52,7 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error receiving ingredients: { ex }");
+            Debug.LogError($"Error receiving ingredients: {ex}");
         }
     }
 
@@ -70,10 +67,16 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
         return JsonConvert.DeserializeObject<NeftyBlend>(jsonResponse);
     }
 
-    public async Task<(RequiredAssetsResult,RollResult,int)> GetRequiredAssets(int blendId)
+    public async Task<Sprite> GetImageLoaderSpriteAsync(string url)
+    {
+        return await imageLoader.GetSpriteAsync(url);
+    }
+
+    public async Task<(RequiredAssetsResult, RollResult, int)> GetRequiredAssets(int blendId)
     {
         var requiredAssetsResult = new RequiredAssetsResult();
         var rollResult = new RollResult();
+
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
@@ -83,8 +86,9 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
             if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given crafting recipe.");
-                return (null, null,0);
+                return (null, null, 0);
             }
+
             var securityId = deserializedJsonResult.details.securityId;
 
             foreach (var ingredient in deserializedJsonResult.details.ingredients)
@@ -94,35 +98,36 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                     case "TEMPLATE_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.templateId.Add(ingredient.template.templateId);
+
                         if (ingredient.template.immutableData.img != null)
                         {
-                            requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.img));
+                            requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.img);
                         }
                         else
                         {
-                            requiredAssetsResult.requirementSprites.Add(await imageLoader.GetSpriteAsync(ingredient.template.immutableData.video));
-
+                            requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.video);
                         }
 
                         requiredAssetsResult.fungibleToken.Add(null);
                         break;
+
                     case "SCHEMA_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
-                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.schema.schemaName);
                         requiredAssetsResult.fungibleToken.Add(null);
-
                         break;
+
                     case "COLLECTION_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
-                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.collection.collectionName);
                         requiredAssetsResult.fungibleToken.Add(null);
-
                         break;
+
                     case "FT_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
-                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add((ingredient.ftAmount.amount / Math.Pow(10, ingredient.ftAmount.tokenPrecision)).ToString("0." + new string('0', ingredient.ftAmount.tokenPrecision)) + " " + ingredient.ftAmount.tokenSymbol);
                         requiredAssetsResult.fungibleToken.Add(new FT
                         {
@@ -133,57 +138,52 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
                         });
                         requiredAssetsResult.tokenContract.Add(ingredient.ftAmount.amount + ingredient.ftAmount.tokenSymbol.ToString());
                         break;
+
                     case "ATTRIBUTE_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
-                        requiredAssetsResult.requirementSprites.Add(null);
+                        requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault());
                         requiredAssetsResult.fungibleToken.Add(null);
-
                         break;
+
                     default:
                         break;
                 }
+
                 requiredAssetsResult.ingredientIndex.Add(ingredient.index);
             }
 
-            //
-           requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
+            requiredAssetsResult.requiredAssetAmount = deserializedJsonResult.details.ingredients
                 .Select(i => i.amount)
                 .ToList();
 
-            rollResult.rollSprites = await Task.WhenAll(deserializedJsonResult.details.rolls
-         .SelectMany(i => i.outcomes)
-         .Select(async r =>
-         {
-             if (r.results.FirstOrDefault()?.template?.immutableData.img != null)
-             {
-                 // Handle img case without deserialization
-                 var imageUrl = r.results.FirstOrDefault()?.template?.immutableData.img;
-                 return await imageLoader.GetSpriteAsync(imageUrl);
-             }
-             else if (r.results.FirstOrDefault()?.template?.immutableData.video != null)
-             {
-                 // Handle video case without deserialization
-                 var videoUrl = r.results.FirstOrDefault()?.template?.immutableData.video;
-                 return await imageLoader.GetSpriteAsync(videoUrl);
-             }
-             else if (r.results.FirstOrDefault()?.pool?.displayData != null)
-             {
-                 // Handle pool.displayData case with deserialization
-                 var displayData = r.results.FirstOrDefault()?.pool.displayData;
-                 var jsonString = displayData.ToString();
-                 var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
-                 var displayImage = jsonObject?.image;
+            rollResult.rollSpritesHash = deserializedJsonResult.details.rolls
+                .SelectMany(i => i.outcomes)
+                .Select(r =>
+                {
+                    if (r.results.FirstOrDefault()?.template?.immutableData.img != null)
+                    {
+                        var imageUrl = r.results.FirstOrDefault()?.template?.immutableData.img;
+                        return imageUrl;
+                    }
+                    else if (r.results.FirstOrDefault()?.template?.immutableData.video != null)
+                    {
+                        var videoUrl = r.results.FirstOrDefault()?.template?.immutableData.video;
+                        return videoUrl;
+                    }
+                    else if (r.results.FirstOrDefault()?.pool?.displayData != null)
+                    {
+                        var displayData = r.results.FirstOrDefault()?.pool.displayData;
+                        var jsonString = displayData.ToString();
+                        var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                        var displayImage = jsonObject?.image;
 
-                 // Use the 'displayImage' as needed
+                        return displayImage;
+                    }
 
-                 return await imageLoader.GetSpriteAsync(displayImage);
-             }
-
-             return await imageLoader.GetSpriteAsync(null);
-         }));
-
-
+                    return null;
+                })
+                .ToArray();
 
             rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
@@ -197,11 +197,11 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
 
             rollResult.totalOdds = deserializedJsonResult.details.rolls[0].totalOdds;
 
-            return (requiredAssetsResult, rollResult,securityId);
+            return (requiredAssetsResult, rollResult, securityId);
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error: { ex }");
+            Debug.Log($"Error: {ex}");
             return (null, null, 0);
         }
     }
@@ -209,32 +209,37 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, RequiredAssetsResult requiredAssetsResult)
     {
         var ingredientAssetsResult = new IndexIngredientAssetsResult();
+
         try
         {
             for (int i = 0; i < requiredAssetsResult.ingredientIndex.Count; i++)
             {
                 var index = requiredAssetsResult.ingredientIndex[i];
+
                 if (!requiredAssetsResult.requirementType[i].Equals("FT_INGREDIENT"))
                 {
                     var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{index}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
                     var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
+
                     if (!deserializedJsonResult.success)
                     {
                         Debug.LogError("No data found for the given ingredient.");
                         return null;
                     }
+
                     foreach (var ingredient in deserializedJsonResult.details)
                     {
                         var ingredientOutcome = ingredient.data.img;
                         var assetId = ingredient.assetId;
-                        ingredientAssetsResult.ingredientSprites.Add(await imageLoader.GetSpriteAsync(ingredientOutcome));
-                        ingredientAssetsResult.assetIds.Add(ingredient.assetId);
+
+                        ingredientAssetsResult.ingredientSpriteHashes.Add(ingredientOutcome);
+                        ingredientAssetsResult.assetIds.Add(assetId);
                         ingredientAssetsResult.indexId.Add(index);
                         ingredientAssetsResult.mintNumbers.Add(ingredient.templateMint);
-
                     }
                 }
             }
+
             return ingredientAssetsResult;
         }
         catch (Exception ex)
@@ -247,10 +252,12 @@ public class CraftingFetcher : MonoBehaviour,IFetcher
     public async Task<ExactIndexIngredientAssetsResult> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
     {
         var ingredientAssetResult = new ExactIndexIngredientAssetsResult();
+
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}/ingredients/{ingredientIndex}/assets?owner={pluginController.GetWalletName()}&page=1&limit=100&order=desc&sort=asset_id";
             var deserializedJsonResult = await GetDeserializedData<Ingredient>(url);
+
             if (!deserializedJsonResult.success)
             {
                 Debug.LogError("No data found for the given ingredient.");
