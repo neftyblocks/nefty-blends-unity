@@ -78,11 +78,18 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
                         var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
                         displayImage = jsonObject?.image;
                     }
+                    else {
+                        displayImage = "burn";
+                    }
+
                 }
 
-                return (displayImage, blend.blendId, blend.contract, blend.displayData?.name);
-            }).ToList();
+                var blendId = blend.blendId;  
+                var contract = blend.contract ;  
+                var blendName = blend.displayData?.name ;  
 
+                return (displayImage, blendId, contract, blendName);
+            }).ToList();
 
             return new BlendAssets
             {
@@ -98,4 +105,5 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
             return null;
         }
     }
+
 }

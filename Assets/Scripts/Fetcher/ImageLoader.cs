@@ -41,7 +41,7 @@ public class ImageLoader : MonoBehaviour, IImageLoader
     {
         try
         {
-            if (string.IsNullOrEmpty(imageUri))
+            if (string.IsNullOrEmpty(imageUri) || imageUri == "burn")
             {
                 var defaultImage = Resources.Load<Sprite>("UI/Burn_Image");
                 if (defaultImage == null)
