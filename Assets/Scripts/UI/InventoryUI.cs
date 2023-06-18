@@ -73,13 +73,22 @@ public class InventoryUI : MonoBehaviour
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
-            var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
-            await imageLoadTask;
-            nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
+
+            if (nftImage != null)
+            {
+                var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
+                await imageLoadTask;
+
+                if (nftImage.GetComponent<Image>() != null)
+                {
+                    nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
+                }
+            }
         }
 
         uIController.ChangePrefabColor();
     }
+
 
 
     public async void RefreshInventorySlots(string filter)
