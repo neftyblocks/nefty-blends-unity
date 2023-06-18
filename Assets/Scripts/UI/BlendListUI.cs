@@ -23,30 +23,11 @@ public class BlendListUI : MonoBehaviour
         InstantiateBlendSlots();
     }
 
-    public async void DisplayAssetImages(BlendAssets blendAssets)
-    {
-        for (int i = 0; i < blendAssets.spritesHash.Length; i++)
-        {
-            if (blendAssets.spritesHash[i] != null)
-            {
-                Transform blendName = blendSlots[i].transform.Find("Blend_Name_Background/Blend_Name_Text");
-                blendName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(blendAssets.blendNames[i], 14);
-                blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
-                blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
-            }
-        }
-
-        for (int i = 0; i < blendAssets.spritesHash.Length; i++)
-        {
-            Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
-            var imageLoadTask = blendFetcherController.GetImageLoaderSpriteAsync(blendAssets.spritesHash[i]);
-            await imageLoadTask;
-            blendImage.GetComponent<Image>().sprite = imageLoadTask.Result;
-        }
-        uIController.ChangePrefabColor();
-    }
     public async void InstantiateBlendSlots()
     {
+        if (blendPrefabContainer == null)
+            return;
+
         var blendAsset = await blendFetcherController.FetchBlendAssets(apiCurrentPage);
         if (blendAsset != null)
         {
@@ -58,9 +39,35 @@ public class BlendListUI : MonoBehaviour
                 blendSlots[i] = Instantiate(blendSlotPrefab, blendPrefabContainer);
                 blendSlots[i].tag = "Blend";
             }
-            DisplayAssetImages(blendAsset);
+            await DisplayAssetImages(blendAsset);
         }
     }
+
+    public async Task DisplayAssetImages(BlendAssets blendAssets)
+    {
+        for (int i = 0; i < blendAssets.spritesHash.Length; i++)
+        {
+            if (!gameObject.activeInHierarchy) return;
+            if (blendSlots[i].activeSelf)
+            {
+                Transform blendName = blendSlots[i].transform.Find("Blend_Name_Background/Blend_Name_Text");
+                blendName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(blendAssets.blendNames[i], 14);
+                blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
+                blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
+
+                Transform blendImage = blendSlots[i].transform.Find("Blend_Image");
+                var imageLoadTask = blendFetcherController.GetImageLoaderSpriteAsync(blendAssets.spritesHash[i]);
+                await imageLoadTask;
+                if (!gameObject.activeInHierarchy) return;
+                blendImage.GetComponent<Image>().sprite = imageLoadTask.Result;
+            }
+        }
+
+        if (!gameObject.activeInHierarchy) return;
+        uIController.ChangePrefabColor();
+    }
+
+
 
     public async void RefreshBlendSlots()
     {
@@ -71,7 +78,6 @@ public class BlendListUI : MonoBehaviour
 
         if (blendSlots != null && blendSlots.Length != 0)
         {
-            
             foreach (GameObject slot in blendSlots)
             {
                 Destroy(slot);
@@ -88,7 +94,7 @@ public class BlendListUI : MonoBehaviour
                 blendSlots[i].tag = "Blend";
             }
 
-            DisplayAssetImages(blendAsset);
+            await DisplayAssetImages(blendAsset);
         }
     }
 }

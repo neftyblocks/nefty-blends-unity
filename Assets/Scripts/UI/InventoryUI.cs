@@ -58,47 +58,44 @@ public class InventoryUI : MonoBehaviour
     {
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
+            if (!gameObject.activeInHierarchy) return;
             inventorySlots[i] = Instantiate(inventoryAssetPrefab, inventoryContainer);
             inventorySlots[i].tag = "Asset";
             inventorySlots[i].GetComponent<NFT>().SetAsssetId(inventoryAsset.invenoryAssetIds[i]);
             inventorySlots[i].GetComponent<NFT>().SetAssetName(inventoryAsset.inventoryAssetName[i]);
             inventorySlots[i].GetComponent<NFT>().SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
-            Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
             Transform nftName = inventorySlots[i].transform.Find("Asset_Name_Background/Asset_Name_Text");
             nftName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(inventorySlots[i].GetComponent<NFT>().GetAssetName(), 14);
             Transform nftMint = inventorySlots[i].transform.Find("Mint_Background/Mint_Number_Text");
             nftMint.GetComponent<TextMeshProUGUI>().text = "#" + inventorySlots[i].GetComponent<NFT>().GetMintNumber().ToString();
-        }
 
-        for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
-        {
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
-
             if (nftImage != null)
             {
                 var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
                 await imageLoadTask;
-
-                if (nftImage.GetComponent<Image>() != null)
-                {
-                    nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
-                }
+                if (!gameObject.activeInHierarchy) return;
+                nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
             }
         }
 
+        if (!gameObject.activeInHierarchy) return;
         uIController.ChangePrefabColor();
     }
 
-
-
     public async void RefreshInventorySlots(string filter)
     {
-        foreach (GameObject slot in inventorySlots)
+        // Delete only if the object exists
+        if (inventorySlots != null)
         {
-            Destroy(slot);
+            foreach (GameObject slot in inventorySlots)
+            {
+                if (slot != null)
+                    Destroy(slot);
+            }
         }
 
-        apiCurrentPage = 1; 
+        apiCurrentPage = 1;
         var result = await inventoryFetcherController.GetInventoryAssets(filter);
 
         inventorySlots = new GameObject[result.inventoryAssetName.Count];
@@ -106,20 +103,23 @@ public class InventoryUI : MonoBehaviour
         SetTotalAssetText(await inventoryFetcherController.GetInventoryAssetsCount());
     }
 
+
     public async void InstantiateInventorySlots()
     {
         var result = await inventoryFetcherController.GetInventoryAssets(GetCurrentFilterSelected());
         inventorySlots = new GameObject[result.inventoryAssetName.Count];
         DisplayAssetImages(result);
     }
- 
+
     public void SetWalletNameText(string wallet)
     {
-        walletNameText.text = $"Welcome { wallet }";
+        if (walletNameText != null)
+            walletNameText.text = $"Welcome {wallet}";
     }
 
     public void SetTotalAssetText(int assetCount)
     {
-        totalAssetText.text = $"NFTs - { assetCount }";
+        if (totalAssetText != null)
+            totalAssetText.text = $"NFTs - {assetCount}";
     }
 }
