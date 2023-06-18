@@ -30,8 +30,7 @@ public class BlendListUI : MonoBehaviour
             if (blendAssets.spritesHash[i] != null)
             {
                 Transform blendName = blendSlots[i].transform.Find("Blend_Name_Background/Blend_Name_Text");
-
-                blendName.GetComponent<TextMeshProUGUI>().text = blendAssets.blendNames[i];
+                blendName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(blendAssets.blendNames[i], 14);
                 blendSlots[i].GetComponent<BlendNFT>().SetBlendId(blendAssets.assetIds[i]);
                 blendSlots[i].GetComponent<BlendNFT>().SetContractName(blendAssets.contractNames[i]);
             }

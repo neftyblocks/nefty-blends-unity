@@ -733,3 +733,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionBoardImage: {fileID: 8658164907119293413}
   isClicked: 0
+  displayImage: {fileID: 0}
+  displayName: {fileID: 0}
+  displayMint: {fileID: 0}
