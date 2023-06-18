@@ -85,13 +85,11 @@ public class InventoryUI : MonoBehaviour
 
     public async void RefreshInventorySlots(string filter)
     {
-        // Delete only if the object exists
-        if (inventorySlots != null)
+        if (inventoryContainer != null)
         {
-            foreach (GameObject slot in inventorySlots)
+            foreach (Transform child in inventoryContainer)
             {
-                if (slot != null)
-                    Destroy(slot);
+                Destroy(child.gameObject);
             }
         }
 
