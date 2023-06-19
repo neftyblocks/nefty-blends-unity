@@ -9,6 +9,7 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class RequirementUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    [SerializeField] private GameObject playSound;
     [SerializeField] private GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
     public delegate void UserSelectedBlendInEventHandler(int ingredientIndex);
@@ -16,6 +17,11 @@ public class RequirementUIElementController : MonoBehaviour, IPointerEnterHandle
     public delegate void UserSelectedGameobjectInEventHandler(GameObject game);
     public static event UserSelectedGameobjectInEventHandler UserSelectedGameobject;
     [SerializeField] public string selectedAssetId;
+
+    public void Start()
+    {
+        playSound = GameObject.Find("Audio Source");
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -36,6 +42,7 @@ public class RequirementUIElementController : MonoBehaviour, IPointerEnterHandle
     {
         if (gameObject.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
         {
+            playSound.GetComponent<ButtonSound>().PlayButtonSound();
             int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
             UserSelectedIngredient(ingredientIndex);
             UserSelectedGameobject(gameObject);

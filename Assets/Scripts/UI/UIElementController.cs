@@ -14,11 +14,15 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     [SerializeField] private bool isClicked;
     [SerializeField] private TextMeshProUGUI assetNameText;
     [SerializeField] private TextMeshProUGUI mintNumberText;
+    [SerializeField] private GameObject playSound;
+
 
     private Dictionary<Transform, Color> originalColors = new Dictionary<Transform, Color>();
 
     void Awake()
     {
+        playSound = GameObject.Find("Audio Source");
+
         // Store the original colors of all child images and texts
         foreach (Transform child in transform)
         {
@@ -54,6 +58,7 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         var ingredientSelector = GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>();
+        playSound.GetComponent<ButtonSound>().PlayButtonSound();
         isClicked = !isClicked;
         if (isClicked)
         {

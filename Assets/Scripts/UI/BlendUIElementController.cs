@@ -8,9 +8,15 @@ public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPo
 {
     [SerializeField] private GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
+    [SerializeField] private GameObject playSound;
     public delegate void UserSelectedBlendInEventHandler(int blendId);
     public static event UserSelectedBlendInEventHandler UserSelectedBlend;
 
+    private void Start()
+    {
+        playSound = GameObject.Find("Audio Source");
+
+    }
     public void OnPointerEnter(PointerEventData eventData)
     {
         selectionBoardImage.SetActive(true);
@@ -25,6 +31,7 @@ public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPo
     }
     public void OnPointerClick(PointerEventData pointerEventData)
     {
+        playSound.GetComponent<ButtonSound>().PlayButtonSound();
         int blendId = gameObject.GetComponent<BlendNFT>().GetBlendId();
         UserSelectedBlend(blendId);
     }
