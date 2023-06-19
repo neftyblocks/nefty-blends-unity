@@ -84,7 +84,9 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, new IndexIngredientAssetsResult()
         {
             assetIds = new List<string>() { },
-            indexId = new List<int>() { 1, 2, 3, 4, 5 }
+            indexId = new List<int>() { 1, 2, 3, 4, 5 },
+            mintNumbers = new List<int>() { 0, 0, 0, 0, 0, 0 }
+
         });
         AssertRequirements(new string[] { null, null, null, null, null });
     }
