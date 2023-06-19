@@ -1,11 +1,18 @@
 using TMPro;
 using UnityEngine;
 
+public interface IPopupOutputter
+{
+    void ShowSuccess();
+    void ShowError(string error);
+    void CloseWindow();
+}
+
 /// <summary>
-/// The TransactionOutputUI class handles the UI elements and actions related to transaction outputs when submitting transactions to the blockchain.
+/// The PopupOutputter class handles the UI elements and actions related to event outputs when submitting for instance when transactions to the blockchain.
 /// It manages the confirmation panel, confirmation panel text, and provides methods to show success, show error, and close the window.
 /// </summary>
-public class TransactionOutputUI : MonoBehaviour
+public class PopupOutputter : MonoBehaviour, IPopupOutputter
 {
     [SerializeField]public GameObject confirmationPanelUI;
     [SerializeField] public TextMeshProUGUI confirmationPanelText;

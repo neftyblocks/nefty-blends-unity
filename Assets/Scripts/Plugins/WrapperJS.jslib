@@ -71,11 +71,11 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
-      myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
+      myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
     } catch (e) {
       console.log(e);
       myGameInstance.SendMessage(
-        "ConfirmationPanel",
+        "PopupOutputterPanel",
         "ShowError",
         e.toString()
       );
@@ -124,11 +124,11 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
-      myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
+      myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
     } catch (e) {
       console.log(e);
       myGameInstance.SendMessage(
-        "ConfirmationPanel",
+        "PopupOutputterPanel",
         "ShowError",
         e.toString()
       );

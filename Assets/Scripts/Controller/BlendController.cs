@@ -14,11 +14,13 @@ public class BlendController : MonoBehaviour
     [SerializeField] public BlendProtectionController blendProtectionController;
     [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
+    [SerializeField] public IPopupOutputter popupOutputter;
 
     [ExcludeFromCodeCoverage]
     void Start()
     {
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
+        popupOutputter = GameObject.Find("PopupOutputterPanel").GetComponent<PopupOutputter>();
     }
 
     public RequirementUIElementController GetUIElementController(Transform child)
@@ -95,6 +97,7 @@ public class BlendController : MonoBehaviour
     {
         if (!CanBlend())
         {
+            popupOutputter.ShowError("Not all ingredients are selected.");
             return;
         }
 
@@ -106,6 +109,7 @@ public class BlendController : MonoBehaviour
 
         if (!blendProtectionController.isWhitelisted)
         {
+            popupOutputter.ShowError("You are not whitelisted.");
             return;
         }
         PerformSecuredBlend();
