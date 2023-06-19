@@ -50,7 +50,9 @@ public class CraftingTest
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, new IndexIngredientAssetsResult()
         {
             assetIds = new List<string>() { "Asset1", "Asset2", "Asset3", "Asset4", "Asset5", "Asset1" },
-            indexId = new List<int>() { 0, 2, 3, 4, 0, 1 }
+            indexId = new List<int>() { 0, 2, 3, 4, 0, 1 },
+            mintNumbers = new List<int>() { 0,0,0,0,0,0 }
+
         });
         AssertRequirements(new string[] { null, "Asset3", null, "Asset2", "Asset1" });
     }
@@ -133,7 +135,7 @@ public class CraftingTest
     {
         for (int i = 0; i < requirementSlots.Length; i++)
         {
-            var text = requirementSlots[i].transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text;
+            var text = requirementSlots[i].GetComponent<RequirementUIElementController>().selectedAssetId;
             Assert.AreEqual(expectedTexts[i], text);
         }
     }

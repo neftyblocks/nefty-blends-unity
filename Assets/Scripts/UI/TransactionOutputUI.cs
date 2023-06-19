@@ -15,14 +15,14 @@ public class TransactionOutputUI : MonoBehaviour
     public void ShowSuccess()
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
-        confirmationPanelText.text = "Success!";
+        confirmationPanelText.text = "Blend has been successful!";
     }
 
     // Shows an error message in the UI if transaction failes when submitting.
     public void ShowError(string error)
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);
-        confirmationPanelText.text = "Fail!" + error;
+        confirmationPanelText.text = error;
     }
 
     public void CloseWindow()
