@@ -286,9 +286,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
             ingredientAssetResult.assetIds.AddRange(details.Select(detail => detail.assetId));
             ingredientAssetResult.assetNames.AddRange(details.Select(detail => detail.name));
             ingredientAssetResult.mintNumbers.AddRange(details.Select(detail => detail.templateMint));
-
-            var downloadedSprites = await Task.WhenAll(details.Select(detail => imageLoader.GetSpriteAsync(detail.data.img)));
-            ingredientAssetResult.sprites = downloadedSprites.ToList();
+            ingredientAssetResult.spriteHashes.AddRange(details.Select(detail => detail.data.img ?? detail.data.video ?? "burn"));
 
             return ingredientAssetResult;
         }

@@ -122,6 +122,9 @@ public class Ingredient
         [JsonProperty("img")]
         public string img { get; set; }
 
+        [JsonProperty("video")]
+        public string video { get; set; }
+
         [JsonProperty("name")]
         public string name { get; set; }
 

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 /// </summary>
 public class CraftAssetPopupUI : MonoBehaviour
 {
+    [SerializeField] public ImageLoader imageLoader;
     [SerializeField] public RectTransform craftAssetPanel;
     [SerializeField] public BlendController blendController;
     [SerializeField] public GameObject ingredientPrefab;
@@ -16,7 +17,7 @@ public class CraftAssetPopupUI : MonoBehaviour
     public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         ResetSlots(ingredientSlots);
-        InstantiateSlots(exactIndexIngredientAssetsResult.sprites.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
+        InstantiateSlots(exactIndexIngredientAssetsResult.spriteHashes.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
     }
 
     // Display automatically selected items in the popup as selected.
@@ -67,25 +68,45 @@ public class CraftAssetPopupUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
+    public async void DisplayAssetImages(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         if (exactIndexIngredientAssetsResult != null)
         {
             InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult);
 
-            for (int i = 0; i < exactIndexIngredientAssetsResult.sprites.Count; i++)
+            for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
             {
-                Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = exactIndexIngredientAssetsResult.sprites[i];
+                if (!gameObject.activeInHierarchy) return;
+
                 ingredientSlots[i].GetComponent<NFT>().SetAsssetId(exactIndexIngredientAssetsResult.assetIds[i]);
                 ingredientSlots[i].GetComponent<NFT>().SetAssetName(exactIndexIngredientAssetsResult.assetNames[i]);
                 ingredientSlots[i].GetComponent<NFT>().SetMintNumber(exactIndexIngredientAssetsResult.mintNumbers[i]);
             }
+
             UpdateAssetText();
+
+            for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
+            {
+                if (!gameObject.activeInHierarchy) return;
+
+                Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
+                if (nftImage != null)
+                {
+                    var spriteLoadTask = imageLoader.GetSpriteAsync(exactIndexIngredientAssetsResult.spriteHashes[i]);
+                    await spriteLoadTask;
+
+                    if (!gameObject.activeInHierarchy) return;
+                    nftImage.GetComponent<Image>().sprite = spriteLoadTask.Result;
+                }
+            }
         }
+
+        if (!gameObject.activeInHierarchy) return;
+
         uIController.ChangePrefabColor();
         DisplayBeingSelected();
     }
+
     public void UpdateAssetText()
     {
         for (int i = 0; i < ingredientSlots.Length; i++)

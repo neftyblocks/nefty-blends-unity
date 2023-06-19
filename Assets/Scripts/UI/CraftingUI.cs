@@ -116,13 +116,14 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayRollImage(RollResult rollResult)
+    public async void DisplayRollImage(RollResult rollResult)
     {
         rollResults = rollResult;
         if (rollResult.rollSprites != null && rollResult.rollSprites.Length > 0)
         {
             Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
-            nftImage.GetComponent<Image>().sprite = rollResult.rollSprites[0];
+            nftImage.GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(rollResult.rollSpritesHash[0]);
+
         }
     }
     public void DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
@@ -241,7 +242,6 @@ public class CraftingUI : MonoBehaviour
         {
             rollResult.rollSprites[i] = await craftingFetcher.GetImageLoaderSpriteAsync(rollResult.rollSpritesHash[i]);
         }
-
     }
 
     public void LoadDefaultRollImages(RollResult rollResult)
