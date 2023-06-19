@@ -185,14 +185,31 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                 })
                 .ToArray();
 
+            rollResult.rollNames = deserializedJsonResult.details.rolls
+                 .SelectMany(i => i.outcomes)
+                 .Select(o =>
+                 {
+                     if (o.results.FirstOrDefault()?.template?.immutableData?.name != null)
+                     {
+                         return o.results.FirstOrDefault()?.template?.immutableData?.name;
+                     }
+                     else if (o.results.FirstOrDefault()?.pool?.displayData != null)
+                     {
+                         var displayData = o.results.FirstOrDefault()?.pool.displayData;
+                         var jsonString = displayData.ToString();
+                         var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                         var displayName = jsonObject?.name;
+
+                         return displayName;
+                     }
+
+                     return "burn";
+                 })
+             .ToArray();
+
             rollResult.rollPercentageRolls = deserializedJsonResult.details.rolls
                 .SelectMany(i => i.outcomes)
                 .Select(i => i.odds)
-                .ToArray();
-
-            rollResult.rollNames = deserializedJsonResult.details.rolls
-                .SelectMany(i => i.outcomes)
-                .Select(o => o.results.FirstOrDefault()?.template?.immutableData?.name ?? "burn")
                 .ToArray();
 
             rollResult.totalOdds = deserializedJsonResult.details.rolls[0].totalOdds;
