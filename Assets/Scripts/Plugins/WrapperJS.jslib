@@ -125,6 +125,7 @@ mergeInto(LibraryManager.library, {
       };
       const result = await user.signTransaction({ actions }, tapos);
       myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
+      myGameInstance.SendMessage("BlendController", "ClearSelectedAssetIdsFromRequirements");
     } catch (e) {
       console.log(e);
       myGameInstance.SendMessage(

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -91,7 +92,29 @@ public class BlendController : MonoBehaviour
                                                         .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedTokenSymbol())
                                                         .ToArray();
     }
-    
+
+    // ClearSelectedAssetIds is called within JS after blend is succesful.
+    public void ClearSelectedAssetIdsFromRequirements()
+    {
+        if (requirementPanel == null)
+            return;
+
+        foreach (Transform child in requirementPanel.transform)
+        {
+            var uiController = GetUIElementController(child);
+            if (uiController != null)
+                uiController.selectedAssetId = string.Empty;
+
+            Transform requirementObject = child.Find("Selected_Ingredient_Background/SelectedIngredient");
+            if (requirementObject != null)
+            {
+                var textMesh = requirementObject.GetComponent<TextMeshProUGUI>();
+                if (textMesh != null)
+                    textMesh.text = string.Empty;
+            }
+        }
+    }
+
     // Attempts to submit the blending operation. If blending isn't possible or the blend isn't secured or whitelisted, the operation is cancelled.
     public void SubmitBlend()
     {

@@ -21,14 +21,12 @@ public class BlendControllerTest
     {
         var blendControllerObject = new GameObject();
         blendController = blendControllerObject.AddComponent<BlendController>();
-/*        transactionOutputUI = new GameObject().AddComponent<TransactionOutputUI>();
-*/
+
         // Mocking
         sendTransactionJS = Substitute.For<ISendTransactionJS>();
         craftAssetPopupController = Substitute.For<CraftAssetPopupController>();
         blendProtectionController = Substitute.For<BlendProtectionController>();
         popupOutputter = Substitute.For<IPopupOutputter>();
-
 
         blendController.sendTransactionJS = sendTransactionJS;
         blendController.blendProtectionController = blendProtectionController;
