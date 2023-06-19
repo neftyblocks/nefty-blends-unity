@@ -36,7 +36,6 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
         try
         {
             var blendUrl = $"{PluginController.apiUrl}/neftyblends/v1/blends?collection_name={pluginController.GetCollectionName()}&page={currentPage}&limit=100&render_markdown=true&order=desc&sort=created_at_time";
-            Debug.Log(blendUrl);
             var deserializedJsonResult = await GetDeserializedData<Blend>(blendUrl);
 
             if (deserializedJsonResult == null || deserializedJsonResult.data == null || deserializedJsonResult.data.Count == 0)

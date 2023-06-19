@@ -60,7 +60,6 @@ public class UIManager : MonoBehaviour
         GameObject blendMenu = UIs[UIType.BlendMenu];
         if (blendMenu.activeSelf)
         {
-            Debug.Log("Exit early");
             return; 
         }
 
@@ -82,7 +81,6 @@ public class UIManager : MonoBehaviour
 
         if (inventoryMenu.activeSelf)
         {
-            Debug.Log("Exit early");
             return; 
         }
 

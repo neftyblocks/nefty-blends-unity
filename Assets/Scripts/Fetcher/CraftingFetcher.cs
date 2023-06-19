@@ -80,7 +80,6 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         try
         {
             var url = $"{PluginController.apiUrl}/neftyblends/v1/blends/blend.nefty/{blendId}?render_markdown=true";
-            Debug.Log(url);
             var deserializedJsonResult = await GetDeserializedData<NeftyBlend>(url);
 
             if (!deserializedJsonResult.success)

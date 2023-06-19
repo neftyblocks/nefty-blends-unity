@@ -29,7 +29,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             string sortOption = GetSortOption(filter);
             var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?{ sortOption }&owner={ pluginController.GetWalletName() }&page={ inventoryUI.apiCurrentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
-            Debug.Log(url);
             foreach (var detail in deserializedJsonResult.details)
             {
                 spriteHash = detail.data.img ?? detail.data.video;
