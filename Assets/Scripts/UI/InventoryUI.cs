@@ -59,29 +59,52 @@ public class InventoryUI : MonoBehaviour
         for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
         {
             if (!gameObject.activeInHierarchy) return;
+
             inventorySlots[i] = Instantiate(inventoryAssetPrefab, inventoryContainer);
+            if (inventorySlots[i] == null) return;
+
             inventorySlots[i].tag = "Asset";
-            inventorySlots[i].GetComponent<NFT>().SetAsssetId(inventoryAsset.invenoryAssetIds[i]);
-            inventorySlots[i].GetComponent<NFT>().SetAssetName(inventoryAsset.inventoryAssetName[i]);
-            inventorySlots[i].GetComponent<NFT>().SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
+            NFT nftComponent = inventorySlots[i].GetComponent<NFT>();
+            if (nftComponent == null) return;
+
+            nftComponent.SetAsssetId(inventoryAsset.invenoryAssetIds[i]);
+            nftComponent.SetAssetName(inventoryAsset.inventoryAssetName[i]);
+            nftComponent.SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
+
             Transform nftName = inventorySlots[i].transform.Find("Asset_Name_Background/Asset_Name_Text");
-            nftName.GetComponent<TextMeshProUGUI>().text = TextTruncation.TruncateText(inventorySlots[i].GetComponent<NFT>().GetAssetName(), 14);
+            if (nftName == null) return;
+
+            TextMeshProUGUI nameText = nftName.GetComponent<TextMeshProUGUI>();
+            if (nameText == null) return;
+
+            nameText.text = TextTruncation.TruncateText(nftComponent.GetAssetName(), 14);
+
             Transform nftMint = inventorySlots[i].transform.Find("Mint_Background/Mint_Number_Text");
-            nftMint.GetComponent<TextMeshProUGUI>().text = "#" + inventorySlots[i].GetComponent<NFT>().GetMintNumber().ToString();
+            if (nftMint == null) return;
+
+            TextMeshProUGUI mintText = nftMint.GetComponent<TextMeshProUGUI>();
+            if (mintText == null) return;
+
+            mintText.text = "#" + nftComponent.GetMintNumber().ToString();
 
             Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
             if (nftImage != null)
             {
                 var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);
                 await imageLoadTask;
-                if (!gameObject.activeInHierarchy) return;
-                nftImage.GetComponent<Image>().sprite = imageLoadTask.Result;
+                if (!gameObject.activeInHierarchy || nftImage == null) return;
+
+                Image imageComponent = nftImage.GetComponent<Image>();
+                if (imageComponent == null) return;
+
+                imageComponent.sprite = imageLoadTask.Result;
             }
         }
 
         if (!gameObject.activeInHierarchy) return;
         uIController.ChangePrefabColor();
     }
+
 
     public async void RefreshInventorySlots(string filter)
     {
