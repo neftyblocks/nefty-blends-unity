@@ -144,6 +144,10 @@ mergeInto(LibraryManager.library, {
   ChangeRPCEndpointJS: function (rpc) {
     updateGlobals(UTF8ToString(rpc));
   },
+  LogoutJS: function () {
+    ual.logoutUser();
+    myGameInstance.SendMessage("UIManager", "EnableLoginMenu");
+  },
   IsBlendProtectionEligibleJS: async function (security_id) {
     let isUserFound = false; // Variable to track if the user is found
 

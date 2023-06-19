@@ -9,22 +9,18 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     // Import JavaScript functions from the internal scope Plugin/WrapperJS.jslib file.
     [DllImport("__Internal")]
     private static extern void SubmitBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount);
-
     [DllImport("__Internal")]
     private static extern void SendSecuredBlend(int blendId, string[] assetIds, string[] contractNames, string[] tokenSymbol, string[] tokenQuantity, int ftCount, int assetCount, string[] protectedAssets, int protectedAssetsCount);
-
     [DllImport("__Internal")]
     private static extern void LoginAnchorJS();
-
     [DllImport("__Internal")]
     private static extern void LoginCloudWalletsJS();
-
     [DllImport("__Internal")]
     private static extern void IsBlendProtectionEligibleJS(int securityId);
-
-
     [DllImport("__Internal")]
     private static extern void ChangeRPCEndpointJS(string rpcLink);
+    [DllImport("__Internal")]
+    private static extern void LogoutJS();
 
 
     // This method calls the JS function to send a secured blend transaction.
@@ -60,5 +56,10 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     public void IsBlendProtectionEligible(int securityId)
     {
         IsBlendProtectionEligibleJS(securityId);
+    }
+    // Logs out user by clearing localstorage in JS
+    public void Logout()
+    {
+        LogoutJS();
     }
 }

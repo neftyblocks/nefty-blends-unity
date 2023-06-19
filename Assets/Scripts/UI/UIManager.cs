@@ -35,7 +35,11 @@ public class UIManager : MonoBehaviour
         UIs.Add(UIType.AssetPopupMenu, assetPopup);
         UIs.Add(UIType.LoginMenu, loginUI);
         UIs.Add(UIType.ConfirmationPopupMenu, confirmationPopup);
+        EnableLoginMenu();
+    }
 
+    public void EnableLoginMenu()
+    {
         if (!UIs[UIType.LoginMenu].activeInHierarchy)
         {
             EnableUI(UIType.LoginMenu);
