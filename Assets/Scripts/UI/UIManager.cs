@@ -36,7 +36,6 @@ public class UIManager : MonoBehaviour
         UIs.Add(UIType.LoginMenu, loginUI);
         UIs.Add(UIType.ConfirmationPopupMenu, confirmationPopup);
 
-
         if (!UIs[UIType.LoginMenu].activeInHierarchy)
         {
             EnableUI(UIType.LoginMenu);

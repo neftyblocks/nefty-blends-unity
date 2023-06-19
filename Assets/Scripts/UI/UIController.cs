@@ -28,11 +28,14 @@ public class UIController : MonoBehaviour
     [SerializeField] private Color primaryButtonColor;
     [SerializeField] private Color secondaryButtonColor;
     [SerializeField] private bool setToDefault;
+    [SerializeField] bool toggleDebugging;
+    [SerializeField] GameObject debugButton;
 
 
 
     private void Awake()
     {
+        IsDebugEnabled();
         if (!setToDefault)
         {
             ChangeColor(textPrimary, primaryTextColor);
@@ -50,6 +53,11 @@ public class UIController : MonoBehaviour
         {
             arrayObject.font = font;
         }
+    }
+
+    public void IsDebugEnabled()
+    {
+        debugButton.SetActive(toggleDebugging);
     }
 
     public void ChangeColor(string tag, Color color)
