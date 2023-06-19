@@ -2061,7 +2061,6 @@ ual.init();
 
 window.updateGlobals = function (newRpcHost) {
   // Update myChain
-  newRpcHost = "https://" + newRpcHost;
   myChain.rpcEndpoints[0].host = newRpcHost;
 
   // Recreate instances with updated configurations
