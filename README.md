@@ -1,29 +1,28 @@
-
 # Introduction
-This repository aims to be a valuable resource for developers. It offers information and inspiration for building tools in the WAX ecosystem, improving the quality of products. The plugin is created in Unity and is designed to be easily customized, allowing third parties to integrate it into their own Unity projects. The main goal is to increase development opportunities, promote decentralization, and contribute to the wider blockchain ecosystem. 
+
+This repository aims to be a valuable resource for developers. It offers information and inspiration for building tools in the WAX ecosystem, improving the quality of products. The plugin is created in Unity and is designed to be easily customized, allowing third parties to integrate it into their own Unity projects. The main goal is to increase development opportunities, promote decentralization, and contribute to the wider blockchain ecosystem.
 
 Included within the GitHub repository is a demonstration of NeftyBlocks blending feature. The demo includes a step-by-step guide on how to log in and submit smart contract transactions directly to the blockchain and many other features. The transaction submission is facilitated by a JavaScript (JS) wrapper, which serves as a communication bridge between C# and JS. The repository also provides instructions on how to deploy projects into a WebGL environment and also how to test them and deploy.
 
 ## 🔑 Prerequisites
 
--  Browserify
--  Git
--  Npm 
--  Node.js 
--  Unity Hub
+- Browserify
+- Git
+- Npm
+- Node.js
+- Unity Hub
 
 ## 🔧 Installing
 
 **For windows:**
- 
-Step 1:  **Clone the Repository**
 
- *To get started, there are two options available:*
+Step 1: **Clone the Repository**
+
+_To get started, there are two options available:_
 
 1. **Clone the Repository**: Use the "Clone" command to create a local copy of the current repository. You can do this by executing the following command in your preferred terminal:
 
-
-`git clone https://github.com/neftyblocks/unity-sdk.git` 
+`git clone https://github.com/neftyblocks/unity-sdk.git`
 
 2.  **Download the .zip File**: Alternatively, you can choose to download the repository as a .zip file. Simply click on the "Code" button and select "Download ZIP" from the dropdown menu.
 
@@ -57,8 +56,7 @@ To complete the installation, follow these steps:
 2.  Within the "webgl-build" folder, locate the existing "index.html" file.
 3.  Replace the existing "index.html" file with the one located in a separate folder named "HTML".
 
-
-##  📖 User guide
+## 📖 User guide
 
 Once the plugin is built and running in the local environment, you can access the login screen. From there, you have two options: you can either log in with **Anchor** or **Wax Cloud Wallet**. These options are made possible through the use of forked UAL dependencies by NeftyBlocks. Additionally, the user has the flexibility to select their own RPC endpoint. This allows them to submit transactions and make calls to the "get_table_rows" function using the endpoint of their choice.
 ![](https://i.ibb.co/xmzY2np/Screenshot-4.png)
@@ -79,7 +77,7 @@ If a blend does not have any protection, eligible users can submit the transacti
 
 Blends operate using **fungible tokens, collections, schemas, attributes**, and **templates**. If the blending process goes smoothly, you will receive a success popup and the resulting NFT will be added to your inventory.
 
-##  📚 Examples
+## 📚 Examples
 
 In this section, I will provide a few examples of techniques that you can use to create your own application based on the approach used in this plugin.
 
@@ -97,21 +95,24 @@ Please ensure that you execute these steps to keep the JavaScript and HTML files
 
 To ensure proper functionality of the login feature, there are a few libraries that you need. Fortunately, these libraries are already included in the project, so you don't need to add anything. The list of required packages, along with their versions, is as follows:
 
--   "@nefty/ual-anchor": "^0.2.5"
--   "@nefty/ual-renderer": "^0.1.1"
--   "@nefty/ual-wax": "^0.2.7"
--   "@waxio/waxjs": "^1.3.0"
+- "@nefty/ual-anchor": "^0.2.5"
+- "@nefty/ual-renderer": "^0.1.1"
+- "@nefty/ual-wax": "^0.2.7"
+- "@waxio/waxjs": "^1.3.0"
 
 You can find these packages in the `WebGL-Build/package.js` file.
 
 The code snippet provided demonstrates the configuration and initialization of a Universal Authenticator Library (UAL) for a specific application. UAL allows users to authenticate and interact with blockchain-based applications. Here's a breakdown of the code and its functionality
+
 ```js
 const { UALJs } = require("@nefty/ual-renderer");
 const { Wax } = require("@nefty/ual-wax");
 const { Anchor } = require("@nefty/ual-anchor");
 const { JsonRpc } = require("eosjs");
 ```
+
 The above lines import the necessary libraries and classes for UAL, including the UAL renderer, UAL Wax, UAL Anchor, and JsonRpc from the eosjs library.
+
 ```js
 const myCallback = async (arrayOfUsers) => {
   window.user = arrayOfUsers[0];
@@ -124,9 +125,11 @@ const myCallback = async (arrayOfUsers) => {
   );
 };
 ```
+
 The `myCallback` function is an asynchronous function that handles the authentication process and receives an array of authenticated users as a parameter. Its purpose is to set global variables for the user's account name and permission, and send a success message to a Unity game instance.
 
 The `myGameInstance` is a separate variable that facilitates communication between Unity and JavaScript. In this example, it refers to an object in the Unity hierarchy called "LoginEnvironment". The function calls the "LoggedIn" method of the "LoginEnvironment" object, passing the `window.accountName` variable as the argument. This variable represents the account name of the user who has just logged in.
+
 ```js
 const myChain = {
   chainId: "1064487b3cd1a897ce03ae5b6a865651747e2e152090f99c1d19d44e01aea5a4",
@@ -138,8 +141,8 @@ const myChain = {
     },
   ],
 };
-
 ```
+
 The `myChain` object is responsible for configuring the blockchain network. It allows you to specify the chain ID and the RPC endpoint. If you want to use a different Antelope Chain, you would need to update the `chainId` and `rpcEndpoints` properties accordingly.
 
 If you decide to use the WAX blockchain, you can modify the endpoint to any preferred endpoint available within the following link: [https://wax.antelope.tools/endpoints](https://wax.antelope.tools/endpoints). It's important to note that each endpoint may have its own limitations, so it's recommended to double-check the endpoint in case any issues arise.
@@ -175,6 +178,7 @@ To ensure the proper initialization of UAL, you need to include the following li
 ```
 
 This line of code adds a hidden `<div>` element with the ID "ual-div", serving as the container for the UAL interface.
+
 ```js
 window.wax = wax;
 window.anchor = anchor;
@@ -183,6 +187,7 @@ window.ual = ual;
 window.accountName = accountName;
 window.permission = permission;
 ```
+
 These global variables can be accessed and utilized throughout the codebase, allowing different parts of the application to interact with the UAL providers, blockchain endpoint, and user-related information.
 
 In the Unity code, there is a specific folder structure to follow. The `WrapperJS.jslib` file should be placed within the `Assets/Scripts/Plugins` directory. This file contains JavaScript methods that can be called from Unity.
@@ -207,9 +212,9 @@ The corresponding JavaScript method in `WrapperJS.jslib` would be defined as fol
 
 ```js
 mergeInto(LibraryManager.library, {
-LoginAnchorJS: async function () {
-  ual.loginUser(anchor);
-}
+  LoginAnchorJS: async function () {
+    ual.loginUser(anchor);
+  },
 });
 ```
 
@@ -222,6 +227,7 @@ By following this structure and calling the appropriate methods, you can seamles
 When submitting transactions, the process is similar to logging in, but there are a few nuances to keep in mind. In the case of this plugin, you should have a dedicated controller for a specific function, which in this case would be the `BlendController`. If the conditions are met, you would internally call the associated JavaScript method.
 
 The corresponding JavaScript method in `WrapperJS.jslib` is defined as follows:
+
 ```js
 SubmitBlend: async function (
     blend_id,
@@ -277,6 +283,7 @@ SubmitBlend: async function (
     }
   },
 ```
+
 When sending data between Unity and JS, it's important to note that in this example you need to retrieve a string[] value from a memory location and then convert it to a JavaScript string using UTF8 encoding. For example, to achieve this for `contract_names`, you can use the following code snippet:
 
 ```js
@@ -285,24 +292,21 @@ contract_names.push(UTF8ToString(HEAP32[(contractName + i * 4) >> 2]));
 
 Additionally, since `foreach` doesn't work in this case, you'll need to add parameters for the item count. Once the data is converted, you can perform the necessary operations. Create an array called `actions` and add the required actions to it. Finally, sign the transaction.
 
- **Keep in mind that the only types you can use are arrays ([]), JSON, strings, and you cannot use classes or lists.**
- ```js
-  try {
-      let tapos = {
-        blocksBehind: 3,
-        expireSeconds: 120,
-      };
-      const result = await user.signTransaction({ actions }, tapos);
-      myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
-    } catch (e) {
-      console.log(e);
-      myGameInstance.SendMessage(
-        "ConfirmationPanel",
-        "ShowError",
-        e.toString()
-      );
-    }
- ```
+**Keep in mind that the only types you can use are arrays ([]), JSON, strings, and you cannot use classes or lists.**
+
+```js
+try {
+  let tapos = {
+    blocksBehind: 3,
+    expireSeconds: 120,
+  };
+  const result = await user.signTransaction({ actions }, tapos);
+  myGameInstance.SendMessage("ConfirmationPanel", "ShowSuccess");
+} catch (e) {
+  console.log(e);
+  myGameInstance.SendMessage("ConfirmationPanel", "ShowError", e.toString());
+}
+```
 
 To add an action, you can follow these steps:
 
@@ -312,16 +316,19 @@ To add an action, you can follow these steps:
 
 For example, if you want to add an action, you can navigate to the `blockchainTransactions` section and find the corresponding method. Make sure that the method returns the necessary `actions` object.
 
-Please ensure that you follow this style when adding your own actions in the `blockchainTransactions` section. Additionally, make use of the global variables `accountName` and `permission` if you need to retrieve the user's wallet name and permission type. 
+Please ensure that you follow this style when adding your own actions in the `blockchainTransactions` section. Additionally, make use of the global variables `accountName` and `permission` if you need to retrieve the user's wallet name and permission type.
+
 ```js
 function TransferAsset(asset_array) {
   return {
     account: "atomicassets",
     name: "transfer",
-    authorization: [{
-      actor: accountName,
-      permission: permission,
-    }],
+    authorization: [
+      {
+        actor: accountName,
+        permission: permission,
+      },
+    ],
     data: {
       from: accountName,
       to: "blend.nefty",
@@ -331,8 +338,6 @@ function TransferAsset(asset_array) {
   };
 }
 ```
-
-
 
 ### Example 3: Retrieving contract tables
 
@@ -360,22 +365,21 @@ The `FetchBlendWhitelistProtection` function takes a `security_id` parameter, wh
 To access the retrieved data, you can use the following syntax:
 
 `let data = await FetchBlendWhitelistProtection(security_id);`
-`let rowData = data.rows[rowNumber];` 
+`let rowData = data.rows[rowNumber];`
 
 In the above code, `data.rows` represents the array of retrieved rows, and `rowNumber` is the index of the specific row you want to access.
 
 To customize the code based on your specific needs. Here are some parameters that you can modify:
 
--   `code`: Replace `"secure.nefty"` with the contract code of your target contract.
--   `scope`: Modify `security_id` according to the usually account or an id.
--   `table`: Change `"whitelists"` to the name of the table you want to fetch data from.
--   `limit`: Adjust the number to fetch a specific maximum number of rows.
--   `reverse`: Set `true` if you want the data to be fetched in a reversed order.
-
+- `code`: Replace `"secure.nefty"` with the contract code of your target contract.
+- `scope`: Modify `security_id` according to the usually account or an id.
+- `table`: Change `"whitelists"` to the name of the table you want to fetch data from.
+- `limit`: Adjust the number to fetch a specific maximum number of rows.
+- `reverse`: Set `true` if you want the data to be fetched in a reversed order.
 
 ### Example 4: Retrieving and Deserializing Data from AtomicAssets
 
-To retrieve data from AtomicAssets in your project, I recommend referring to the documentation available at [https://aa.neftyblocks.com/docs/#/](https://aa.neftyblocks.com/docs/#/). 
+To retrieve data from AtomicAssets in your project, I recommend referring to the documentation available at [https://aa.neftyblocks.com/docs/#/](https://aa.neftyblocks.com/docs/#/).
 
 In C#, when you make a JSON call, the first step is to deserialize the response. To achieve this, you need to create a class that represents the structure of the JSON data. You can use a site like [https://app.quicktype.io/](https://app.quicktype.io/) to generate the class based on the retrieved JSON. Set the following settings:
 
@@ -473,16 +477,15 @@ namespace QuickTyp
         [JsonProperty("template")]
         public Template Template { get; set;
 	 }
-	 ...	
+	 ...
 }
 ```
-
 
 This class can be used to fetch and deserialize the JSON response from AtomicAssets. This response is structured in a way that allows for easy access to the required data.
 Here's an example of code that uses the `IFetcher` interface within the `Assets/Scripts/Fetcher` folder:
 
 ```csharp
-// To get JSON response you would use 
+// To get JSON response you would use
 var exampleUrl = "https://aa.neftyblocks.com/atomicassets/v1/assets?page=1&limit=1&order=desc&sort=asset_id";
 var deserializedJsonResult = await GetDeserializedData<Example>(exampleUrl);
 var assetID = deserializedJsonResult.Data[0].AssetId;
@@ -490,10 +493,9 @@ var assetID = deserializedJsonResult.Data[0].AssetId;
 
 In this code snippet, `GetDeserializedData<Example>(exampleUrl)` is a function that fetches the JSON response from the API call, and then deserializes it. The generic `Example` parameter indicates the type to which the JSON should be deserialized. After deserialization, you can access the desired data using the `deserializedJsonResult` object. For example, `deserializedJsonResult.Data` gives you access to the retrieved data, and `deserializedJsonResult.Data[0].AssetId` retrieves the `AssetId` property of the first item in the data array.
 
-
 ### Example 5: Sending arguments from JS to Unity
 
-This example provides instructions on how to send JavaScript (JS) code to Unity. 
+This example provides instructions on how to send JavaScript (JS) code to Unity.
 
 **Step 1: Initialize Unity Canvas Variable**
 
@@ -503,28 +505,28 @@ To begin, you need to initialize the Unity Canvas variable in the `WebGL-Build/i
 <!-- WebGL-Build/index.html -->
 
 <script>
-var script = document.createElement("script");
-script.src = loaderUrl;
-var myGameInstance = null;
+  var script = document.createElement("script");
+  script.src = loaderUrl;
+  var myGameInstance = null;
 
-script.onload = () => {
+  script.onload = () => {
     createUnityInstance(canvas, config, (progress) => {
-        progressBarFull.style.width = 100 * progress + "%";
+      progressBarFull.style.width = 100 * progress + "%";
     })
-    .then((unityInstance) => {
+      .then((unityInstance) => {
         loadingBar.style.display = "none";
         myGameInstance = unityInstance;
 
         // Additional initialization code if needed
 
         fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
+          unityInstance.SetFullscreen(1);
         };
-    })
-    .catch((message) => {
+      })
+      .catch((message) => {
         alert(message);
-    });
-};
+      });
+  };
 </script>
 ```
 
@@ -560,28 +562,30 @@ In the above code, the "LoggedIn" method is defined, which takes a `walletName` 
 
 With these steps, you can send JavaScript code to Unity and handle the messages in your C# scripts. Customize the code snippets based on your project's specific needs.
 
-## 🚀  Deployment
+## 🚀 Deployment
+
 To enable continuous integration, the plugin provides a pre-configured GitHub Actions workflow in the `.github` folder. Inside this folder, you'll find a YAML file template that automates the testing, building, and deployment of your Unity game for WebGL. The workflow consists of multiple jobs, including running tests, building the game, deploying to GitHub Pages, and deploying to Vercel. This workflow streamlines the integration process and ensures that your game is tested, built, and deployed efficiently.
 
 If you want it to generate in Vercel:
 
-1.  Retrieve your  [Vercel Access Token](https://vercel.com/guides/how-do-i-use-a-vercel-api-access-token)
-2.  Install the  [Vercel CLI](https://vercel.com/cli)  and run  `vercel login`
-3.  Inside your folder, run  `vercel link`to create a new Vercel project
-4.  Inside the generated  `.vercel`folder, save the  `projectId`and  `orgId`from the  `project.json`
-5.  Inside GitHub, add  `VERCEL_TOKEN`,  `VERCEL_ORG_ID`, and  `VERCEL_PROJECT_ID`as  [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-### Important note 
+1.  Retrieve your [Vercel Access Token](https://vercel.com/guides/how-do-i-use-a-vercel-api-access-token)
+2.  Install the [Vercel CLI](https://vercel.com/cli) and run `vercel login`
+3.  Inside your folder, run `vercel link`to create a new Vercel project
+4.  Inside the generated `.vercel`folder, save the `projectId`and `orgId`from the `project.json`
+5.  Inside GitHub, add `VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID`as [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+
+### Important note
+
 Ensure that the project is built to see changes in the Vercel environment. Refer to Step 4 of the **Installation** for instructions on how to accomplish this.
 
-## 🧪  Running the tests
+## 🧪 Running the tests
 
 To run the tests for this project, follow the steps below:
 
 1.  Navigate to the `Assets/Tests/EditModeTests/` directory.
 2.  Right-click on the folder and select "Create" > "Testing" > "C# Test script" to create a new file.
 3.  I recommend separating the `[Setup]` and `[Teardown]` sections to improve code cleanliness.
-4. 
-Example of a test case located in the `BlendControllerTest` script:
+4.  Example of a test case located in the `BlendControllerTest` script:
 
 To ensure clarity and code isolation, follow the Act/Assert/Arrange pattern for your tests. Additionally, use `Substitute.For<ClassName>()` from the NSubstitute framework to create mock objects. This helps in isolating the code being tested.
 
@@ -615,7 +619,7 @@ To ensure clarity and code isolation, follow the Act/Assert/Arrange pattern for 
     [Test]
     public void CanBlend_ReturnsTrue_IfPopulatedWithSelectedAssetIds()
     {
-        //Arrange 
+        //Arrange
         blendController.requirementPanel = CreatePopulatedRequirementPanel(10);
 
         // Act
@@ -626,10 +630,36 @@ To ensure clarity and code isolation, follow the Act/Assert/Arrange pattern for 
 ```
 
 ## How to run code coverage reports
--   Open the test runner by navigating to "Window" > "Analysis" > "Code Coverage".
--   In the test runner, click on "Generate Report" to execute the tests and generate a report.
--   The test runner will display the results of the tests, including any failures or errors.
--   It should open a folder with the report and by clicking index.html you can analyze the test results to ensure that all tests pass successfully and how much code is covered.
+
+- Open the test runner by navigating to "Window" > "Analysis" > "Code Coverage".
+- In the test runner, click on "Generate Report" to execute the tests and generate a report.
+- The test runner will display the results of the tests, including any failures or errors.
+- It should open a folder with the report and by clicking index.html you can analyze the test results to ensure that all tests pass successfully and how much code is covered.
 
 By following these steps, you will be able to run the tests for the project and generate a report using the Unity test runner.
 
+## How to Add a Plugin to an Existing Project
+
+Here's an improved version for better readability on GitHub:
+
+To add a plugin to your game that you've built, follow these steps:
+
+1. Launch the plugin and navigate to the Assets folder.
+2. Select all the folders and right-click, then choose "Export package...".
+3. In the export window, select "All" and click "Export". Save the file in your desired folder.
+4. Launch your own project and locate the files of your project.
+5. Drag and drop the exported file into your project's files.
+6. Select all the files and click "Import" to import them into your project.
+7. Make sure to go to "File" > "Build Settings".
+8. From the folder, locate the file named "Scenes/PluginScene" and drag it into the "Scenes in Build" section.
+9. Now, one way to activate the plugin is by creating a script and attaching it to a button.
+10. Inside the button, add the following method:
+
+```csharp
+public void SwitchScene()
+{
+    SceneManager.LoadScene("PluginScene");
+}
+```
+
+11. After that, when the button is clicked, the scene will change to the plugin scene.
