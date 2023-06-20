@@ -119,6 +119,7 @@ jobs:
           folder: build/WebGL
 
   deploy-vercel:
+    needs: testRunner
     name: Vercel Production Deployment
     runs-on: ubuntu-latest
     steps:

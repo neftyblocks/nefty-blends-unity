@@ -2,52 +2,84 @@ using Newtonsoft.Json;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// InventoryFetcherController is responsible for fetching and handling Asset data.
+/// </summary>
 public class InventoryFetcherController : MonoBehaviour, IFetcher
 {
     [SerializeField] private ImageLoader imageLoader;
     [SerializeField] private PluginController pluginController;
-
+    [SerializeField] private InventoryUI inventoryUI;
+ 
     public async Task<Asset> GetDeserializedData<Asset>(string url)
     {
         var jsonResponse = await imageLoader.GetTextAsync(url);
         return JsonConvert.DeserializeObject<Asset>(jsonResponse);
     }
 
-    public async Task<(Sprite[], string[])> GetInventoryAssets(int slotLimit, int currentPage)
+    public async Task<InventoryAsset> GetInventoryAssets(string filter)
     {
+        var result = new InventoryAsset();
+        string spriteHash;
         try
         {
-            var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?sort=transferred&order=desc&owner={"cabba.wam"}&page={ currentPage }&limit={ slotLimit }&only_whitelisted=true&collection_name={ pluginController.GetCollectionName() }";
+            string sortOption = GetSortOption(filter);
+            var url = $"{ PluginController.apiUrl }/atomicassets/v1/assets?{ sortOption }&owner={ pluginController.GetWalletName() }&page={ inventoryUI.apiCurrentPage }&limit=100&only_whitelisted=false&collection_name={ pluginController.GetCollectionName() }";
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
-
-            var assetDetailsList = deserializedJsonResult.details
-                .Take(slotLimit)
-                .Select(detail => (detail.data.img, detail.assetId))
-                .ToList();
-
-            var spriteTasks = assetDetailsList
-                .Select(uriWithId => imageLoader.GetSpriteAsync(uriWithId.img))
-                .ToArray();
-
-            var spriteResults = await Task.WhenAll(spriteTasks);
-            var sprites = spriteResults.ToArray();
-            var assetIds = assetDetailsList.Select(uriWithId => uriWithId.assetId).ToArray();
-
-            return (sprites, assetIds);
+            foreach (var detail in deserializedJsonResult.details)
+            {
+                spriteHash = detail.data.img ?? detail.data.video;
+                result.inventoryAssetSprites.Add(spriteHash);
+                result.invenoryAssetIds.Add(detail.assetId);
+                result.inventoryAssetMintNumber.Add(detail.templateMint);
+                result.inventoryAssetName.Add(detail.name);
+            }
+            return result;
         }
         catch (Exception ex)
         {
             Debug.LogError($"Error: {ex}");
-            return (null, null);
+            return result;
+        }
+    }
+
+    public async Task<Sprite> GetImageLoaderSpriteAsync(string url)
+    {
+        return await imageLoader.GetSpriteAsync(url);
+    }
+
+    private string GetSortOption(string filter)
+    {
+        switch (filter)
+        {
+            case "Transferred (Newest)":
+                return "sort=transferred&order=desc";
+            case "Transferred (Oldest)":
+                return "sort=transferred&order=asc";
+            case "Name (A-Z)":
+                return "sort=name&order=asc";
+            case "Name (Z-A)":
+                return "sort=name&order=desc";
+            case "Mint (Highest)":
+                return "sort=template_mint&order=desc";
+            case "Mint (Lowest)":
+                return "sort=template_mint&order=asc";
+            default:
+                return "sort=transferred&order=desc";
         }
     }
 
     public async Task<int> GetInventoryAssetsCount()
     {
-        var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={"cabba.wam"}&only_whitelisted=true&collection_name={pluginController.GetCollectionName()}";
-        var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
-        return deserializedJsonResult.data;
+        if (!string.IsNullOrEmpty(PluginController.walletName))
+        {
+            var url = $"{PluginController.apiUrl}/atomicassets/v1/assets/_count?sort=transferred&order=desc&owner={pluginController.GetWalletName()}&only_whitelisted=false&collection_name={pluginController.GetCollectionName()}";
+            var deserializedJsonResult = await GetDeserializedData<AssetCount>(url);
+            return deserializedJsonResult.data;
+        }
+        return 0;
     }
 }

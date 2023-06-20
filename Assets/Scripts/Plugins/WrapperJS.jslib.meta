@@ -27,6 +27,12 @@ PluginImporter:
     second:
       enabled: 1
       settings: {}
+  - first:
+      Windows Store Apps: WindowsStoreApps
+    second:
+      enabled: 0
+      settings:
+        CPU: AnyCPU
   userData: 
   assetBundleName: 
   assetBundleVariant: 

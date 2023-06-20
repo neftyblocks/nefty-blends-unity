@@ -1,42 +1,35 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <script src="waxjs.js"></script>
-
+  <script src="blockchainTransactions.js"></script>
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>CI/CD Unity WebGL Player | My project</title>
+    <title>Neftyblocks Plugin [Dev]</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico" />
     <link rel="stylesheet" href="TemplateData/style.css" />
   </head>
   <body>
-    <button id="login" onclick="login()">WAX Login</button><br /><br />
-    <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width="960" height="600"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-logo"></div>
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+    <div>
+      <div id="unity-container" class="unity-desktop">
+        <canvas id="unity-canvas"></canvas>
+        <div id="unity-loading-bar">
+          <div id="unity-logo"></div>
+          <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+          </div>
+        </div>
+        <div id="unity-warning"></div>
+        <div style="display: none" id="ual-div"></div>
+        <div id="unity-footer">
+          <div id="unity-webgl-logo"></div>
+          <div id="unity-fullscreen-button"></div>
+          <div id="unity-build-title">Neftyblocks-Plugin-NEW</div>
         </div>
       </div>
-      <div id="unity-warning"></div>
-      <div id="unity-footer">
-        <div id="unity-webgl-logo"></div>
-        <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Neftyblocks-Plugin-NEW</div>
-      </div>
     </div>
+    <script src="bundle.js"></script>
     <script>
-      const wax = new waxjs.WaxJS({
-        rpcEndpoint: "https://wax.greymass.com",
-        tryAutoLogin: true,
-      });
-      async function login() {
-        try {
-          const userAccount = await wax.login();
-        } catch (e) {}
-      }
-
       var container = document.querySelector("#unity-container");
       var canvas = document.querySelector("#unity-canvas");
       var loadingBar = document.querySelector("#unity-loading-bar");
@@ -109,21 +102,29 @@
         unityShowBanner("WebGL builds are not supported on mobile devices.");
       } else {
         // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
-
-        canvas.style.width = "960px";
-        canvas.style.height = "600px";
+        canvas.style.width = "auto";
+        canvas.style.height = "min(calc(100vw * (9 / 16)), 100vh)";
+        canvas.style.aspectRatio = "16/9";
+        canvas.style.display = "block";
+        var aspectRatio = 16 / 9;
+        var maxWidth = 1600;
+        var maxHeight = 900;
+        canvas.style.maxWidth = 1920 + "px";
+        canvas.style.maxHeight = 1080 + "px";
       }
 
       loadingBar.style.display = "block";
 
       var script = document.createElement("script");
       script.src = loaderUrl;
+      var myGameInstance = null;
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         })
           .then((unityInstance) => {
             loadingBar.style.display = "none";
+            myGameInstance = unityInstance;
             fullscreenButton.onclick = () => {
               unityInstance.SetFullscreen(1);
             };

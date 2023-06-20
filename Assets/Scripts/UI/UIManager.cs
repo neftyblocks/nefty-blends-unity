@@ -1,35 +1,48 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// The UIManager class manages different UI screens and provides methods to enable and load specific UI screens.
+/// It utilizes a dictionary to store references to the UI screens.
+/// </summary>
 public class UIManager : MonoBehaviour
 {
+    [SerializeField] private GameObject loginUI;
     [SerializeField] private GameObject inventoryUI;
     [SerializeField] private GameObject blendMenuUI;
     [SerializeField] private GameObject craftingUI;
     [SerializeField] private GameObject assetPopup;
+    [SerializeField] private GameObject confirmationPopup;
 
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
+    // The types of UI screens available
     public enum UIType
     {
+        LoginMenu,
         InventoryMenu,
         BlendMenu,
         CraftingMenu,
-        AssetPopupMenu
+        AssetPopupMenu,
+        ConfirmationPopupMenu,
     }
 
-    private void Awake()
+    private void Start()
     {
         UIs.Add(UIType.InventoryMenu, inventoryUI);
         UIs.Add(UIType.BlendMenu, blendMenuUI);
         UIs.Add(UIType.CraftingMenu, craftingUI);
         UIs.Add(UIType.AssetPopupMenu, assetPopup);
+        UIs.Add(UIType.LoginMenu, loginUI);
+        UIs.Add(UIType.ConfirmationPopupMenu, confirmationPopup);
+        EnableLoginMenu();
+    }
 
-
-        if (!UIs[UIType.InventoryMenu].activeInHierarchy)
+    public void EnableLoginMenu()
+    {
+        if (!UIs[UIType.LoginMenu].activeInHierarchy)
         {
-            EnableUI(UIType.InventoryMenu);
+            EnableUI(UIType.LoginMenu);
         }
     }
 
@@ -47,30 +60,61 @@ public class UIManager : MonoBehaviour
 
     public void EnableBlendMainMenuUI()
     {
-        foreach (KeyValuePair<UIType, GameObject> ui in UIs)
+        GameObject blendMenu = UIs[UIType.BlendMenu];
+        if (blendMenu.activeSelf)
         {
-            if (ui.Key != UIType.BlendMenu && ui.Value.activeInHierarchy)
+            return; 
+        }
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.BlendMenu && kvp.Value.activeSelf)
             {
-                ui.Value.SetActive(false);
+                kvp.Value.SetActive(false);
             }
         }
 
-        UIs[UIType.BlendMenu].SetActive(true);
-        blendMenuUI.GetComponentInChildren<BlendMainUI>().DisplayAssetImages();
+        blendMenu.SetActive(true);
+        blendMenuUI.GetComponentInChildren<BlendListUI>().RefreshBlendSlots();
     }
 
     public void EnableInventoryMainMenuUI()
     {
-        foreach (KeyValuePair<UIType, GameObject> ui in UIs)
+        GameObject inventoryMenu = UIs[UIType.InventoryMenu];
+
+        if (inventoryMenu.activeSelf)
         {
-            if (ui.Key != UIType.InventoryMenu && ui.Value.activeInHierarchy)
+            return; 
+        }
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.InventoryMenu && kvp.Value.activeSelf)
             {
-                ui.Value.SetActive(false);
+                kvp.Value.SetActive(false);
             }
         }
 
-        UIs[UIType.InventoryMenu].SetActive(true);
-        inventoryUI.GetComponentInChildren<InventoryUI>().DisplayAssetImages();
+        inventoryMenu.SetActive(true);
+        var inventory = inventoryUI.GetComponentInChildren<InventoryUI>();
+        inventory.RefreshInventorySlots(inventory.GetCurrentFilterSelected());
+    }
+
+    public void LoadMainMenu()
+    {
+        GameObject inventoryMenu = UIs[UIType.InventoryMenu];
+
+        foreach (KeyValuePair<UIType, GameObject> kvp in UIs)
+        {
+            if (kvp.Key != UIType.InventoryMenu && kvp.Value.activeSelf)
+            {
+                kvp.Value.SetActive(false);
+            }
+        }
+
+        inventoryMenu.SetActive(true);
+        var inventory = inventoryUI.GetComponentInChildren<InventoryUI>();
+        inventory.RefreshInventorySlots(inventory.GetCurrentFilterSelected());
     }
 
     public void EnableCraftingUI()

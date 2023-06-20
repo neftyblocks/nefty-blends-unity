@@ -1,83 +1,156 @@
 using Newtonsoft.Json;
-using System.Collections;
+using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class NeftyBlend
 {
+    [JsonProperty("success")]
     public bool success { get; set; }
+
     [JsonProperty("data")]
     public Data details { get; set; }
+
+    [JsonProperty("query_time")]
     public long queryTime { get; set; }
+
 
     public partial class Data
     {
-        public long blendId { get; set; }
+        [JsonProperty("blend_id")]
+        public string blendId { get; set; }
+
+        [JsonProperty("contract")]
         public string contract { get; set; }
+
+        [JsonProperty("collection_name")]
         public string collectionName { get; set; }
+
+        [JsonProperty("start_time")]
         public string startTime { get; set; }
-        public long endTime { get; set; }
-        public long max { get; set; }
-        public long useCount { get; set; }
+
+        [JsonProperty("end_time")]
+        public string endTime { get; set; }
+
+        [JsonProperty("max")]
+        public string max { get; set; }
+
+        [JsonProperty("use_count")]
+        public string useCount { get; set; }
+
+        [JsonProperty("display_data")]
         public DisplayData displayData { get; set; }
+
+        [JsonProperty("created_at_time")]
         public string createdAtTime { get; set; }
-        public long ingredientsCount { get; set; }
-        public long securityId { get; set; }
+
+        [JsonProperty("ingredients_count")]
+        public int ingredientsCount { get; set; }
+
+        [JsonProperty("security_id")]
+        public int securityId { get; set; }
+
+        [JsonProperty("is_hidden")]
         public bool isHidden { get; set; }
-        public long accountLimit { get; set; }
-        public long accountLimitCooldown { get; set; }
+
+        [JsonProperty("account_limit")]
+        public string accountLimit { get; set; }
+
+        [JsonProperty("account_limit_cooldown")]
+        public string accountLimitCooldown { get; set; }
+
+        [JsonProperty("ingredients")]
         public List<Ingredient> ingredients { get; set; }
+
+        [JsonProperty("rolls")]
         public List<Roll> rolls { get; set; }
+
+        [JsonProperty("upgrade_specs")]
         public object upgradeSpecs { get; set; }
+
+        [JsonProperty("category")]
         public string category { get; set; }
     }
 
     public partial class DisplayData
     {
+        [JsonProperty("name")]
         public string name { get; set; }
+
+        [JsonProperty("image")]
         public string image { get; set; }
+
+        [JsonProperty("description")]
         public string description { get; set; }
     }
 
     public partial class Ingredient
     {
+        [JsonProperty("type")]
         public string type { get; set; }
-        public long index { get; set; }
+        [JsonProperty("index")]
+        public int index { get; set; }
+        [JsonProperty("amount")]
         public int amount { get; set; }
+        [JsonProperty("effect")]
         public Effect effect { get; set; }
+        [JsonProperty("ft_amount")]
+        public FtAmount ftAmount { get; set; }
         public Attributes attributes { get; set; }
+        public Collection collection { get; set; }
+        [JsonProperty("display_data")]
         public string displayData { get; set; }
         public IngredientSchema schema { get; set; }
+        [JsonProperty("template")]
         public IngredientTemplate template { get; set; }
+    }
+
+    public partial class FtAmount
+    {
+        [JsonProperty("amount")]
+        public long amount { get; set; }
+        [JsonProperty("token_symbol")]
+        public string tokenSymbol { get; set; }
+        [JsonProperty("token_contract")]
+        public string tokenContract { get; set; }
+        [JsonProperty("token_precision")]
+        public int tokenPrecision { get; set; }
     }
 
     public partial class Attributes
     {
+        [JsonProperty("attributes")]
         public List<Attribute> attributesAttributes { get; set; }
         public string schemaName { get; set; }
+        [JsonProperty("collection_name")]
         public string collectionName { get; set; }
     }
 
     public partial class Attribute
     {
         public string name { get; set; }
+        [JsonProperty("allowed_values")]
         public List<string> allowedValues { get; set; }
     }
 
     public partial class Effect
     {
+        [JsonProperty("type")]
         public string type { get; set; }
+
+        [JsonProperty("payload")]
         public Payload payload { get; set; }
     }
 
     public partial class Payload
     {
-        public long type { get; set; }
+        [JsonProperty("type")]
+        public int type { get; set; }
     }
 
     public partial class IngredientSchema
     {
         public string contract { get; set; }
+        [JsonProperty("schema_name")]
         public string schemaName { get; set; }
         public List<Format> format { get; set; }
         public long createdAtBlock { get; set; }
@@ -89,7 +162,7 @@ public class NeftyBlend
     public partial class Format
     {
         public string name { get; set; }
-        public TypeEnum type { get; set; }
+        public string type { get; set; }
     }
 
     public partial class IngredientTemplate
@@ -112,6 +185,7 @@ public class NeftyBlend
 
     public partial class Collection
     {
+        [JsonProperty("collection_name")]
         public string collectionName { get; set; }
         public string name { get; set; }
         public string img { get; set; }
@@ -150,6 +224,18 @@ public class NeftyBlend
     {
         public string type { get; set; }
         public ResultTemplate template { get; set; }
+
+        [JsonProperty("pool")]
+        public Pool pool { get; set; }
+    }
+
+    public partial class Pool
+    {
+        [JsonProperty("pool_name")]
+        public string poolName { get; set; }
+
+        [JsonProperty("display_data")]
+        public string displayData { get; set; }
     }
 
     public partial class ResultTemplate
@@ -171,16 +257,10 @@ public class NeftyBlend
 
     public partial class ImmutableData
     {
-        public string era { get; set; }
         public string img { get; set; }
+        public string video { get; set; }
         public string name { get; set; }
         public string rarity { get; set; }
-        public long zosId { get; set; }
-        public string description { get; set; }
-        public long shieldStrength { get; set; }
     }
-
     public enum TypeEnum { Image, String, Uint64, IPFS };
-
-
 }

@@ -5,23 +5,27 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// This script manages the Crafting UI, handling the display and interaction of crafting-related elements such as requirement and roll slots,
+/// roll data, and blend protection. It includes methods for setting UI text, displaying roll sprites and percentages, displaying requirement images,
+/// sorting and selecting assets in slots, displaying blend protection, and resetting slots. Serialized fields reference other components and prefabs used in the UI.
+/// </summary>
 public class CraftingUI : MonoBehaviour
 {
+    [SerializeField] public BlendProtectionController blendProtectionController;
+
     [SerializeField] private CraftingFetcher craftingFetcher;
-    [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] public GameObject[] requirementSlots;
     [SerializeField] public GameObject[] rollSlots;
     [SerializeField] public GameObject recipeUI;
-    [SerializeField] public GameObject ingredientUI;
     [SerializeField] public GameObject requirementPrefab;
-    [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject rollPrefab;
     [SerializeField] public GameObject rollPaginationArrow;
     [SerializeField] public RectTransform requirementContainer;
-    [SerializeField] public RectTransform ingredientContainer;
     [SerializeField] public RectTransform rollContainer;
     [SerializeField] private TextMeshProUGUI rollNameText;
     [SerializeField] private TextMeshProUGUI rollPercentageText;
+    [SerializeField] private UIController uIController;
     [SerializeField] public RollResult rollResults { get; set; }
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
     [SerializeField] public int slotCount { get; set; } = 100;
@@ -54,12 +58,6 @@ public class CraftingUI : MonoBehaviour
         InstantiateSlots(slotCount, requirementPrefab, requirementContainer, ref requirementSlots);
     }
 
-    public void InstantiateIngredientSlots(int slotCount)
-    {
-        ResetSlots(ingredientSlots);
-        InstantiateSlots(slotCount, ingredientPrefab, ingredientContainer, ref ingredientSlots);
-    }
-
     public void DisplayRollPaginationArrows(Sprite[] rollSprite)
     {
         if (rollSprite.Length >= 2)
@@ -78,7 +76,7 @@ public class CraftingUI : MonoBehaviour
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
         nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
         rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
-        float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
+        float rollPercentage = (float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100;
         rollPercentage = (float)Math.Round(rollPercentage, 1);
         rollPercentageText.text = rollPercentage.ToString() + "%";
     }
@@ -108,96 +106,166 @@ public class CraftingUI : MonoBehaviour
     {
         InstantiateRollSlots(1);
         rollResults = rollResult;
-        
+
         if (rollResult.rollSprites != null && rollResult.rollSprites.Length > 0)
         {
-            Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
-            nftImage.GetComponent<Image>().sprite = rollResult.rollSprites[0];
             rollNameText.text = rollResults.rollNames[0];
             float rollPercentage = ((float)rollResults.rollPercentageRolls[0] / rollResults.totalOdds * 100);
             rollPercentage = (float)Math.Round(rollPercentage, 1);
-            rollPercentageText.text = rollPercentage.ToString()+"%";
+            rollPercentageText.text = rollPercentage.ToString() + "%";
         }
     }
 
-    public void DisplayRequirementsImage(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    public async void DisplayRollImage(RollResult rollResult)
     {
-        Dictionary<int, List<string>> indexToAssetIds = new Dictionary<int, List<string>>();
-        int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
-
-        for (int i = 0; i < indexIngredientAssetsResult.indexId.Length; i++)
+        rollResults = rollResult;
+        if (rollResult.rollSprites != null && rollResult.rollSprites.Length > 0)
         {
-            int index = indexIngredientAssetsResult.indexId[i];
-            string assetId = indexIngredientAssetsResult.assetIds[i];
+            Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
+            nftImage.GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(rollResult.rollSpritesHash[0]);
 
-            if (!indexToAssetIds.ContainsKey(index))
-            {
-                indexToAssetIds[index] = new List<string>();
-            }
-
-            indexToAssetIds[index].Add(assetId);
         }
+    }
+    public void DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
+        int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
+        InstantiateRequirementSlots(totalRequiredAssets);
+        int currentRequirementSlotIndex = 0;
+        var listSize = requiredAssetResult.requiredAssetAmount.Count;
 
-        if (requiredAssetResult.requirementSprites != null)
+        for (int i = 0; i < listSize; i++)
         {
-            InstantiateRequirementSlots(totalRequiredAssets);
-            int currentRequirementSlotIndex = 0;
-
-            for (int i = 0; i < requiredAssetResult.requiredAssetAmount.Length; i++)
+            if (requiredAssetResult.requirementType[i] == "FT_INGREDIENT")
             {
-                int assetCounter = 0;
-
                 for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
                 {
-                    Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Image");
-                    nftImage.GetComponent<Image>().sprite = requiredAssetResult.requirementSprites[i];
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetTemplateId(requiredAssetResult.templateId[i]);
-                    requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(i);
+                    DisplayFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
+                    currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
+                }
+            }
+            else
+            {
+                DisplayNFTIngredientRequirement(requiredAssetResult, currentRequirementSlotIndex, i);
+                currentRequirementSlotIndex += requiredAssetResult.requiredAssetAmount[i];
 
-                    if (requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().GetBlendIngredientIndex() == i)
+            }
+        }
+        SortAndSelectAssetsInRequirementSlots(requirementSlots,indexIngredientAssetsResult);
+        uIController.ChangePrefabColor();
+
+    }
+
+    // Sort and select the assets in the requirement slots based on priority.
+    public void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
+        string[] priorityOrder = { "TEMPLATE_INGREDIENT", "ATTRIBUTE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT" };
+        var sortedRequirementSlots = requirementSlots.OrderBy(slot => Array.IndexOf(priorityOrder, slot.GetComponent<TemplateNFT>().GetRequirementType())).ToList();
+
+        List<string> selectedAssetIds = new List<string>();
+        foreach (var requirementSlot in sortedRequirementSlots)
+        {
+            if (requirementSlot.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
+            {
+                for (var i = 0; i < indexIngredientAssetsResult.assetIds.Count; i++)
+                {
+                    if (requirementSlot.GetComponent<TemplateNFT>().GetBlendIngredientIndex() == indexIngredientAssetsResult.indexId[i])
                     {
-                        if (indexToAssetIds.ContainsKey(i))
+                        if (!selectedAssetIds.Contains(indexIngredientAssetsResult.assetIds[i]))
                         {
-                            if (assetCounter < indexToAssetIds[i].Count)
-                            {
-                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = indexToAssetIds[i][assetCounter];
-                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = indexToAssetIds[i][assetCounter];
-                                assetCounter++;
-                            }
-                            else
-                            {
-                                requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateUIElementController>().selectedAssetId = "";
-                                requirementSlots[currentRequirementSlotIndex].transform.Find("SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "";
-                            }
+                            selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
+                            requirementSlot.GetComponent<RequirementUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
+                            requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "# " + indexIngredientAssetsResult.mintNumbers[i];
+                            break;
                         }
                     }
-                    currentRequirementSlotIndex++;
                 }
             }
         }
     }
 
-    public void DisplayIngredientImage(Sprite[] downloadedSprites, string[] assetIds)
+    private void DisplayFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
     {
-        if (downloadedSprites != null)
+        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
         {
-            InstantiateIngredientSlots(downloadedSprites.Length);
+            Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Text");
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+            nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
+            currentRequirementSlotIndex++;
+        }
+    }
 
-            for (int i = 0; i < downloadedSprites.Length; i++)
+    private void DisplayNFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
+    {
+        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
+        {
+            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "NFT_Text");
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[i]);
+            if (requiredAssetResult.requirementSpriteHashes[i] == null)
             {
-                Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                nftImage.GetComponent<Image>().sprite = downloadedSprites[i];
-                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(assetIds[i]);
+                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            }
+            currentRequirementSlotIndex++;
+        }
+    }
+
+    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult,int securityId)
+    {
+        LoadDefaultRollImages(rollResult);
+        DisplayRollData(rollResult);
+        DisplayRequirementsData(requiredAssetResult, indexIngredientAssetsResult);
+        DisplayRollPaginationArrows(rollResult.rollSprites);
+        DisplayBlendProtection(securityId);
+        LoadRollImages(rollResult);
+        DisplayRollImage(rollResult);
+        LoadRequirementsImages(requirementSlots);
+    }
+
+    public async void LoadRequirementsImages(GameObject[] requirementSlots)
+    {
+        foreach (var requirementSlot in requirementSlots)
+        {
+            if (!string.IsNullOrEmpty(requirementSlot.GetComponent<TemplateNFT>().GetRequirementHash()))
+            {
+                Transform nftImage = requirementSlot.transform.Find("NFT_Image");
+                nftImage.GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(requirementSlot.GetComponent<TemplateNFT>().GetRequirementHash());
             }
         }
     }
 
-    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult)
+    public async void LoadRollImages(RollResult rollResult)
     {
-        DisplayRollData(rollResult);
-        DisplayRequirementsImage(requiredAssetResult, indexIngredientAssetsResult);
-        DisplayIngredientImage(indexIngredientAssetsResult.ingredientSprites, indexIngredientAssetsResult.assetIds);
-        DisplayRollPaginationArrows(requiredAssetResult.rollSprites);
+        for (int i = 0; i < rollResult.rollSpritesHash.Length; i++)
+        {
+            rollResult.rollSprites[i] = await craftingFetcher.GetImageLoaderSpriteAsync(rollResult.rollSpritesHash[i]);
+        }
+    }
+
+    public void LoadDefaultRollImages(RollResult rollResult)
+    {
+        rollResult.rollSprites = new Sprite[rollResult.rollSpritesHash.Length];
+        for (int i = 0; i < rollResult.rollSpritesHash.Length; i++)
+        {
+            rollResult.rollSprites[i] = Resources.Load<Sprite>("UI/Burn_Image");
+        }
+    }
+
+    public void DisplayBlendProtection(int securityId) 
+    {
+        if(securityId != 0)
+        {
+            blendProtectionController.IsBlendWhitelisted(securityId);
+
+        }
+        else
+        {
+            blendProtectionController.isSecured = false;
+            blendProtectionController.whitelistUI.GetComponent<WhitelistUI>().DisplayWhitelistWarning(false);
+
+        }
     }
 
     public void ResetSlots(GameObject[] gameObjects)
@@ -211,13 +279,5 @@ public class CraftingUI : MonoBehaviour
 
             gameObjects[i] = null;
         }
-    }
-
-    public void SwitchRecipeIngredientWindow()
-    {
-        recipeUI.SetActive(!recipeUI.activeSelf);
-        ingredientUI.SetActive(!ingredientUI.activeSelf);
-        TextMeshProUGUI tabSwitcherText = gameObject.transform.Find("Utility/TabSwitcherButton/TabSwitcherText").GetComponent<TextMeshProUGUI>();
-        tabSwitcherText.text = recipeUI.activeSelf ? "Requirements" : "Inventory";
     }
 }
