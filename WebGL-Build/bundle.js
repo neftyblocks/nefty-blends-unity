@@ -2062,11 +2062,11 @@ ual.init();
 window.updateGlobals = function (newRpcHost) {
   // Update myChain
   myChain.rpcEndpoints[0].host = newRpcHost;
-
   // Recreate instances with updated configurations
   wax = new Wax([myChain], { appName: myAppName });
   anchor = new Anchor([myChain], { appName: myAppName });
-  rpcEndpoint = new JsonRpc(newRpcHost);
+  console.log(newRpcHost);
+  rpcEndpoint = new JsonRpc("https://" + newRpcHost);
   ual = new UALJs(myCallback, [myChain], myAppName, [wax, anchor], myAppRoot);
   ual.init();
 
