@@ -40,6 +40,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         }
     }
 
+    // By clicking requirement you toggle this function
     private async void ReceiveIngredients(int ingredientIndex)
     {
         try
