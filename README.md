@@ -1,8 +1,8 @@
-﻿# Introduction
 
+# Introduction
 This repository aims to be a valuable resource for developers. It offers information and inspiration for building tools in the WAX ecosystem, improving the quality of products. The plugin is created in Unity and is designed to be easily customized, allowing third parties to integrate it into their own Unity projects. The main goal is to increase development opportunities, promote decentralization, and contribute to the wider blockchain ecosystem. 
 
-Included within the GitHub repository is a demonstration of NeftyBlocks' blending feature. The demo includes a step-by-step guide on how to log in and submit smart contract transactions directly to the blockchain. The transaction submission is facilitated by a JavaScript (JS) wrapper, which serves as a communication bridge between C# and JS. The repository also provides instructions on how to deploy projects into a WebGL environment and how to test them and deploy.
+Included within the GitHub repository is a demonstration of NeftyBlocks blending feature. The demo includes a step-by-step guide on how to log in and submit smart contract transactions directly to the blockchain and many other features. The transaction submission is facilitated by a JavaScript (JS) wrapper, which serves as a communication bridge between C# and JS. The repository also provides instructions on how to deploy projects into a WebGL environment and also how to test them and deploy.
 
 ## 🔑 Prerequisites
 
@@ -10,7 +10,7 @@ Included within the GitHub repository is a demonstration of NeftyBlocks' blendin
 -  Git
 -  Npm 
 -  Node.js 
--  	Unity Hub
+-  Unity Hub
 
 ## 🔧 Installing
 
@@ -61,6 +61,7 @@ To complete the installation, follow these steps:
 ##  📖 User guide
 
 Once the plugin is built and running in the local environment, you can access the login screen. From there, you have two options: you can either log in with **Anchor** or **Wax Cloud Wallet**. These options are made possible through the use of forked UAL dependencies by NeftyBlocks. Additionally, the user has the flexibility to select their own RPC endpoint. This allows them to submit transactions and make calls to the "get_table_rows" function using the endpoint of their choice.
+![](https://i.ibb.co/xmzY2np/Screenshot-4.png)
 
 After the user successfully logs in, they can view their owned NFTs. These NFTs are organized by collection, based on the **Collection Name** set inside the PluginController. To locate the **PluginController**, you can search for it in the **Project Hierarchy**.
 
@@ -569,7 +570,8 @@ If you want it to generate in Vercel:
 3.  Inside your folder, run  `vercel link`to create a new Vercel project
 4.  Inside the generated  `.vercel`folder, save the  `projectId`and  `orgId`from the  `project.json`
 5.  Inside GitHub, add  `VERCEL_TOKEN`,  `VERCEL_ORG_ID`, and  `VERCEL_PROJECT_ID`as  [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-
+### Important note 
+Ensure that the project is built to see changes in the Vercel environment. Refer to Step 4 of the **Installation** for instructions on how to accomplish this.
 
 ## 🧪  Running the tests
 
