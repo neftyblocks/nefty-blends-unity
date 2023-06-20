@@ -1257,7 +1257,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3d94b800ac11234dbf42f95fe98da4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collectionName: auroratesttt
+  collectionName: skunkychunks
 --- !u!4 &206229107
 Transform:
   m_ObjectHideFlags: 0
@@ -7189,7 +7189,7 @@ MonoBehaviour:
   primaryTextColor: {r: 0.6742405, g: 1, b: 0.2028302, a: 1}
   primaryButtonColor: {r: 1, g: 0.7185303, b: 0, a: 1}
   secondaryButtonColor: {r: 0.8962264, g: 0.19023676, b: 0.71203905, a: 1}
-  setToDefault: 1
+  setToDefault: 0
   toggleDebugging: 1
   debugButton: {fileID: 604020776}
 --- !u!1 &1110650590

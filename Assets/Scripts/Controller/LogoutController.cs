@@ -12,7 +12,6 @@ public class LogoutController : MonoBehaviour
     {
         ToggleLogoutButton();
         sendTransactionJS = GameObject.Find("Javascript-Wrapper").GetComponent<SendTransactionJS>();
-        
     }
     public void ToggleLogoutButton()
     {
