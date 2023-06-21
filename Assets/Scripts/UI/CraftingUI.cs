@@ -263,7 +263,7 @@ public class CraftingUI : MonoBehaviour
         else
         {
             blendProtectionController.isSecured = false;
-            blendProtectionController.whitelistUI.GetComponent<WhitelistUI>().DisplayWhitelistWarning(false);
+            blendProtectionController.whitelistUI.GetComponent<WhitelistUI>().DisplayWhitelistWarning(WhitelistStatus.NotProtected);
 
         }
     }

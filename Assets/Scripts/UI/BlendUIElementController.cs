@@ -1,43 +1,80 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
-/// <summary>
-/// This class manages the behavior of the blend UI elements inside the popup with respect to mouse pointer events.
-/// </summary>
 public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private GameObject selectionBoardImage;
-    [SerializeField] private bool isClicked;
     [SerializeField] private GameObject playSound;
     public delegate void UserSelectedBlendInEventHandler(int blendId);
     public static event UserSelectedBlendInEventHandler UserSelectedBlend;
+    private const float TooltipDelay = 0.05f; // tooltip delay time in seconds
+    private Coroutine tooltipCoroutine; // reference to tooltip coroutine
 
     private void Start()
     {
         playSound = GameObject.Find("Audio Source");
-
     }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
-        selectionBoardImage.SetActive(true);
+        ShowSelectionBoard();
+        tooltipCoroutine = StartCoroutine(ShowTooltipAfterDelay(TooltipDelay));
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!isClicked)
+        HideSelectionBoard();
+        if (tooltipCoroutine != null)
         {
-            selectionBoardImage.SetActive(false);
+            StopCoroutine(tooltipCoroutine);
+            tooltipCoroutine = null;
         }
-    }
-    public void OnPointerClick(PointerEventData pointerEventData)
-    {
-        playSound.GetComponent<ButtonSound>().PlayButtonSound();
-        int blendId = gameObject.GetComponent<BlendNFT>().GetBlendId();
-        UserSelectedBlend(blendId);
+        HideTooltip();
     }
 
-    public bool IsClicked()
+    public void OnPointerClick(PointerEventData pointerEventData)
     {
-        return isClicked;
+        PlayButtonClickSound();
+        HideTooltip();
+        NotifyUserSelection();
+    }
+
+    private IEnumerator ShowTooltipAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ShowTooltip();
+    }
+
+    private void ShowTooltip()
+    {
+        TooltipManager.tooltipManager.SetAndShowShowTooltip(gameObject.GetComponent<BlendNFT>().GetBlendName());
+    }
+
+    private void HideTooltip()
+    {
+        TooltipManager.tooltipManager.HideTooltip();
+    }
+
+    private void ShowSelectionBoard()
+    {
+        selectionBoardImage.SetActive(true);
+    }
+
+    private void HideSelectionBoard()
+    {
+        selectionBoardImage.SetActive(false);
+    }
+
+    private void PlayButtonClickSound()
+    {
+        playSound.GetComponent<ButtonSound>().PlayButtonSound();
+    }
+
+    private void NotifyUserSelection()
+    {
+        int blendId = gameObject.GetComponent<BlendNFT>().GetBlendId();
+        UserSelectedBlend(blendId);
     }
 }

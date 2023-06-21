@@ -48,20 +48,9 @@ public class BlendProtectionController : MonoBehaviour
     public void ResetProtectionState()
     {
         protectedAssets.Clear();
-        UpdateWhitelistedState(false);
+        whitelistUI.DisplayWhitelistWarning(WhitelistStatus.Checking);
     }
 
-    // Updates the whitelisted state and displays a whitelist warning if the value is not whitelisted.
-    public void UpdateWhitelistedState(bool value)
-    {
-        isWhitelisted = value;
-        whitelistUI.DisplayWhitelistWarning(!isWhitelisted);
-    }
-    // Getting called in WrapperJS.jslib and checks if user from response is valid for the Proof of Whitelist protection.
-    public void IsWhitelisted(string response)
-    {
-        UpdateWhitelistedState(response == "true");
-    }
     public void Initialize()
     {
         isWhitelisted = true;
@@ -93,14 +82,20 @@ public class BlendProtectionController : MonoBehaviour
             if (!ownsProof)
             {
                 isWhitelisted = false;
-                whitelistUI.DisplayWhitelistWarning(true);
+                whitelistUI.DisplayWhitelistWarning(WhitelistStatus.NotWhitelisted);
                 break;
             }
         }
 
         var sortedList = SortFilterList(filterList);
         protectedAssets = await AddAssetsToProtection(sortedList);
-        whitelistUI.RemoveWhitelistWarning(isWhitelisted);
+        whitelistUI.DisplayWhitelistWarning(WhitelistStatus.Whitelisted);
+    }
+
+    // Getting called in WrapperJS.jslib and checks if user from response is valid for the Proof of Whitelist protection.
+    public void IsWhitelisted(string response)
+    {
+        whitelistUI.DisplayWhitelistWarning(response == "true" ? WhitelistStatus.Whitelisted : WhitelistStatus.NotWhitelisted);
     }
 
     // Processes a protection filter and returns details about the filter from received JSON in secure.nefty contract (that is called in WrapperJS.jslib).

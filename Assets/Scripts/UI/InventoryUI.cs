@@ -86,8 +86,17 @@ public class InventoryUI : MonoBehaviour
             if (mintText == null) return;
 
             mintText.text = "#" + nftComponent.GetMintNumber().ToString();
+        }
 
-            Transform nftImage = inventorySlots[i].transform.Find("NFT_Image");
+        // Start a separate loop for loading the images.
+        for (int i = 0; i < inventoryAsset.inventoryAssetSprites.Count; i++)
+        {
+            if (!gameObject.activeInHierarchy) return;
+
+            GameObject slot = inventorySlots[i];
+            if (slot == null) return;
+
+            Transform nftImage = slot.transform.Find("NFT_Image");
             if (nftImage != null)
             {
                 var imageLoadTask = inventoryFetcherController.GetImageLoaderSpriteAsync(inventoryAsset.inventoryAssetSprites[i]);

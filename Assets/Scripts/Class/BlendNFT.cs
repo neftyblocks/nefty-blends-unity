@@ -10,6 +10,7 @@ public class BlendNFT : MonoBehaviour
 {
     [SerializeField] private int blendId;
     [SerializeField] private string contract;
+    [SerializeField] private string blendName;
 
     public void SetBlendId(int id)
     {
@@ -18,6 +19,15 @@ public class BlendNFT : MonoBehaviour
     public int GetBlendId()
     {
         return blendId;
+    }
+
+    public void SetBlendName(string name)
+    {
+        blendName = name;
+    }
+    public string GetBlendName()
+    {
+        return blendName;
     }
     public void SetContractName(string contractName)
     {
