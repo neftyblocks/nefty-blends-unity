@@ -18,7 +18,6 @@ public class WhitelistUI : MonoBehaviour
     }
     public void DisplayWhitelistWarning(WhitelistStatus status)
     {
-        Debug.Log(status);
         switch (status)
         {
             case WhitelistStatus.NotWhitelisted:

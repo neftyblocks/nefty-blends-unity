@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// The IngredientSelector class is responsible for managing and setting the chosen asset in a selectedRequirementObject. 
@@ -12,10 +13,11 @@ public class IngredientSelector : MonoBehaviour
 
     // SetSelectedAsset updates the chosen asset for the selectedRequirementObject by updating both the internal 
     // asset ID and the visible asset ID in the corresponding UI text element.
-    public void SetSelectedAsset(string assetId,int mintNumber)
+    public void SetSelectedAsset(string assetId,int mintNumber, Sprite sprite)
     {
         selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId = assetId;
         TextMeshProUGUI textMeshPro = selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
+        var image = selectedRequirementObject.transform.Find("NFT_Image").GetComponent<Image>();
 
         if (mintNumber == -1)
         {
@@ -23,7 +25,9 @@ public class IngredientSelector : MonoBehaviour
         }
         else
         {
-            textMeshPro.text = "# " + mintNumber;
+
+            textMeshPro.text = "Selected: " + mintNumber;
         }
+        image.sprite = sprite;
     }
 }

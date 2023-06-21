@@ -63,21 +63,21 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
         if (isClicked)
         {
             CheckForMatchingAssetIdsInOtherRequirements();
-            ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
+            ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber(),gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
             UpdateGreyedOutWindows();
         }
         else
         {
 
             CheckForMatchingAssetIdsInOtherRequirements();
-            ingredientSelector.SetSelectedAsset(string.Empty, -1);
+            ingredientSelector.SetSelectedAsset(string.Empty, -1, Resources.Load<Sprite>("UI/Empty_Image"));
             UpdateGreyedOutWindows();
             // if selectedassetId that was clicked does not equal the one that is inside this gameobject then update this gameobject with the asset id that was previously selected in another requirement field.
             if (ingredientSelector.selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId != gameObject.GetComponent<NFT>().GetAssetId())
             {
                 GetComponent<UIElementController>().SetIsClicked(false);
                 GetComponent<UIElementController>().GreyOutAsset(false);
-                ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber());
+                ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber(), gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
             }
 
         }
@@ -103,6 +103,7 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
             {
                 requirementController.selectedAssetId = string.Empty;
                 var textMeshPro = child.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
+                child.transform.Find("NFT_Image").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/Empty_Image");
                 textMeshPro.text = string.Empty;
             }
         }

@@ -22,7 +22,7 @@ public class CraftAssetPopupUI : MonoBehaviour
 
     // Display automatically selected items in the popup as selected.
     public void DisplayBeingSelected()
-    {
+    {   
         var selectedIds = blendController.GetSelectedAssetList();
         foreach (var ingredientSlot in ingredientSlots)
         {

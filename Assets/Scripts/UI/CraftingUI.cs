@@ -156,7 +156,7 @@ public class CraftingUI : MonoBehaviour
     }
 
     // Sort and select the assets in the requirement slots based on priority.
-    public void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    public async void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         string[] priorityOrder = { "TEMPLATE_INGREDIENT", "ATTRIBUTE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT" };
         var sortedRequirementSlots = requirementSlots.OrderBy(slot => Array.IndexOf(priorityOrder, slot.GetComponent<TemplateNFT>().GetRequirementType())).ToList();
@@ -174,7 +174,8 @@ public class CraftingUI : MonoBehaviour
                         {
                             selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
                             requirementSlot.GetComponent<RequirementUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
-                            requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "# " + indexIngredientAssetsResult.mintNumbers[i];
+                            requirementSlot.transform.Find("NFT_Image").GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(indexIngredientAssetsResult.ingredientSpriteHashes[i]); ;
+                            requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "Autoselected: # " + indexIngredientAssetsResult.mintNumbers[i];
                             break;
                         }
                     }
@@ -187,7 +188,7 @@ public class CraftingUI : MonoBehaviour
     {
         for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
         {
-            Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("NFT_Text");
+            Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("Requirement_Background/Requirement_Text");
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
             nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
@@ -200,7 +201,7 @@ public class CraftingUI : MonoBehaviour
     {
         for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
         {
-            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "NFT_Text");
+            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "Requirement_Background/Requirement_Text");
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[i]);
