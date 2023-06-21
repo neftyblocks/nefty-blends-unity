@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// The BlendController class manages the functionality for blending assets and submitting the transaction through JS Wrapper.
@@ -108,6 +109,7 @@ public class BlendController : MonoBehaviour
             Transform requirementObject = child.Find("Selected_Ingredient_Background/SelectedIngredient");
             if (requirementObject != null)
             {
+                child.Find("NFT_Image").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/Empty_Image");
                 var textMesh = requirementObject.GetComponent<TextMeshProUGUI>();
                 if (textMesh != null)
                     textMesh.text = string.Empty;

@@ -60,28 +60,32 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
         var ingredientSelector = GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>();
         playSound.GetComponent<ButtonSound>().PlayButtonSound();
         isClicked = !isClicked;
+
+        var currentAssetId = gameObject.GetComponent<NFT>().GetAssetId();
+
         if (isClicked)
         {
-            CheckForMatchingAssetIdsInOtherRequirements();
-            ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber(),gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
-            UpdateGreyedOutWindows();
+            CheckForMatchingAssetIdsInOtherRequirements(currentAssetId);
+            ingredientSelector.SetSelectedAsset(currentAssetId, gameObject.GetComponent<NFT>().GetMintNumber(), gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
         }
         else
         {
-
-            CheckForMatchingAssetIdsInOtherRequirements();
-            ingredientSelector.SetSelectedAsset(string.Empty, -1, Resources.Load<Sprite>("UI/Empty_Image"));
-            UpdateGreyedOutWindows();
-            // if selectedassetId that was clicked does not equal the one that is inside this gameobject then update this gameobject with the asset id that was previously selected in another requirement field.
-            if (ingredientSelector.selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId != gameObject.GetComponent<NFT>().GetAssetId())
+            if (ingredientSelector.selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId == currentAssetId)
+            {
+                CheckForMatchingAssetIdsInOtherRequirements(string.Empty);
+                ingredientSelector.SetSelectedAsset(string.Empty, -1, Resources.Load<Sprite>("UI/Empty_Image"));
+            }
+            else
             {
                 GetComponent<UIElementController>().SetIsClicked(false);
                 GetComponent<UIElementController>().GreyOutAsset(false);
-                ingredientSelector.SetSelectedAsset(gameObject.GetComponent<NFT>().GetAssetId(), gameObject.GetComponent<NFT>().GetMintNumber(), gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
+                CheckForMatchingAssetIdsInOtherRequirements(currentAssetId);
+                ingredientSelector.SetSelectedAsset(currentAssetId, gameObject.GetComponent<NFT>().GetMintNumber(), gameObject.transform.Find("NFT_Image").GetComponent<Image>().sprite);
             }
-
         }
+        UpdateGreyedOutWindows();
     }
+
 
     // If assetId from another requirement field is taken it will remove greyed out field
     public void UpdateGreyedOutWindows()
@@ -91,15 +95,14 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
     }
 
     // if there are other matching assetids set them as empty
-    private void CheckForMatchingAssetIdsInOtherRequirements()
+    private void CheckForMatchingAssetIdsInOtherRequirements(string newAssetId)
     {
-        var currentAssetId = gameObject.GetComponent<NFT>().GetAssetId();
         var blendController = GameObject.Find("BlendController").GetComponent<BlendController>();
         var requirementPanel = blendController.requirementPanel;
         foreach (Transform child in requirementPanel.transform)
         {
             var requirementController = child.GetComponent<RequirementUIElementController>();
-            if (requirementController != null && requirementController.selectedAssetId == currentAssetId)
+            if (requirementController != null && (requirementController.selectedAssetId == newAssetId || requirementController.selectedAssetId == gameObject.GetComponent<NFT>().GetAssetId()))
             {
                 requirementController.selectedAssetId = string.Empty;
                 var textMeshPro = child.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
