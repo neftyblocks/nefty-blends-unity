@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -83,7 +84,7 @@ public class CraftingUI : MonoBehaviour
         currentRollSpriteIndex = (currentRollSpriteIndex + 1) % rollResults.rollSprites.Length;
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
         nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
-        rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
+        SetRollNameText(rollResults.rollNames[currentRollSpriteIndex]);
         float rollPercentage = (float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100;
         rollPercentage = (float)Math.Round(rollPercentage, 1);
         SetRollPercentageText(rollPercentage.ToString());
@@ -98,7 +99,7 @@ public class CraftingUI : MonoBehaviour
         }
         Transform nftImage = rollSlots[0].transform.Find("NFT_Image");
         nftImage.GetComponent<Image>().sprite = rollResults.rollSprites[currentRollSpriteIndex];
-        rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
+        SetRollNameText(rollResults.rollNames[currentRollSpriteIndex]);
         float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
         rollPercentage = (float)Math.Round(rollPercentage, 1);
         SetRollPercentageText(rollPercentage.ToString());
@@ -117,7 +118,7 @@ public class CraftingUI : MonoBehaviour
 
         if (rollResult.rollSprites != null && rollResult.rollSprites.Length > 0)
         {
-            rollNameText.text = rollResults.rollNames[0];
+            SetRollNameText(rollResults.rollNames[0]);
             float rollPercentage = ((float)rollResults.rollPercentageRolls[0] / rollResults.totalOdds * 100);
             rollPercentage = (float)Math.Round(rollPercentage, 1);
             SetRollPercentageText(rollPercentage.ToString());
@@ -135,7 +136,7 @@ public class CraftingUI : MonoBehaviour
 
         }
     }
-    public void DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    public async Task DisplayRequirementsData(RequiredAssetsResult requiredAssetResult, IndexIngredientAssetsResult indexIngredientAssetsResult)
     {
         int totalRequiredAssets = requiredAssetResult.requiredAssetAmount.Sum();
         InstantiateRequirementSlots(totalRequiredAssets);
@@ -159,17 +160,25 @@ public class CraftingUI : MonoBehaviour
 
             }
         }
-        SortAndSelectAssetsInRequirementSlots(requirementSlots,indexIngredientAssetsResult);
+        var sortedRequirementSlots = SortAssets(requirementSlots);
+        SetupRequirements(sortedRequirementSlots, indexIngredientAssetsResult);
+        await LoadRequirementSlotImages(sortedRequirementSlots, indexIngredientAssetsResult);
+
         uIController.ChangePrefabColor();
+
 
     }
 
-    // Sort and select the assets in the requirement slots based on priority.
-    public async void SortAndSelectAssetsInRequirementSlots(GameObject[] requirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    // Method for sorting the assets based on priority.
+    public List<GameObject> SortAssets(GameObject[] requirementSlots)
     {
         string[] priorityOrder = { "TEMPLATE_INGREDIENT", "ATTRIBUTE_INGREDIENT", "SCHEMA_INGREDIENT", "COLLECTION_INGREDIENT" };
         var sortedRequirementSlots = requirementSlots.OrderBy(slot => Array.IndexOf(priorityOrder, slot.GetComponent<TemplateNFT>().GetRequirementType())).ToList();
+        return sortedRequirementSlots;
+    }
 
+    public void SetupRequirements(List<GameObject> sortedRequirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
         List<string> selectedAssetIds = new List<string>();
         foreach (var requirementSlot in sortedRequirementSlots)
         {
@@ -183,7 +192,6 @@ public class CraftingUI : MonoBehaviour
                         {
                             selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
                             requirementSlot.GetComponent<RequirementUIElementController>().selectedAssetId = indexIngredientAssetsResult.assetIds[i];
-                            requirementSlot.transform.Find("NFT_Image").GetComponent<Image>().sprite = await craftingFetcher.GetImageLoaderSpriteAsync(indexIngredientAssetsResult.ingredientSpriteHashes[i]); ;
                             requirementSlot.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>().text = "Autoselected: # " + indexIngredientAssetsResult.mintNumbers[i];
                             break;
                         }
@@ -192,6 +200,28 @@ public class CraftingUI : MonoBehaviour
             }
         }
     }
+
+    public async Task LoadRequirementSlotImages(List<GameObject> sortedRequirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
+        List<string> selectedAssetIds = new List<string>();
+        foreach (var requirementSlot in sortedRequirementSlots)
+        {
+            if (requirementSlot.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
+            {
+                for (var i = 0; i < indexIngredientAssetsResult.assetIds.Count; i++)
+                {
+                    if (requirementSlot.GetComponent<TemplateNFT>().GetBlendIngredientIndex() == indexIngredientAssetsResult.indexId[i] && !selectedAssetIds.Contains(indexIngredientAssetsResult.assetIds[i]))
+                    {
+                        selectedAssetIds.Add(indexIngredientAssetsResult.assetIds[i]);
+                        Sprite sprite = await craftingFetcher.GetImageLoaderSpriteAsync(indexIngredientAssetsResult.ingredientSpriteHashes[i]);
+                        requirementSlot.transform.Find("NFT_Image").GetComponent<Image>().sprite = sprite;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 
     private void DisplayFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
     {
@@ -226,11 +256,11 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult,int securityId)
+    public async Task DisplayAssetImages(RequiredAssetsResult  requiredAssetResult,IndexIngredientAssetsResult indexIngredientAssetsResult,RollResult rollResult,int securityId)
     {
         LoadDefaultRollImages(rollResult);
         DisplayRollData(rollResult);
-        DisplayRequirementsData(requiredAssetResult, indexIngredientAssetsResult);
+        await DisplayRequirementsData(requiredAssetResult, indexIngredientAssetsResult);
         DisplayRollPaginationArrows(rollResult.rollSprites);
         DisplayBlendProtection(securityId);
         LoadRollImages(rollResult);
