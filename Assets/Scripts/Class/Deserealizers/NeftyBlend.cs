@@ -96,6 +96,7 @@ public class NeftyBlend
         [JsonProperty("ft_amount")]
         public FtAmount ftAmount { get; set; }
         public Attributes attributes { get; set; }
+        [JsonProperty("collection")]
         public Collection collection { get; set; }
         [JsonProperty("display_data")]
         public string displayData { get; set; }

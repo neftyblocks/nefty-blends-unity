@@ -209,17 +209,18 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    private void DisplayNFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
+    private void DisplayNFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int index)
     {
-        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
+        for (int j = 0; j < requiredAssetResult.requiredAssetAmount[index]; j++)
         {
-            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[i] != null ? "NFT_Image" : "Requirement_Background/Requirement_Text");
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[i]);
-            if (requiredAssetResult.requirementSpriteHashes[i] == null)
+            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[index] != null ? "NFT_Image" : "Requirement_Background/Requirement_Text");
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[index]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[index]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[index]);
+            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetMarketplaceLink(requiredAssetResult.marketplaceLink[index]);
+            if (requiredAssetResult.requirementSpriteHashes[index] == null)
             {
-                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[index];
             }
             currentRequirementSlotIndex++;
         }

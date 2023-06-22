@@ -13,7 +13,8 @@ public class CraftAssetPopupUI : MonoBehaviour
     [SerializeField] public GameObject ingredientPrefab;
     [SerializeField] public GameObject[] ingredientSlots;
     [SerializeField] private UIController uIController;
-
+    [SerializeField] private GameObject hyperlinkButton;
+    [SerializeField] private string currentMarketplaceUrl;
     public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         ResetSlots(ingredientSlots);
@@ -68,10 +69,23 @@ public class CraftAssetPopupUI : MonoBehaviour
         }
     }
 
+    public void OpenChannel()
+    {
+        Application.OpenURL(currentMarketplaceUrl);
+    }
+
     public async void DisplayAssetImages(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         if (exactIndexIngredientAssetsResult != null)
         {
+            hyperlinkButton.SetActive(false);
+            if (exactIndexIngredientAssetsResult.spriteHashes == null || exactIndexIngredientAssetsResult.spriteHashes.Count <= 0)
+            {
+                hyperlinkButton.SetActive(true);
+                currentMarketplaceUrl = GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().selectedRequirementObject.GetComponent<TemplateNFT>().GetMarketplaceLink();
+            }
+
+
             InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult);
 
             for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)

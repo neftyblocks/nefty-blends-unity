@@ -13,6 +13,8 @@ public class RequiredAssetsResult
     public List<int> requiredAssetAmount { get; set; } = new List<int>();
     public List<int> ingredientIndex { get; set; } = new List<int>();
     public List<int> templateId { get; set; } = new List<int>();
+    public List<string> marketplaceLink { get; set; } = new List<string>();
+
 }
 public class FT
 {

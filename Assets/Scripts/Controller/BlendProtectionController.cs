@@ -83,7 +83,7 @@ public class BlendProtectionController : MonoBehaviour
             {
                 isWhitelisted = false;
                 whitelistUI.DisplayWhitelistWarning(WhitelistStatus.NotWhitelisted);
-                break;
+                return;
             }
         }
 

@@ -90,7 +90,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
             }
 
             var securityId = deserializedJsonResult.details.securityId;
-
+            var marketplaceLink = "https://neftyblocks.com/marketplace/listing";
             foreach (var ingredient in deserializedJsonResult.details.ingredients)
             {
                 switch (ingredient.type)
@@ -107,7 +107,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         {
                             requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.video);
                         }
-
+                        requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?template_id={ingredient.template.templateId}&collection_name={deserializedJsonResult.details.collectionName}");
                         requiredAssetsResult.fungibleToken.Add(null);
                         break;
 
@@ -116,6 +116,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.schema.schemaName);
                         requiredAssetsResult.fungibleToken.Add(null);
+                        requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?schema_name={ingredient.schema.schemaName}&collection_name={deserializedJsonResult.details.collectionName}");
                         break;
 
                     case "COLLECTION_INGREDIENT":
@@ -123,6 +124,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.collection.collectionName);
                         requiredAssetsResult.fungibleToken.Add(null);
+                        requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?collection_name={ingredient.collection.collectionName}");
                         break;
 
                     case "FT_INGREDIENT":
@@ -137,6 +139,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                             tokenSymbol = ingredient.ftAmount.tokenSymbol
                         });
                         requiredAssetsResult.tokenContract.Add(ingredient.ftAmount.amount + ingredient.ftAmount.tokenSymbol.ToString());
+                        requiredAssetsResult.marketplaceLink.Add($"");
                         break;
 
                     case "ATTRIBUTE_INGREDIENT":
@@ -144,6 +147,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         requiredAssetsResult.requirementSpriteHashes.Add(null);
                         requiredAssetsResult.requirementText.Add(ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault());
                         requiredAssetsResult.fungibleToken.Add(null);
+                        requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?data:text.rarity={ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault()}&collection_name={deserializedJsonResult.details.collectionName}");
                         break;
 
                     default:
