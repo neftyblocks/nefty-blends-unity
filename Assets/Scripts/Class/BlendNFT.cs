@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class BlendNFT : MonoBehaviour
 {
@@ -12,26 +6,26 @@ public class BlendNFT : MonoBehaviour
     [SerializeField] private string contract;
     [SerializeField] private string blendName;
 
-    public void SetBlendId(int id)
+    public void SetBlendId(int blendId)
     {
-        blendId = id;
+        this.blendId = blendId;
     }
     public int GetBlendId()
     {
         return blendId;
     }
 
-    public void SetBlendName(string name)
+    public void SetBlendName(string blendName)
     {
-        blendName = name;
+        this.blendName = blendName;
     }
     public string GetBlendName()
     {
         return blendName;
     }
-    public void SetContractName(string contractName)
+    public void SetContractName(string contract)
     {
-        contract = contractName;
+        this.contract = contract;
     }
     public string GetContractName()
     {

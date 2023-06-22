@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TemplateNFT : MonoBehaviour
@@ -8,11 +6,10 @@ public class TemplateNFT : MonoBehaviour
     [SerializeField] private string requirementType;
     [SerializeField] private string requirementHash;
     [SerializeField] private string marketplaceLink;
-
-    [SerializeField] private FT fungibleToken;
-    public void SetBlendIngredientIndex(int id)
+    private FT fungibleToken;
+    public void SetBlendIngredientIndex(int blendIngredientIndex)
     {
-        blendIngredientIndex = id;
+        this.blendIngredientIndex = blendIngredientIndex;
     }
     public int GetBlendIngredientIndex()
     {
@@ -30,21 +27,21 @@ public class TemplateNFT : MonoBehaviour
     {
         return requirementHash;
     }
-    public void SetRequirementHash(string hash)
+    public void SetRequirementHash(string requirementHash)
     {
-        requirementHash = hash;
+        this.requirementHash = requirementHash;
     }
-    public void SetRequirementType(string type)
+    public void SetRequirementType(string requirementType)
     {
-        requirementType = type;
+        this.requirementType = requirementType;
     }
     public string GetRequirementType()
     {
         return requirementType;
     }
-    public void SetFungibleToken(FT ft)
+    public void SetFungibleToken(FT fungibleToken)
     {
-        fungibleToken = ft;
+        this.fungibleToken = fungibleToken;
     }
     public FT GetFungibleToken()
     {

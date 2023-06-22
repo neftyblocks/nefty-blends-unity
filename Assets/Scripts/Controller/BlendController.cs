@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using TMPro;
@@ -14,9 +12,9 @@ public class BlendController : MonoBehaviour
 {
     [SerializeField] public GameObject requirementPanel;
     [SerializeField] public BlendProtectionController blendProtectionController;
-    [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public CraftAssetPopupController craftAssetPopupController;
-    [SerializeField] public IPopupOutputter popupOutputter;
+    public ISendTransactionJS sendTransactionJS;
+    public IPopupOutputter popupOutputter;
 
     [ExcludeFromCodeCoverage]
     void Start()
@@ -42,7 +40,7 @@ public class BlendController : MonoBehaviour
         var uiController = GetUIElementController(child);
         var templateNFT = GetTemplateNFT(child);
 
-        return !(uiController.selectedAssetId == null || uiController.selectedAssetId == "") || templateNFT.GetRequirementType() == "FT_INGREDIENT";
+        return !string.IsNullOrEmpty(uiController.selectedAssetId) || templateNFT.GetRequirementType() == "FT_INGREDIENT";
     }
 
     // Determines if a blend operation is possible as long as there aren't any empty selectedAssetId's in inside the requirementPanel
@@ -58,7 +56,7 @@ public class BlendController : MonoBehaviour
     public string[] GetSelectedAssetList()
     {
         return requirementPanel == null
-            ? new string[0]
+            ? Array.Empty<string>()
             : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() != "FT_INGREDIENT")
                                                         .Select(t => GetUIElementController(t).selectedAssetId)
                                                         .ToArray();
@@ -68,7 +66,7 @@ public class BlendController : MonoBehaviour
     public string[] GetContractNameList()
     {
         return requirementPanel == null
-            ? new string[0]
+            ? Array.Empty<string>()
             : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
                                                         .Select(t => GetTemplateNFT(t).GetFungibleToken().contractName)
                                                         .ToArray();
@@ -78,7 +76,7 @@ public class BlendController : MonoBehaviour
     public string[] GetTokenQuantityList()
     {
         return requirementPanel == null
-            ? new string[0]
+            ? Array.Empty<string>()
             : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
                                                         .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedAmount())
                                                         .ToArray();
@@ -88,7 +86,7 @@ public class BlendController : MonoBehaviour
     public string[] GetTokenSymbolList()
     {
         return requirementPanel == null
-            ? new string[0]
+            ? Array.Empty<string>()
             : requirementPanel.transform.Cast<Transform>().Where(t => GetTemplateNFT(t).GetRequirementType() == "FT_INGREDIENT")
                                                         .Select(t => GetTemplateNFT(t).GetFungibleToken().GetFormattedTokenSymbol())
                                                         .ToArray();
@@ -110,8 +108,7 @@ public class BlendController : MonoBehaviour
             if (requirementObject != null)
             {
                 child.Find("NFT_Image").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/Empty_Image");
-                var textMesh = requirementObject.GetComponent<TextMeshProUGUI>();
-                if (textMesh != null)
+                if (requirementObject.TryGetComponent<TextMeshProUGUI>(out var textMesh))
                     textMesh.text = string.Empty;
             }
         }

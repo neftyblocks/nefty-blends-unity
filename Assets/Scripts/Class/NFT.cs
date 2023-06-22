@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NFT : MonoBehaviour
@@ -8,27 +6,27 @@ public class NFT : MonoBehaviour
     [SerializeField] private string assetName;
     [SerializeField] private int mintNumber;
 
-    public void SetAsssetId(string id)
+    public void SetAsssetId(string assetId)
     {
-       assetId = id;
+       this.assetId = assetId;
     }
     public string GetAssetId()
     {
         return assetId;
     }
 
-    public void SetAssetName(string name)
+    public void SetAssetName(string assetName)
     {
-        assetName = name;
+        this.assetName = assetName;
     }
     public string GetAssetName()
     {
         return assetName;
     }
 
-    public void SetMintNumber(int mint)
+    public void SetMintNumber(int mintNumber)
     {
-        mintNumber = mint;
+        this.mintNumber = mintNumber;
     }
     public int GetMintNumber()
     {
