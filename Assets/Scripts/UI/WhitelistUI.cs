@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class WhitelistUI : MonoBehaviour
 {
     [SerializeField] public GameObject whitelistObject; 
-    private TextMeshProUGUI whitelist;
+    public TextMeshProUGUI whitelist;
 
     private void Awake()
     {

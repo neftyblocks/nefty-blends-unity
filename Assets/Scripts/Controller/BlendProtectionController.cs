@@ -93,6 +93,7 @@ public class BlendProtectionController : MonoBehaviour
     // Getting called in WrapperJS.jslib and checks if user from response is valid for the Proof of Whitelist protection.
     public void IsWhitelisted(string response)
     {
+        isWhitelisted = response == "true";
         whitelistUI.DisplayWhitelistWarning(response == "true" ? WhitelistStatus.Whitelisted : WhitelistStatus.NotWhitelisted);
     }
 

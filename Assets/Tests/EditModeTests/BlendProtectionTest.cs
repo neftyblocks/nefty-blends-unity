@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using NSubstitute;
 using NUnit.Framework;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlendProtectionTest
 {
@@ -38,8 +40,14 @@ public class BlendProtectionTest
         ownershipFetcher.pluginController = pluginController;
         ownershipFetcher.imageLoader = imageLoader;
         // SetUP Fake UI
-        fakeUI = new GameObject();
+        GameObject fakeUI = new GameObject("WhitelistBanner");
+        fakeUI.AddComponent<Image>();
+        GameObject textObject = new GameObject("Text (TMP)");
+        textObject.transform.SetParent(fakeUI.transform);
+
+        TextMeshProUGUI textMeshPro = textObject.AddComponent<TextMeshProUGUI>();
         whitelistUI.whitelistObject = fakeUI;
+        whitelistUI.whitelist = textMeshPro;
     }
 
     [TearDown]
@@ -92,7 +100,7 @@ public class BlendProtectionTest
         Assert.IsFalse(blendProtectionController.isWhitelisted);
     }
 
-  /*  [Test]
+    [Test]
     public void IsWhitelisted_ShouldUpdateWhitelistedStateBasedOnResponse()
     {
         // Arrange
@@ -109,7 +117,7 @@ public class BlendProtectionTest
         // Assert
         Assert.IsTrue(whitelistedTrue);
         Assert.IsFalse(whitelistedFalse);
-    }*/
+    }
 
     [Test]
     public void AdjustAmount_ShouldIncreaseAmountByOne_WhenComparisonOperatorIsTwo()
