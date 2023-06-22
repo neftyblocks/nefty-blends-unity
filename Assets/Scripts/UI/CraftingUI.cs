@@ -25,6 +25,8 @@ public class CraftingUI : MonoBehaviour
     [SerializeField] public RectTransform rollContainer;
     [SerializeField] private TextMeshProUGUI rollNameText;
     [SerializeField] private TextMeshProUGUI rollPercentageText;
+    [SerializeField] private TextMeshProUGUI rollResultCountText;
+
     [SerializeField] private UIController uIController;
     [SerializeField] public RollResult rollResults { get; set; }
     [SerializeField] public int apiCurrentPage { get; set; } = 1;
@@ -49,8 +51,14 @@ public class CraftingUI : MonoBehaviour
 
     public void SetRollPercentageText(string text)
     {
-        rollPercentageText.text = "Probability: " + text + "%";
+        rollPercentageText.text = "Chance: " + text + "%";
     }
+
+    public void SetRollResultCountText(string text)
+    {
+        rollResultCountText.text = $"Possible results: : { text }";
+    }
+
 
     public void InstantiateRequirementSlots(int slotCount)
     {
@@ -78,7 +86,7 @@ public class CraftingUI : MonoBehaviour
         rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
         float rollPercentage = (float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100;
         rollPercentage = (float)Math.Round(rollPercentage, 1);
-        rollPercentageText.text = rollPercentage.ToString() + "%";
+        SetRollPercentageText(rollPercentage.ToString());
     }
 
     public void DisplayPreviousRollSprite()
@@ -93,7 +101,7 @@ public class CraftingUI : MonoBehaviour
         rollNameText.text = rollResults.rollNames[currentRollSpriteIndex];
         float rollPercentage = ((float)rollResults.rollPercentageRolls[currentRollSpriteIndex] / rollResults.totalOdds * 100);
         rollPercentage = (float)Math.Round(rollPercentage, 1);
-        rollPercentageText.text = rollPercentage.ToString() + "%";
+        SetRollPercentageText(rollPercentage.ToString());
     }
 
     public void InstantiateRollSlots(int slotCount)
@@ -112,7 +120,8 @@ public class CraftingUI : MonoBehaviour
             rollNameText.text = rollResults.rollNames[0];
             float rollPercentage = ((float)rollResults.rollPercentageRolls[0] / rollResults.totalOdds * 100);
             rollPercentage = (float)Math.Round(rollPercentage, 1);
-            rollPercentageText.text = rollPercentage.ToString() + "%";
+            SetRollPercentageText(rollPercentage.ToString());
+            SetRollResultCountText(rollResult.rollSprites.Length.ToString());
         }
     }
 
@@ -188,9 +197,12 @@ public class CraftingUI : MonoBehaviour
     {
         for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
         {
-            Transform nftText = requirementSlots[currentRequirementSlotIndex].transform.Find("Requirement_Background/Requirement_Text");
+            Transform requirementText = requirementSlots[currentRequirementSlotIndex].transform.Find("Requirement_Background/Requirement_Text");
+            Transform selectedIngredientText = requirementSlots[currentRequirementSlotIndex].transform.Find("Selected_Ingredient_Background/SelectedIngredient");
+
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
-            nftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            requirementText.GetComponent<TextMeshProUGUI>().text = "Costs: ";
+            selectedIngredientText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
             currentRequirementSlotIndex++;
