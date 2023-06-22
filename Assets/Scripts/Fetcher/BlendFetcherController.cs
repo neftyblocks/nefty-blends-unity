@@ -73,7 +73,7 @@ public class BlendFetcherController : MonoBehaviour, IFetcher
 
                     if (displayData != null)
                     {
-                        var jsonString = displayData.ToString();
+                        var jsonString = displayData;
                         var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
                         displayImage = jsonObject?.image;
                     }

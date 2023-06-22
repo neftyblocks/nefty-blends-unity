@@ -1,10 +1,8 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using static RequiredAssetsResult;
 
 public class CraftingFetcher : MonoBehaviour, IFetcher
 {
@@ -20,7 +18,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
     {
         BlendUIElementController.UserSelectedBlend += ReceiveBlendId;
         RequirementUIElementController.UserSelectedIngredient += ReceiveIngredients;
-        RequirementUIElementController.UserSelectedGameobject += selectedObject;
+        RequirementUIElementController.UserSelectedGameobject += SelectedObject;
     }
 
     private async void ReceiveBlendId(int blendId)
@@ -57,9 +55,9 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         }
     }
 
-    private void selectedObject(GameObject gameObject)
+    private void SelectedObject(GameObject selectedObject)
     {
-        currentSelectedIngredient = gameObject;
+        currentSelectedIngredient = selectedObject;
     }
 
     public async Task<NeftyBlend> GetDeserializedData<NeftyBlend>(string url)
@@ -73,7 +71,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         return await imageLoader.GetSpriteAsync(url);
     }
 
-    public async Task<(RequiredAssetsResult, RollResult, int)> GetRequiredAssets(int blendId)
+    private async Task<(RequiredAssetsResult, RollResult, int)> GetRequiredAssets(int blendId)
     {
         var requiredAssetsResult = new RequiredAssetsResult();
         var rollResult = new RollResult();
@@ -99,14 +97,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.templateId.Add(ingredient.template.templateId);
 
-                        if (ingredient.template.immutableData.img != null)
-                        {
-                            requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.img);
-                        }
-                        else
-                        {
-                            requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.video);
-                        }
+                        requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.img ?? ingredient.template.immutableData.video);
                         requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?template_id={ingredient.template.templateId}&collection_name={deserializedJsonResult.details.collectionName}");
                         requiredAssetsResult.fungibleToken.Add(null);
                         break;
@@ -138,7 +129,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                             contractName = ingredient.ftAmount.tokenContract,
                             tokenSymbol = ingredient.ftAmount.tokenSymbol
                         });
-                        requiredAssetsResult.tokenContract.Add(ingredient.ftAmount.amount + ingredient.ftAmount.tokenSymbol.ToString());
+                        requiredAssetsResult.tokenContract.Add(ingredient.ftAmount.amount + ingredient.ftAmount.tokenSymbol);
                         requiredAssetsResult.marketplaceLink.Add($"");
                         break;
 
@@ -148,9 +139,6 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                         requiredAssetsResult.requirementText.Add(ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault());
                         requiredAssetsResult.fungibleToken.Add(null);
                         requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?data:text.rarity={ingredient.attributes.attributesAttributes.FirstOrDefault()?.allowedValues.FirstOrDefault()}&collection_name={deserializedJsonResult.details.collectionName}");
-                        break;
-
-                    default:
                         break;
                 }
 
@@ -178,11 +166,14 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                     else if (r.results.FirstOrDefault()?.pool?.displayData != null)
                     {
                         var displayData = r.results.FirstOrDefault()?.pool.displayData;
-                        var jsonString = displayData.ToString();
-                        var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
-                        var displayImage = jsonObject?.image;
+                        var jsonString = displayData;
+                        if (jsonString != null)
+                        {
+                            var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                            var displayImage = jsonObject?.image;
 
-                        return displayImage;
+                            return displayImage;
+                        }
                     }
 
                     return null;
@@ -200,11 +191,14 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                      else if (o.results.FirstOrDefault()?.pool?.displayData != null)
                      {
                          var displayData = o.results.FirstOrDefault()?.pool.displayData;
-                         var jsonString = displayData.ToString();
-                         var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
-                         var displayName = jsonObject?.name;
+                         if (displayData != null)
+                         {
+                             var jsonString = displayData;
+                             var jsonObject = JsonConvert.DeserializeObject<PoolData>(jsonString);
+                             var displayName = jsonObject?.name;
 
-                         return displayName;
+                             return displayName;
+                         }
                      }
 
                      return "burn";
@@ -227,7 +221,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         }
     }
 
-    public async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, RequiredAssetsResult requiredAssetsResult)
+    private async Task<IndexIngredientAssetsResult> GetAllIndexIngredientAssets(int blendId, RequiredAssetsResult requiredAssetsResult)
     {
         var ingredientAssetsResult = new IndexIngredientAssetsResult();
 
@@ -270,7 +264,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
         }
     }
 
-    public async Task<ExactIndexIngredientAssetsResult> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
+    private async Task<ExactIndexIngredientAssetsResult> GetExactIndexIngredientAssets(int blendId, int ingredientIndex)
     {
         var ingredientAssetResult = new ExactIndexIngredientAssetsResult();
 

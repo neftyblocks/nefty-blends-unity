@@ -11,11 +11,11 @@ public interface IImageLoader
 }
 
 /// <summary>
-/// ImageLoader is a class for loading image and text from URLs basd on IPFS hash including caching.
+/// ImageLoader is a class for loading image and text from URLs based on IPFS hash including caching.
 /// </summary>
 public class ImageLoader : MonoBehaviour, IImageLoader
 {
-    [SerializeField] private static Dictionary<string, Sprite> _spriteCache = new Dictionary<string, Sprite>();
+    private static readonly Dictionary<string, Sprite> SpriteCache = new Dictionary<string, Sprite>();
 
     public async Task<string> GetTextAsync(string url)
     {
@@ -51,7 +51,7 @@ public class ImageLoader : MonoBehaviour, IImageLoader
                 return defaultImage;
             }
 
-            if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
+            if (SpriteCache.TryGetValue(imageUri, out Sprite sprite))
             {
                 return sprite;
             }
@@ -80,7 +80,6 @@ public class ImageLoader : MonoBehaviour, IImageLoader
                 {
                     var defaultImage = Resources.Load<Sprite>("UI/Burn_Image");
                     return defaultImage;
-                    throw new UnityException(request.error);
                 }
             }
 
@@ -89,10 +88,7 @@ public class ImageLoader : MonoBehaviour, IImageLoader
             var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
 
-            if (!_spriteCache.ContainsKey(imageUri))
-            {
-                _spriteCache.Add(imageUri, sprite);
-            }
+            SpriteCache.TryAdd(imageUri, sprite);
             return sprite;
         }
         catch(Exception e)
@@ -121,7 +117,7 @@ public class ImageLoader : MonoBehaviour, IImageLoader
                 return defaultImage;
             }
 
-            if (_spriteCache.TryGetValue(imageUri, out Sprite sprite))
+            if (SpriteCache.TryGetValue(imageUri, out Sprite sprite))
             {
                 return sprite;
             }
@@ -139,16 +135,12 @@ public class ImageLoader : MonoBehaviour, IImageLoader
             {
                 var defaultImage = Resources.Load<Sprite>("UI/Burn_Image");
                 return defaultImage;
-                throw new UnityException(request.error);
             }
 
             var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
 
-            if (!_spriteCache.ContainsKey(imageUri))
-            {
-                _spriteCache.Add(imageUri, sprite);
-            }
+            SpriteCache.TryAdd(imageUri, sprite);
             return sprite;
         }
         catch (Exception e)

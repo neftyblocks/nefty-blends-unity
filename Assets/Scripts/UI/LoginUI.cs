@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -14,7 +12,7 @@ public class LoginUI : MonoBehaviour
     [SerializeField] public UIManager uIManager;
     [SerializeField] public TextMeshProUGUI walletText;
 
-    // Updates the UI elements after a successful login that is caleld in WrapperJS.jslib file
+    // Updates the UI elements after a successful login that is called in WrapperJS.jslib file
     public void LoggedIn(string walletName)
     {
         loginPanelUI.SetActive(false);

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// The UIController class manages various UI elements and provides methods to change colors, fonts, and sprites.
-/// Inside Hierachy under UIController you can change elements inside the Inspector
+/// Inside Hierarchy under UIController you can change elements inside the Inspector
 /// </summary>
 public class UIController : MonoBehaviour
 {
@@ -55,23 +55,24 @@ public class UIController : MonoBehaviour
         }
     }
 
-    public void IsDebugEnabled()
+    private void IsDebugEnabled()
     {
         debugButton.SetActive(toggleDebugging);
     }
 
-    public void ChangeColor(string tag, Color color)
+    private void ChangeColor(string objectTag, Color color)
     {
-        var foundObjects = GameObject.FindGameObjectsWithTag(tag);
+        var foundObjects = GameObject.FindGameObjectsWithTag(objectTag);
 
         foreach (var foundObject in foundObjects)
         {
             foundObject.GetComponent<TextMeshProUGUI>().color = color;
         }
     }
-    public void ChangeSprites(string tag, Sprite newSprite,Color color)
+
+    private void ChangeSprites(string objectTag, Sprite newSprite,Color color)
     {
-        var foundObjects = GameObject.FindGameObjectsWithTag(tag);
+        var foundObjects = GameObject.FindGameObjectsWithTag(objectTag);
 
         foreach (var foundObject in foundObjects)
         {

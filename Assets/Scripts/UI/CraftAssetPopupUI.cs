@@ -15,7 +15,8 @@ public class CraftAssetPopupUI : MonoBehaviour
     [SerializeField] private UIController uIController;
     [SerializeField] private GameObject hyperlinkButton;
     [SerializeField] private string currentMarketplaceUrl;
-    public void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
+
+    private void InstantiateCraftAssetPopupUI(ExactIndexIngredientAssetsResult exactIndexIngredientAssetsResult)
     {
         ResetSlots(ingredientSlots);
         InstantiateSlots(exactIndexIngredientAssetsResult.spriteHashes.Count, ingredientPrefab, craftAssetPanel, ref ingredientSlots);
@@ -41,7 +42,7 @@ public class CraftAssetPopupUI : MonoBehaviour
         }
     }
 
-    public void ResetSlots(GameObject[] gameObjects)
+    private void ResetSlots(GameObject[] gameObjects)
     {
         for (int i = 0; i < gameObjects.Length; i++)
         {
@@ -88,31 +89,35 @@ public class CraftAssetPopupUI : MonoBehaviour
 
             InstantiateCraftAssetPopupUI(exactIndexIngredientAssetsResult);
 
-            for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
-            {
-                if (!gameObject.activeInHierarchy) return;
+            if (exactIndexIngredientAssetsResult.spriteHashes != null)
+                for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
+                {
+                    if (!gameObject.activeInHierarchy) return;
 
-                ingredientSlots[i].GetComponent<NFT>().SetAsssetId(exactIndexIngredientAssetsResult.assetIds[i]);
-                ingredientSlots[i].GetComponent<NFT>().SetAssetName(exactIndexIngredientAssetsResult.assetNames[i]);
-                ingredientSlots[i].GetComponent<NFT>().SetMintNumber(exactIndexIngredientAssetsResult.mintNumbers[i]);
-            }
+                    ingredientSlots[i].GetComponent<NFT>().SetAssetId(exactIndexIngredientAssetsResult.assetIds[i]);
+                    ingredientSlots[i].GetComponent<NFT>().SetAssetName(exactIndexIngredientAssetsResult.assetNames[i]);
+                    ingredientSlots[i].GetComponent<NFT>()
+                        .SetMintNumber(exactIndexIngredientAssetsResult.mintNumbers[i]);
+                }
 
             UpdateAssetText();
 
-            for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
-            {
-                if (!gameObject.activeInHierarchy) return;
-
-                Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
-                if (nftImage != null)
+            if (exactIndexIngredientAssetsResult.spriteHashes != null)
+                for (int i = 0; i < exactIndexIngredientAssetsResult.spriteHashes.Count; i++)
                 {
-                    var spriteLoadTask = imageLoader.GetSpriteAsync(exactIndexIngredientAssetsResult.spriteHashes[i]);
-                    await spriteLoadTask;
-
                     if (!gameObject.activeInHierarchy) return;
-                    nftImage.GetComponent<Image>().sprite = spriteLoadTask.Result;
+
+                    Transform nftImage = ingredientSlots[i].transform.Find("NFT_Image");
+                    if (nftImage != null)
+                    {
+                        var spriteLoadTask =
+                            imageLoader.GetSpriteAsync(exactIndexIngredientAssetsResult.spriteHashes[i]);
+                        await spriteLoadTask;
+
+                        if (!gameObject.activeInHierarchy) return;
+                        nftImage.GetComponent<Image>().sprite = spriteLoadTask.Result;
+                    }
                 }
-            }
         }
 
         if (!gameObject.activeInHierarchy) return;
@@ -121,12 +126,12 @@ public class CraftAssetPopupUI : MonoBehaviour
         DisplayBeingSelected();
     }
 
-    public void UpdateAssetText()
+    private void UpdateAssetText()
     {
-        for (int i = 0; i < ingredientSlots.Length; i++)
+        foreach (var ingredientSlot in ingredientSlots)
         {
-            ingredientSlots[i].GetComponent<UIElementController>().SetAssetNameText(ingredientSlots[i].GetComponent<NFT>().GetAssetName());
-            ingredientSlots[i].GetComponent<UIElementController>().SetMintNumberText(ingredientSlots[i].GetComponent<NFT>().GetMintNumber().ToString());
+            ingredientSlot.GetComponent<UIElementController>().SetAssetNameText(ingredientSlot.GetComponent<NFT>().GetAssetName());
+            ingredientSlot.GetComponent<UIElementController>().SetMintNumberText(ingredientSlot.GetComponent<NFT>().GetMintNumber().ToString());
         }
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 
 /// <summary>
 /// This class manages the behavior of the blend UI elements .
@@ -78,6 +77,6 @@ public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPo
     private void NotifyUserSelection()
     {
         int blendId = gameObject.GetComponent<BlendNFT>().GetBlendId();
-        UserSelectedBlend(blendId);
+        UserSelectedBlend?.Invoke(blendId);
     }
 }

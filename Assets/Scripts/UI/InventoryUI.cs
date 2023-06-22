@@ -67,7 +67,7 @@ public class InventoryUI : MonoBehaviour
             NFT nftComponent = inventorySlots[i].GetComponent<NFT>();
             if (nftComponent == null) return;
 
-            nftComponent.SetAsssetId(inventoryAsset.invenoryAssetIds[i]);
+            nftComponent.SetAssetId(inventoryAsset.inventoryAssetIds[i]);
             nftComponent.SetAssetName(inventoryAsset.inventoryAssetName[i]);
             nftComponent.SetMintNumber(inventoryAsset.inventoryAssetMintNumber[i]);
 

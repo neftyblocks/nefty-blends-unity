@@ -1,8 +1,6 @@
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
 /// <summary>
@@ -23,7 +21,6 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
     public async Task<InventoryAsset> GetInventoryAssets(string filter)
     {
         var result = new InventoryAsset();
-        string spriteHash;
         try
         {
             string sortOption = GetSortOption(filter);
@@ -31,9 +28,9 @@ public class InventoryFetcherController : MonoBehaviour, IFetcher
             var deserializedJsonResult = await GetDeserializedData<Asset>(url);
             foreach (var detail in deserializedJsonResult.details)
             {
-                spriteHash = detail.data.img ?? detail.data.video;
+                var spriteHash = detail.data.img ?? detail.data.video;
                 result.inventoryAssetSprites.Add(spriteHash);
-                result.invenoryAssetIds.Add(detail.assetId);
+                result.inventoryAssetIds.Add(detail.assetId);
                 result.inventoryAssetMintNumber.Add(detail.templateMint);
                 result.inventoryAssetName.Add(detail.name);
             }

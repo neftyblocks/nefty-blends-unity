@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,8 +37,6 @@ public class WhitelistUI : MonoBehaviour
                 break;
             case WhitelistStatus.NotProtected:
                 whitelistObject.SetActive(false);
-                break;
-            default:
                 break;
         }
     }

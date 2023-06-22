@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// </summary>
 public class CollectionUI : MonoBehaviour
 {
-    [SerializeField] private Sprite colletionImage;
+    [SerializeField] private Sprite collectionImage;
     [SerializeField] private GameObject collectionImageUI;
     [SerializeField] private CollectionFetcherController collectionFetcherController;
 
@@ -16,10 +16,10 @@ public class CollectionUI : MonoBehaviour
     }
     public Sprite GetCollectionImage()
     {
-        return colletionImage; 
+        return collectionImage; 
     }
 
-    public void DisplayCollectionImage(Sprite image)
+    private void DisplayCollectionImage(Sprite image)
     {
         collectionImageUI.GetComponent<Image>().sprite = image;
     }

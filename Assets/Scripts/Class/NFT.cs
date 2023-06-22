@@ -6,7 +6,7 @@ public class NFT : MonoBehaviour
     [SerializeField] private string assetName;
     [SerializeField] private int mintNumber;
 
-    public void SetAsssetId(string assetId)
+    public void SetAssetId(string assetId)
     {
        this.assetId = assetId;
     }

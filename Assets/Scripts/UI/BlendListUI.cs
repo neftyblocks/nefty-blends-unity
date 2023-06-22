@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -16,14 +15,14 @@ public class BlendListUI : MonoBehaviour
     [SerializeField] private GameObject blendSlotPrefab;
     [SerializeField] private RectTransform blendPrefabContainer;
     [SerializeField] private UIController uIController;
-    [SerializeField] private int apiCurrentPage { get; set; } = 1;
+    private int apiCurrentPage { get; set; } = 1;
 
     void Start()
     {
         InstantiateBlendSlots();
     }
 
-    public async void InstantiateBlendSlots()
+    private async void InstantiateBlendSlots()
     {
         if (blendPrefabContainer == null)
             return;
@@ -43,7 +42,7 @@ public class BlendListUI : MonoBehaviour
         }
     }
 
-    public async Task DisplayAssetImages(BlendAssets blendAssets)
+    private async Task DisplayAssetImages(BlendAssets blendAssets)
     {
         for (int i = 0; i < blendAssets.spritesHash.Length; i++)
         {

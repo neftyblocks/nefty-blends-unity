@@ -23,19 +23,19 @@ public class BlendController : MonoBehaviour
         popupOutputter = GameObject.Find("PopupOutputterPanel").GetComponent<PopupOutputter>();
     }
 
-    public RequirementUIElementController GetUIElementController(Transform child)
+    private RequirementUIElementController GetUIElementController(Transform child)
     {
         return child.GetComponent<RequirementUIElementController>();
     }
 
-    public TemplateNFT GetTemplateNFT(Transform child)
+    private TemplateNFT GetTemplateNFT(Transform child)
     {
         return child.GetComponent<TemplateNFT>();
     }
 
     // Checks if a child is valid for the blending operation.
     // A child is valid if it has a selected asset or if its requirement type is FT_INGREDIENT.
-    public bool IsRequirementPanelChildValid(Transform child)
+    private bool IsRequirementPanelChildValid(Transform child)
     {
         var uiController = GetUIElementController(child);
         var templateNFT = GetTemplateNFT(child);
@@ -63,7 +63,7 @@ public class BlendController : MonoBehaviour
     }
 
     [ExcludeFromCodeCoverage]
-    public string[] GetContractNameList()
+    private string[] GetContractNameList()
     {
         return requirementPanel == null
             ? Array.Empty<string>()
@@ -73,7 +73,7 @@ public class BlendController : MonoBehaviour
     }
 
     [ExcludeFromCodeCoverage]
-    public string[] GetTokenQuantityList()
+    private string[] GetTokenQuantityList()
     {
         return requirementPanel == null
             ? Array.Empty<string>()
@@ -83,7 +83,7 @@ public class BlendController : MonoBehaviour
     }
 
     [ExcludeFromCodeCoverage]
-    public string[] GetTokenSymbolList()
+    private string[] GetTokenSymbolList()
     {
         return requirementPanel == null
             ? Array.Empty<string>()
@@ -92,7 +92,7 @@ public class BlendController : MonoBehaviour
                                                         .ToArray();
     }
 
-    // ClearSelectedAssetIds is called within JS after blend is succesful.
+    // ClearSelectedAssetIds is called within JS after blend is successful.
     public void ClearSelectedAssetIdsFromRequirements()
     {
         if (requirementPanel == null)
@@ -138,7 +138,7 @@ public class BlendController : MonoBehaviour
     }
 
     // Performs the blending operation by sending the blending transaction that ends up calling JS under folder Plugins/WrapperJS.jslib SubmitBlend()
-    public void PerformBlend()
+    private void PerformBlend()
     {
             sendTransactionJS.SendBlendTransaction(
                 craftAssetPopupController.currentBlendId,
@@ -152,7 +152,7 @@ public class BlendController : MonoBehaviour
     }
 
     // Performs a secured blending operation by sending the secured blending transaction that ends up calling JS under folder Plugins/WrapperJS.jslib SendSecuredBlend()
-    public void PerformSecuredBlend()
+    private void PerformSecuredBlend()
     {
         sendTransactionJS.SendSecuredBlendTransaction(
             craftAssetPopupController.currentBlendId,

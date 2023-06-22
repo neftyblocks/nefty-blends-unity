@@ -12,7 +12,7 @@ public class RPCController : MonoBehaviour
 
     private void Start()
     {
-        // Attach an event listener to the Dropdown's OnValueChanged event
+        // Attach an event listener to the Dropdowns OnValueChanged event
         dropdown.onValueChanged.AddListener(OnDropdownValueChanged);
     }
 

@@ -25,7 +25,7 @@ public class PopupOutputter : MonoBehaviour, IPopupOutputter
         confirmationPanelText.text = "Blend has been successful!";
     }
 
-    // Shows an error message in the UI if transaction failes when submitting.
+    // Shows an error message in the UI if transaction fails when submitting.
     public void ShowError(string error)
     {
         gameObject.transform.GetChild(0).gameObject.SetActive(true);

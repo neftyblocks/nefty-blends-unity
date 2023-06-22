@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     private Dictionary<UIType, GameObject> UIs = new Dictionary<UIType, GameObject>();
 
     // The types of UI screens available
-    public enum UIType
+    private enum UIType
     {
         LoginMenu,
         InventoryMenu,
@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
         EnableLoginMenu();
     }
 
-    public void EnableLoginMenu()
+    private void EnableLoginMenu()
     {
         if (!UIs[UIType.LoginMenu].activeInHierarchy)
         {
@@ -46,16 +46,9 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void EnableUI(UIType uiType)
+    private void EnableUI(UIType uiType)
     {
-        if (!UIs[uiType].gameObject.activeInHierarchy)
-        {
-            UIs[uiType].SetActive(true);
-        }
-        else
-        {
-            UIs[uiType].SetActive(false);
-        }
+        UIs[uiType].SetActive(!UIs[uiType].gameObject.activeInHierarchy);
     }
 
     public void EnableBlendMainMenuUI()

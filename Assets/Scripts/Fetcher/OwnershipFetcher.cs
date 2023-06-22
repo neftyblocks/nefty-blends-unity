@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -69,7 +68,7 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher, IOwnershipFetcher
         }
     }
 
-    public async Task<bool> OwnsTemplate(string collectionName, int templateid, int amount)
+    public async Task<bool> OwnsTemplate(string collectionName, int templateId, int amount)
     {
         try
         {
@@ -78,7 +77,7 @@ public class OwnershipFetcher : MonoBehaviour, IFetcher, IOwnershipFetcher
 
             foreach (var template in deserializedJsonResult.data.templates)
             {
-                if (template.templateId == templateid && template.assets >= amount)
+                if (template.templateId == templateId && template.assets >= amount)
                 {
                     return true;
                 }

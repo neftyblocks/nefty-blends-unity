@@ -16,7 +16,7 @@ public class IngredientSelector : MonoBehaviour
     public void SetSelectedAsset(string assetId,int mintNumber, Sprite sprite)
     {
         selectedRequirementObject.GetComponent<RequirementUIElementController>().selectedAssetId = assetId;
-        TextMeshProUGUI textMeshPro = selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
+        var textMeshPro = selectedRequirementObject.transform.Find("Selected_Ingredient_Background/SelectedIngredient").GetComponent<TextMeshProUGUI>();
         var image = selectedRequirementObject.transform.Find("NFT_Image").GetComponent<Image>();
 
         if (mintNumber == -1)

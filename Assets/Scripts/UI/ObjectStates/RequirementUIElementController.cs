@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -43,10 +41,11 @@ public class RequirementUIElementController : MonoBehaviour, IPointerEnterHandle
         if (gameObject.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
         {
             playSound.GetComponent<ButtonSound>().PlayButtonSound();
-            int ingredientIndex = gameObject.GetComponent<TemplateNFT>().GetBlendIngredientIndex();
-            UserSelectedIngredient(ingredientIndex);
-            UserSelectedGameobject(gameObject);
-            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().selectedRequirementObject = gameObject;
+            GameObject o;
+            int ingredientIndex = (o = gameObject).GetComponent<TemplateNFT>().GetBlendIngredientIndex();
+            UserSelectedIngredient?.Invoke(ingredientIndex);
+            UserSelectedGameobject?.Invoke(o);
+            GameObject.Find("IngredientSelector").GetComponent<IngredientSelector>().selectedRequirementObject = o;
         }
     }
 

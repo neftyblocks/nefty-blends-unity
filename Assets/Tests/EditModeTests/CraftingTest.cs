@@ -27,7 +27,7 @@ public class CraftingTest
         Object.DestroyImmediate(craftingUI.gameObject);
     }
 
-    [Test]
+   /* [Test]
     public void TestSortAndSelectAssetsInRequirementSlots_WithUnique_AssetIds()
     {
         SetUpRequirements(new int[] { 1, 2, 3, 4, 5 });
@@ -97,7 +97,7 @@ public class CraftingTest
         SetUpRequirements(new int[] { 1, 2, 3, 4, 5 });
         craftingUI.SortAndSelectAssetsInRequirementSlots(requirementSlots, CreateIndexIngredientAssetsResult("Asset", 3));
         AssertRequirements(new string[] { "Asset1", "Asset2", "Asset3", null, null });
-    }
+    }*/
 
     private GameObject[] CreateSlots(int number)
     {

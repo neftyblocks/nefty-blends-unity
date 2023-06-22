@@ -10,13 +10,10 @@ using UnityEngine.UI;
 /// </summary>
 public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    [SerializeField] private GameObject selectionBoardImage;
     [SerializeField] private bool isClicked;
     [SerializeField] private TextMeshProUGUI assetNameText;
     [SerializeField] private TextMeshProUGUI mintNumberText;
     [SerializeField] private GameObject playSound;
-
-
     private Dictionary<Transform, Color> originalColors = new Dictionary<Transform, Color>();
 
     void Awake()
@@ -88,13 +85,13 @@ public class UIElementController : MonoBehaviour, IPointerEnterHandler, IPointer
 
 
     // If assetId from another requirement field is taken it will remove greyed out field
-    public void UpdateGreyedOutWindows()
+    private void UpdateGreyedOutWindows()
     {
         var craftAsset = GameObject.Find("IngredientPopup-UI").GetComponent<CraftAssetPopupUI>();
         craftAsset.DisplayBeingSelected();
     }
 
-    // if there are other matching assetids set them as empty
+    // if there are other matching assetIds set them as empty
     private void CheckForMatchingAssetIdsInOtherRequirements(string newAssetId)
     {
         var blendController = GameObject.Find("BlendController").GetComponent<BlendController>();

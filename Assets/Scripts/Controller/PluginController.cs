@@ -6,9 +6,10 @@ using UnityEngine;
 public class PluginController : MonoBehaviour
 {
     [SerializeField] string collectionName;
-    [SerializeField] public static string walletName { get; set; }
+    public static string walletName { get; private set; }
     public static string apiUrl = "https://aa.neftyblocks.com";
     public static string ipfsUrl = "https://resizer.neftyblocks.com";
+    
     public string GetCollectionName()
     {
         return collectionName;
@@ -17,9 +18,8 @@ public class PluginController : MonoBehaviour
     {
         return walletName;
     }
-
-    public void SetWalletName(string name)
+    public void SetWalletName(string walletName)
     {
-        walletName = name;
+        PluginController.walletName = walletName;
     }
 }

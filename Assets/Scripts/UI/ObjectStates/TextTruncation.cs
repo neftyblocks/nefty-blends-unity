@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 /// <summary>
 /// TextTruncation class provides functionality to truncate a string to a maximum length.
 /// </summary>
@@ -13,7 +9,7 @@ public class TextTruncation
             return string.Empty;
 
         if (originalText.Length > maxLength)
-            return originalText.Substring(0, maxLength);
+            return originalText[..maxLength];
 
         return originalText;
     }

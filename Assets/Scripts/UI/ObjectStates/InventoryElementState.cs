@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,7 +9,6 @@ using UnityEngine.UI;
 public class InventoryElementState : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [SerializeField] private GameObject selectionBoardImage;
-    [SerializeField] private bool isClicked;
     [SerializeField] private GameObject displayImage;
     [SerializeField] private GameObject displayName;
     [SerializeField] private GameObject displayMint;

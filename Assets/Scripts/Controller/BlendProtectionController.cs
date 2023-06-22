@@ -1,13 +1,10 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
-using static NeftyBlend;
-
 
 /// <summary>
 /// The BlendProtectionController class manages the blend protection feature which 
@@ -17,11 +14,12 @@ using static NeftyBlend;
 public class BlendProtectionController : MonoBehaviour
 {
     [SerializeField] public PluginController pluginController;
-    [SerializeField] public ISendTransactionJS sendTransactionJS;
     [SerializeField] public WhitelistUI whitelistUI;
-    [SerializeField] public IOwnershipFetcher ownershipFetcher;
+    public IOwnershipFetcher ownershipFetcher;
+    public ISendTransactionJS sendTransactionJS;
+
     public bool isWhitelisted { get; set; }
-    public bool ownsProof { get; set; }
+    public bool ownsProof { get; private set; }
     public bool isSecured { get; set; }
 
     public List<string> protectedAssets { get; set; } = new List<string>();
@@ -51,14 +49,14 @@ public class BlendProtectionController : MonoBehaviour
         whitelistUI.DisplayWhitelistWarning(WhitelistStatus.Checking);
     }
 
-    public void Initialize()
+    private void Initialize()
     {
         isWhitelisted = true;
         ownsProof = true;
         protectedAssets = new List<string>();
     }
 
-    public ProtectionFilter DeserializeJson(string jsonResponse)
+    private ProtectionFilter DeserializeJson(string jsonResponse)
     {
         return JsonConvert.DeserializeObject<ProtectionFilter>(jsonResponse);
     }
@@ -68,18 +66,18 @@ public class BlendProtectionController : MonoBehaviour
     {
         Initialize();
         var deserializedJsonResult = DeserializeJson(jsonResponse);
-        List<(string, string, string, string, int)> filterList = new List<(string, string, string, string, int)>();
+        var filterList = new List<(string, string, string, string, int)>();
 
-        foreach (List<object> filter in deserializedJsonResult.filters)
+        foreach (var filter in deserializedJsonResult.filters)
         {
-            var (collectionName, templateId, schemaName, entityType, amount, ownsProof) = await ProcessFilter(filter);
+            var (collectionName, templateId, schemaName, entityType, amount, proof) = await ProcessFilter(filter);
 
             if (!string.IsNullOrEmpty(collectionName) || !string.IsNullOrEmpty(templateId) || !string.IsNullOrEmpty(schemaName))
             {
                 filterList.Add((collectionName, templateId, schemaName, entityType, amount));
             }
             
-            if (!ownsProof)
+            if (!proof)
             {
                 isWhitelisted = false;
                 whitelistUI.DisplayWhitelistWarning(WhitelistStatus.NotWhitelisted);
@@ -99,15 +97,15 @@ public class BlendProtectionController : MonoBehaviour
     }
 
     // Processes a protection filter and returns details about the filter from received JSON in secure.nefty contract (that is called in WrapperJS.jslib).
-    public async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
+    private async Task<(string, string, string, string, int, bool)> ProcessFilter(List<object> filter)
     {
-        string filterType = filter[0].ToString();
-        string filterJson = filter[1].ToString();
-        string collectionName = string.Empty;
-        string templateId = string.Empty;
-        string schemaName = string.Empty;
-        string entityType = string.Empty;
-        int amount = 0;
+        var filterType = filter[0].ToString();
+        var filterJson = filter[1].ToString();
+        var collectionName = string.Empty;
+        var templateId = string.Empty;
+        var schemaName = string.Empty;
+        var entityType = string.Empty;
+        var amount = 0;
         switch (filterType)
         {
             case "COLLECTION_HOLDINGS":
@@ -136,18 +134,16 @@ public class BlendProtectionController : MonoBehaviour
                 schemaName = schemaHoldings.schema_name;
                 entityType = "Schema";
                 break;
-            default:
-                break;
         }
         return (collectionName, templateId, schemaName, entityType, amount, ownsProof);
     }
-    // Adds assets to protection list and returns the updated protected assets that will be spent to JS with the list of proof of ownership NFT's
-    public async Task<List<string>> AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
+    // Adds assets to protection list and returns the updated protected assets that will be spent to JS with the list of proof of ownership NFTs
+    private async Task<List<string>> AddAssetsToProtection(List<(string, string, string, string, int)> sortedList)
     {
         foreach (var item in sortedList)
         {
             var response = await ownershipFetcher.RetrieveAsset($"&collection_name={item.Item1}&template_id={item.Item2}&schema_name={item.Item3}");
-            int retrievedCount = 0;
+            var retrievedCount = 0;
 
             foreach (var detail in response.details)
             {
@@ -166,11 +162,11 @@ public class BlendProtectionController : MonoBehaviour
 
     public List<(string, string, string, string, int)> SortFilterList(List<(string, string, string, string, int)> filterList)
     {
-        List<string> order = new List<string>() { "template", "schema", "collection" };
+        var order = new List<string>() { "template", "schema", "collection" };
 
         return filterList.OrderBy(obj =>
         {
-            int index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
+            var index = order.FindIndex(item => item.Equals(obj.Item4, StringComparison.OrdinalIgnoreCase));
             return index == -1 ? int.MaxValue : index;
         }).ToList();
     }
