@@ -93,6 +93,8 @@ public class BlendController : MonoBehaviour
     }
 
     // ClearSelectedAssetIds is called within JS after blend is successful.
+
+    [ExcludeFromCodeCoverage]
     public void ClearSelectedAssetIdsFromRequirements()
     {
         if (requirementPanel == null)
