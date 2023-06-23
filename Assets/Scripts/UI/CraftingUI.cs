@@ -60,7 +60,6 @@ public class CraftingUI : MonoBehaviour
         rollResultCountText.text = $"Possible results: : { text }";
     }
 
-
     public void InstantiateRequirementSlots(int slotCount)
     {
         ResetSlots(requirementSlots);

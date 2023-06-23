@@ -107,7 +107,7 @@ public class BlendController : MonoBehaviour
                 uiController.selectedAssetId = string.Empty;
 
             Transform requirementObject = child.Find("Selected_Ingredient_Background/SelectedIngredient");
-            if (requirementObject != null)
+            if (requirementObject != null && child.GetComponent<TemplateNFT>().GetRequirementType() != "FT_INGREDIENT")
             {
                 child.Find("NFT_Image").GetComponent<Image>().sprite = Resources.Load<Sprite>("UI/Empty_Image");
                 if (requirementObject.TryGetComponent<TextMeshProUGUI>(out var textMesh))
