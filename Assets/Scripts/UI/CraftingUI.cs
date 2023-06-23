@@ -62,7 +62,7 @@ public class CraftingUI : MonoBehaviour
 
     public void InstantiateRequirementSlots(int slotCount)
     {
-        ResetSlots(requirementSlots);
+        ResetSlots(requirementContainer);
         InstantiateSlots(slotCount, requirementPrefab, requirementContainer, ref requirementSlots);
     }
 
@@ -106,7 +106,7 @@ public class CraftingUI : MonoBehaviour
 
     public void InstantiateRollSlots(int slotCount)
     {
-        ResetSlots(rollSlots);
+        ResetSlots(rollContainer);
         InstantiateSlots(slotCount, rollPrefab, rollContainer, ref rollSlots);
     }
 
@@ -334,16 +334,11 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-    public void ResetSlots(GameObject[] gameObjects)
+    public void ResetSlots(RectTransform container)
     {
-        for (int i = 0; i < gameObjects.Length; i++)
+        foreach(Transform child in container)
         {
-            if (gameObjects[i] != null)
-            {
-                Destroy(gameObjects[i]); 
-            }
-
-            gameObjects[i] = null;
+            Destroy(child.gameObject);
         }
     }
 }
