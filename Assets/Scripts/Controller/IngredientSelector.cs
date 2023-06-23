@@ -26,7 +26,7 @@ public class IngredientSelector : MonoBehaviour
         else
         {
 
-            textMeshPro.text = "Selected: " + mintNumber;
+            textMeshPro.text = "Selected: #" + mintNumber;
         }
         image.sprite = sprite;
     }

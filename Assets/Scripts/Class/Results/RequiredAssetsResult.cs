@@ -26,6 +26,11 @@ public class FT
         return (amount / Math.Pow(10, tokenPrecision)).ToString("0." + new string('0', tokenPrecision)) + " " + tokenSymbol;
     }
 
+    public string GetFormattedAmountWithoutSymbol()
+    {
+        return (amount / Math.Pow(10, tokenPrecision)).ToString("0." + new string('0', tokenPrecision));
+    }
+
     public string GetFormattedTokenSymbol()
     {
         return tokenPrecision + "," + tokenSymbol;
