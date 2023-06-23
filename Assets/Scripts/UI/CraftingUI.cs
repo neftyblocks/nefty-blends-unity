@@ -222,17 +222,18 @@ public class CraftingUI : MonoBehaviour
         }
     }
 
-
     private void DisplayFTIngredientRequirement(RequiredAssetsResult requiredAssetResult, int currentRequirementSlotIndex, int i)
     {
         for (int j = 0; j < requiredAssetResult.requiredAssetAmount[i]; j++)
         {
             Transform requirementText = requirementSlots[currentRequirementSlotIndex].transform.Find("Requirement_Background/Requirement_Text");
             Transform selectedIngredientText = requirementSlots[currentRequirementSlotIndex].transform.Find("Selected_Ingredient_Background/SelectedIngredient");
-
+            var ftText = requirementSlots[currentRequirementSlotIndex].transform.Find("FT_Name");
+            ftText.gameObject.SetActive(true);
+            ftText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.fungibleToken[i].tokenSymbol;
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[i]);
-            requirementText.GetComponent<TextMeshProUGUI>().text = "Costs: ";
-            selectedIngredientText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[i];
+            requirementText.GetComponent<TextMeshProUGUI>().text = "Token";
+            selectedIngredientText.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.fungibleToken[i].GetFormattedAmountWithoutSymbol();
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[i]);
             requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetFungibleToken(requiredAssetResult.fungibleToken[i]);
             currentRequirementSlotIndex++;
