@@ -162,11 +162,33 @@ public class CraftingUI : MonoBehaviour
         }
         var sortedRequirementSlots = SortAssets(requirementSlots);
         SetupRequirements(sortedRequirementSlots, indexIngredientAssetsResult);
+        ToggleMarketBuyButtonIfNeeded(sortedRequirementSlots, indexIngredientAssetsResult);
         await LoadRequirementSlotImages(sortedRequirementSlots, indexIngredientAssetsResult);
-
         uIController.ChangePrefabColor();
+    }
 
+    public void ToggleMarketBuyButtonIfNeeded(List<GameObject> sortedRequirementSlots, IndexIngredientAssetsResult indexIngredientAssetsResult)
+    {
+        foreach (var requirementSlot in sortedRequirementSlots)
+        {
+            var templateNFT = requirementSlot.GetComponent<TemplateNFT>();
+            if (templateNFT.GetRequirementType() != "FT_INGREDIENT")
+            {
+                bool found = false;
+                int blendIngredientIndex = templateNFT.GetBlendIngredientIndex();
+                for (var i = 0; i < indexIngredientAssetsResult.assetIds.Count; i++)
+                {
+                    if (blendIngredientIndex == indexIngredientAssetsResult.indexId[i])
+                    {
+                        found = true;
+                        break;
+                    }
+                }
 
+                var hyperlinkButton = requirementSlot.transform.GetComponentInChildren<HyperlinkController>();
+                hyperlinkButton.ToggleHyperlinkButton(!found);
+            }
+        }
     }
 
     // Method for sorting the assets based on priority.
