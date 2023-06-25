@@ -121,7 +121,7 @@ async function FetchBlendWhitelistProtection(security_id) {
   });
   return data;
 }
-async function FetchBlendPoOProtection(security_id, collection_name) {
+async function FetchBlendPoOProtection(collection_name) {
   let data = await rpcEndpoint.get_table_rows({
     json: true, // Get the response as json
     code: "secure.nefty", // Contract that we target

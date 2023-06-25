@@ -16,7 +16,7 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     [DllImport("__Internal")]
     private static extern void LoginCloudWalletsJS();
     [DllImport("__Internal")]
-    private static extern void IsBlendProtectionEligibleJS(int securityId);
+    private static extern void IsBlendProtectionEligibleJS(int securityId,string collectionName);
     [DllImport("__Internal")]
     private static extern void ChangeRPCEndpointJS(string rpcLink);
     [DllImport("__Internal")]
@@ -53,9 +53,9 @@ public class SendTransactionJS : MonoBehaviour, ISendTransactionJS
     }
 
     // This method calls a JS function to check the eligibility for blend protection.
-    public void IsBlendProtectionEligible(int securityId)
+    public void IsBlendProtectionEligible(int securityId,string collectionName)
     {
-        IsBlendProtectionEligibleJS(securityId);
+        IsBlendProtectionEligibleJS(securityId,collectionName);
     }
     // Logs out user by clearing localstorage in JS
     public void Logout()

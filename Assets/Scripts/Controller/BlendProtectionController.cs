@@ -37,9 +37,9 @@ public class BlendProtectionController : MonoBehaviour
         isSecured = true;
         ResetProtectionState();
 
-        if (pluginController.GetWalletName() != null)
+        if (pluginController.GetWalletName() != null && pluginController.GetCollectionName() != null)
         {
-            sendTransactionJS.IsBlendProtectionEligible(securityId);
+            sendTransactionJS.IsBlendProtectionEligible(securityId, pluginController.GetCollectionName());
         }
     }
     // Resets the protection state by clearing the protected assets and updating the whitelisted state.

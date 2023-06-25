@@ -39,8 +39,8 @@ public class BlendUIElementController : MonoBehaviour, IPointerEnterHandler, IPo
     public void OnPointerClick(PointerEventData pointerEventData)
     {
         PlayButtonClickSound();
-        HideTooltip();
         NotifyUserSelection();
+        HideTooltip();
     }
 
     private IEnumerator ShowTooltipAfterDelay(float delay)

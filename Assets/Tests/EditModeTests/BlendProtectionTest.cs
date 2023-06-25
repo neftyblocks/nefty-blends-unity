@@ -62,13 +62,14 @@ public class BlendProtectionTest
         // Arrange
         var securityId = 12345;
         pluginController.SetWalletName("usersWallet");
+        pluginController.collectionName = "testcollectionName";
         blendProtectionController.isWhitelisted = false;
 
         // Act
         blendProtectionController.IsBlendWhitelisted(securityId);
 
         // Assert
-        sendTransactionJS.Received().IsBlendProtectionEligible(12345);
+        sendTransactionJS.Received().IsBlendProtectionEligible(12345, "testcollectionName");
     }
 
     [Test]
@@ -83,7 +84,7 @@ public class BlendProtectionTest
         blendProtectionController.IsBlendWhitelisted(securityId);
 
         // Assert
-        sendTransactionJS.DidNotReceive().IsBlendProtectionEligible(12345);
+        sendTransactionJS.DidNotReceive().IsBlendProtectionEligible(12345,"testcollectionName");
     }
 
     [Test]

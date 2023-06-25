@@ -29,6 +29,7 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
             var ingredientAssetsResult = await GetAllIndexIngredientAssets(blendId, requiredAssetsResult);
 
             craftAssetPopupController.currentBlendId = blendId;
+            TooltipManager.tooltipManager.HideTooltip();
             uIManager.EnableCraftingUI();
             craftingUI.DisplayAssetImages(requiredAssetsResult, ingredientAssetsResult, rollResult, securityId);
         }

@@ -71,6 +71,8 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
+      console.log(result);
+
       myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
     } catch (e) {
       console.log(e);
@@ -124,8 +126,12 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
+  console.log(result);
       myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
-      myGameInstance.SendMessage("BlendController", "ClearSelectedAssetIdsFromRequirements");
+      myGameInstance.SendMessage(
+        "BlendController",
+        "ClearSelectedAssetIdsFromRequirements"
+      );
       myGameInstance.SendMessage("IngredientPopup-UI", "CloseUI");
     } catch (e) {
       console.log(e);
@@ -149,13 +155,12 @@ mergeInto(LibraryManager.library, {
     ual.logoutUser();
     myGameInstance.SendMessage("UIManager", "EnableLoginMenu");
   },
-  IsBlendProtectionEligibleJS: async function (security_id) {
+  IsBlendProtectionEligibleJS: async function (security_id,collectionName) {
     let isUserFound = false; // Variable to track if the user is found
-
-    let data = await FetchBlendWhitelistProtection(security_id);
+    collectionName = UTF8ToString(collectionName)
+    let data = await FetchBlendWhitelistProtection(security_id,collectionName);
     let proofOfOwnership = await FetchBlendPoOProtection(
-      security_id,
-      "auroratesttt"
+      collectionName
     );
     let userWallet = await accountName;
 
