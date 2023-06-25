@@ -265,15 +265,18 @@ public class CraftingUI : MonoBehaviour
     {
         for (int j = 0; j < requiredAssetResult.requiredAssetAmount[index]; j++)
         {
-            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find(requiredAssetResult.requirementSpriteHashes[index] != null ? "NFT_Image" : "Requirement_Background/Requirement_Text");
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementType(requiredAssetResult.requirementType[index]);
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[index]);
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetRequirementHash(requiredAssetResult.requirementSpriteHashes[index]);
-            requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>().SetMarketplaceLink(requiredAssetResult.marketplaceLink[index]);
-            if (requiredAssetResult.requirementSpriteHashes[index] == null)
-            {
-                nftImage.GetComponent<TextMeshProUGUI>().text = requiredAssetResult.requirementText[index];
-            }
+            Transform nftImage = requirementSlots[currentRequirementSlotIndex].transform.Find("Requirement_Background/Requirement_Text");
+
+            TemplateNFT templateNFTComponent = requirementSlots[currentRequirementSlotIndex].GetComponent<TemplateNFT>();
+            templateNFTComponent.SetRequirementType(requiredAssetResult.requirementType[index]);
+            templateNFTComponent.SetBlendIngredientIndex(requiredAssetResult.ingredientIndex[index]);
+            templateNFTComponent.SetRequirementHash(requiredAssetResult.requirementSpriteHashes[index]);
+            templateNFTComponent.SetMarketplaceLink(requiredAssetResult.marketplaceLink[index]);
+
+            TextMeshProUGUI nftTextComponent = nftImage.GetComponent<TextMeshProUGUI>();
+            nftTextComponent.text = (requiredAssetResult.requirementSpriteHashes[index] == null) ?
+                requiredAssetResult.requirementText[index] : "Asset";
+
             currentRequirementSlotIndex++;
         }
     }
