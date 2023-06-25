@@ -71,9 +71,24 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
-      console.log(result);
+      console.log(result.transactionId);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      var txData = {
+        txId: result.transactionId,
+        blendId: blend_id,
+      };
+      var serializedData = JSON.stringify(txData);
 
-      myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
+      myGameInstance.SendMessage(
+        "RewardFetcherController",
+        "DeseralizeReward",
+        serializedData
+      );
+      myGameInstance.SendMessage(
+        "BlendController",
+        "ClearSelectedAssetIdsFromRequirements"
+      );
+      myGameInstance.SendMessage("IngredientPopup-UI", "CloseUI");
     } catch (e) {
       console.log(e);
       myGameInstance.SendMessage(
@@ -126,8 +141,18 @@ mergeInto(LibraryManager.library, {
         expireSeconds: 120,
       };
       const result = await user.signTransaction({ actions }, tapos);
-  console.log(result);
-      myGameInstance.SendMessage("PopupOutputterPanel", "ShowSuccess");
+      console.log(result.transactionId);
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      var txData = {
+        txId: result.transactionId,
+        blendId: blend_id,
+      };
+      var serializedData = JSON.stringify(txData);
+      myGameInstance.SendMessage(
+        "RewardFetcherController",
+        "DeseralizeReward",
+        serializedData
+      );
       myGameInstance.SendMessage(
         "BlendController",
         "ClearSelectedAssetIdsFromRequirements"
@@ -155,13 +180,11 @@ mergeInto(LibraryManager.library, {
     ual.logoutUser();
     myGameInstance.SendMessage("UIManager", "EnableLoginMenu");
   },
-  IsBlendProtectionEligibleJS: async function (security_id,collectionName) {
+  IsBlendProtectionEligibleJS: async function (security_id, collectionName) {
     let isUserFound = false; // Variable to track if the user is found
-    collectionName = UTF8ToString(collectionName)
-    let data = await FetchBlendWhitelistProtection(security_id,collectionName);
-    let proofOfOwnership = await FetchBlendPoOProtection(
-      collectionName
-    );
+    collectionName = UTF8ToString(collectionName);
+    let data = await FetchBlendWhitelistProtection(security_id, collectionName);
+    let proofOfOwnership = await FetchBlendPoOProtection(collectionName);
     let userWallet = await accountName;
 
     if (data.rows.length != 0) {

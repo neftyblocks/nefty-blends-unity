@@ -97,7 +97,6 @@ public class CraftingFetcher : MonoBehaviour, IFetcher
                     case "TEMPLATE_INGREDIENT":
                         requiredAssetsResult.requirementType.Add(ingredient.type);
                         requiredAssetsResult.templateId.Add(ingredient.template.templateId);
-
                         requiredAssetsResult.requirementSpriteHashes.Add(ingredient.template.immutableData.img ?? ingredient.template.immutableData.video);
                         requiredAssetsResult.marketplaceLink.Add($"{marketplaceLink}?template_id={ingredient.template.templateId}&collection_name={deserializedJsonResult.details.collectionName}");
                         requiredAssetsResult.fungibleToken.Add(null);
