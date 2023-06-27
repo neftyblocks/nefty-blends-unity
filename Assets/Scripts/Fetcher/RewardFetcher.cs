@@ -36,6 +36,7 @@ public class RewardFetcher : MonoBehaviour, IFetcher
 
             if (deserializedJsonResult.data.Count == 0 || deserializedJsonResult.data[0].results.Count == 0)
             {
+                Debug.Log("burn");
                 result.rewardName = "burn";
                 result.rewardSprite = await imageLoader.GetSpriteAsync(null);
                 return result;

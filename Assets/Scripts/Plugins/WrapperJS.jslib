@@ -72,7 +72,7 @@ mergeInto(LibraryManager.library, {
       };
       const result = await user.signTransaction({ actions }, tapos);
       console.log(result.transactionId);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1750));
       var txData = {
         txId: result.transactionId,
         blendId: blend_id,
@@ -142,7 +142,7 @@ mergeInto(LibraryManager.library, {
       };
       const result = await user.signTransaction({ actions }, tapos);
       console.log(result.transactionId);
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1750));
       var txData = {
         txId: result.transactionId,
         blendId: blend_id,

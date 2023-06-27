@@ -207,15 +207,6 @@ public class Reward
         [JsonProperty("backed_tokens")]
         public List<object> backedTokens { get; set; }
 
-        [JsonProperty("burned_by_account")]
-        public string burnedByAccount { get; set; }
-
-        [JsonProperty("burned_at_block")]
-        public long burnedAtBlock { get; set; }
-
-        [JsonProperty("burned_at_time")]
-        public string burnedAtTime { get; set; }
-
         [JsonProperty("updated_at_block")]
         public long updatedAtBlock { get; set; }
 
