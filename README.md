@@ -6,15 +6,13 @@ Included within the GitHub repository is a demonstration of NeftyBlocks blending
 
 ## 🔑 Prerequisites
 
-- Browserify
-- Git
-- Npm
-- Node.js
-- Unity Hub
+- Browserify [https://browserify.org/](https://browserify.org/)
+- Git [https://git-scm.com/downloads/](https://git-scm.com/downloads/)
+- Node.js [https://nodejs.org/en/download](https://nodejs.org/en/download)
+- Npm [https://docs.npmjs.com/downloading-and-installing-node-js-and-npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/)
+- Unity Hub [https://unity.com/download](https://unity.com/download)
 
 ## 🔧 Installing
-
-**For windows:**
 
 Step 1: **Clone the Repository**
 
